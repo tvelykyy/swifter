@@ -1,0 +1,7 @@
+parameters:
+#    swifter_front.example.class: Swifter\FrontBundle\Example
+
+services:
+#    swifter_front.example:
+#        class: %swifter_front.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
