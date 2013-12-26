@@ -3,3 +3,4 @@ swifter_front_homepage:
     defaults: { _controller: SwifterFrontBundle:Default:index }
     requirements:
         route:  "[a-zA-Z0-9\-/\.]*"
+    methods:  [GET]
