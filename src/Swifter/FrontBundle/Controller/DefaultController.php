@@ -6,8 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
 {
-    public function indexAction()
+    public function indexAction($route)
     {
-        return $this->render('SwifterFrontBundle:Default:index.html.twig', array('name' => 'Taras'));
+        return $this->render('SwifterFrontBundle:Default:index.html.twig', array('name' => $route));
     }
 }
