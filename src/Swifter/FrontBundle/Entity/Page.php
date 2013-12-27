@@ -25,6 +25,11 @@ class Page
     protected $uri;
 
     /**
+     * @ORM\OneToMany(targetEntity="PageBlock", mappedBy="page")
+     **/
+    protected $pageBlocks;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Template")
      * @ORM\JoinColumn(name="template_id", referencedColumnName="id")
      **/
@@ -45,6 +50,16 @@ class Page
     public function getUri()
     {
         return $this->uri;
+    }
+
+    public function setPageBlocks($pageBlocks)
+    {
+        $this->pageBlocks = $pageBlocks;
+    }
+
+    public function getPageBlocks()
+    {
+        return $this->pageBlocks;
     }
 
     public function setTemplate($template)
