@@ -24,6 +24,10 @@ class Page
      */
     protected $uri;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Template")
+     * @ORM\JoinColumn(name="template_id", referencedColumnName="id")
+     **/
     protected $template;
 
     public function getId()
@@ -41,5 +45,15 @@ class Page
     public function getUri()
     {
         return $this->uri;
+    }
+
+    public function setTemplate($template)
+    {
+        $this->template = $template;
+    }
+
+    public function getTemplate()
+    {
+        return $this->template;
     }
 }
