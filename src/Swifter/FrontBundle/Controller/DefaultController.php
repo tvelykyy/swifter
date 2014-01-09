@@ -8,20 +8,33 @@ class DefaultController extends Controller
 {
     public function indexAction($uri)
     {
-        $fullUri = $this->leadWithSlash($uri);
+        $slashLeadedUri = $this->leadWithSlash($uri);
         $page = $this->getDoctrine()
             ->getRepository('SwifterFrontBundle:Page')
-            ->findOneByUri($fullUri);
+            ->findOneByUri($slashLeadedUri);
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found.');
         }
 
-        return $this->render('SwifterFrontBundle:Default:index.html.twig', array('name' => $fullUri));
+        $blocks = $this->convertPageBlocksToAssociativeArray($page->getPageBlocks());
+
+        return $this->render('SwifterFrontBundle:Default:index.html.twig', $blocks);
     }
 
     private function leadWithSlash($uri)
     {
         return '/'.$uri;
+    }
+
+    private function convertPageBlocksToAssociativeArray($pageBlocks)
+    {
+        $blockValue = array();
+        foreach($pageBlocks->toArray() as $pageBlock)
+        {
+            $blockValue[$pageBlock->getBlock()->getTitle()] = $pageBlock->getContent();
+        }
+
+        return $blockValue;
     }
 }
