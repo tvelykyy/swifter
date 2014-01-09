@@ -51,7 +51,7 @@ class PageBlock
 
     public function getBlock()
     {
-        return $this->blockId;
+        return $this->block;
     }
 
     public function setContent($content)
