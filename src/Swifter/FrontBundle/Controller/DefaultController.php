@@ -6,6 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
 {
+    protected $snippetService;
+
+    public function __construct(SnippetService $snippetService)
+    {
+        $this->snippetService = $snippetService;
+    }
+
     public function indexAction($uri)
     {
         $slashLeadedUri = $this->leadWithSlash($uri);
@@ -37,4 +44,5 @@ class DefaultController extends Controller
 
         return $blockValue;
     }
+
 }
