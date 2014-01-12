@@ -4,7 +4,7 @@ namespace Swifter\FrontBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class DefaultController extends Controller
+class DispatcherController extends Controller
 {
     protected $snippetService;
 
