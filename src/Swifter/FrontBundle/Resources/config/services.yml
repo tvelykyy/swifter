@@ -1,7 +1,14 @@
 parameters:
-#    swifter_front.example.class: Swifter\FrontBundle\Example
+    swifter.front.controller.dispatcher.class: Swifter\FrontBundle\Controller\DispatcherController
+    swifter.front.service.snippet.class: Swifter\FrontBundle\Service\SnippetService
 
 services:
-#    swifter_front.example:
-#        class: %swifter_front.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    swifter.front.service.snippet:
+        class: %swifter.front.service.snippet.class%
+
+    swifter.front.controller.dispatcher:
+        class: %swifter.front.controller.dispatcher.class%
+        arguments: ["@swifter.front.service.snippet"]
+        calls:
+            -  [setContainer, ["@service_container"]]
+

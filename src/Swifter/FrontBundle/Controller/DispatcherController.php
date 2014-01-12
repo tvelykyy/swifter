@@ -3,6 +3,7 @@
 namespace Swifter\FrontBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Swifter\FrontBundle\Service\SnippetService;
 
 class DispatcherController extends Controller
 {
@@ -23,6 +24,8 @@ class DispatcherController extends Controller
         if (!$page) {
             throw $this->createNotFoundException('Page not found.');
         }
+
+        $this->snippetService->resolveSnippetsForPage($page);
 
         $blocks = $this->convertPageBlocksToAssociativeArray($page->getPageBlocks());
 

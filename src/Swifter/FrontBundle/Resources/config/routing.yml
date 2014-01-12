@@ -1,6 +1,6 @@
 swifter_front_dispatcher:
     pattern:  /{uri}
-    defaults: { _controller: SwifterFrontBundle:Default:index, uri: "" }
+    defaults: { _controller: swifter.front.controller.dispatcher:indexAction, uri: "" }
     requirements:
         route:  "[\sa-zA-Z0-9\-/\.]*"
     methods:  [GET]
