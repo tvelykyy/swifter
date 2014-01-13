@@ -1,8 +1,13 @@
 parameters:
     swifter.front.controller.dispatcher.class: Swifter\FrontBundle\Controller\DispatcherController
     swifter.front.service.snippet.class: Swifter\FrontBundle\Service\SnippetService
+    swifter.front.service.devtest.class: Swifter\FrontBundle\Service\DevTestService
 
 services:
+    swifter.front.service.devtest:
+        class: %swifter.front.service.devtest.class%
+        arguments: ["@doctrine.orm.entity_manager"]
+
     swifter.front.service.snippet:
         class: %swifter.front.service.snippet.class%
 

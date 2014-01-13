@@ -19,6 +19,10 @@ class SnippetService
     {
         $snippets = $this->getSnippetsFromPageBlockContent($pageBlock);
 
+        foreach($snippets as $snippet)
+        {
+            $parsedSnippert = $this->parseSnippet($snippet);
+        }
     }
 
     private function getSnippetsFromPageBlockContent(PageBlock $pageBlock)
@@ -35,5 +39,16 @@ class SnippetService
         }
 
         return $foundSnippets;
+    }
+
+    private function parseSnippet($snippetSource)
+    {
+        $tokens = explode('?', $snippetSource);
+
+        $executionPart = explode('.', $tokens[0]);
+        $service = new $executionPart[0];
+        $method = $executionPart[1];
+
+        $templateId = $executionPart[2];
     }
 }
