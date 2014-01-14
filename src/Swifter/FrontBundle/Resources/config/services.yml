@@ -10,7 +10,7 @@ services:
 
     swifter_front.service.snippet:
         class: %swifter_front.service.snippet.class%
-        arguments: ["@service_container"]
+        arguments: ["@service_container", "@doctrine.orm.entity_manager"]
 
     swifter_front.controller.dispatcher:
         class: %swifter_front.controller.dispatcher.class%
