@@ -45,7 +45,7 @@ class SnippetService
     private function getSnippetsTitlesFromPageBlockContent(PageBlock $pageBlock)
     {
         $matchedSnippets = null;
-        preg_match_all('/\\[\\[(.*?)\\]\\]/', $pageBlock->getContent(), $matchedSnippets);
+        preg_match_all('/\\[\\[([A-Za-z0-9_]*?)\\]\\]/', $pageBlock->getContent(), $matchedSnippets);
 
         $snippetsTitles = array();
 
@@ -82,9 +82,9 @@ class SnippetService
         return $result;
     }
 
-    private function render($template, $params)
+    private function render($templatePath, $params)
     {
-        return $this->container->get('templating')->render($template, array('params' => $params));
+        return $this->container->get('templating')->render($templatePath, array('params' => $params));
     }
 
     private function updatePageBlockContentWithResolvedSnippet(PageBlock $pageBlock, $snippetTitle, $html)
