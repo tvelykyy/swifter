@@ -1,3 +1,18 @@
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : localhost
+Source Server Version : 50534
+Source Host           : localhost:3306
+Source Database       : swifter
+
+Target Server Type    : MYSQL
+Target Server Version : 50534
+File Encoding         : 65001
+
+Date: 2014-01-17 10:20:19
+*/
+
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
@@ -11,16 +26,31 @@ CREATE TABLE `block` (
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
+-- Records of block
+-- ----------------------------
+INSERT INTO `block` VALUES ('1', 'MAIN_CONTENT');
+INSERT INTO `block` VALUES ('2', 'TITLE');
+INSERT INTO `block` VALUES ('17', 'FOOTER');
+INSERT INTO `block` VALUES ('35', 'Test With Id5');
+INSERT INTO `block` VALUES ('36', 'Test Noty');
+
+-- ----------------------------
 -- Table structure for `page`
 -- ----------------------------
 DROP TABLE IF EXISTS `page`;
 CREATE TABLE `page` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Represent unique page identifier',
-  `parent_id` bigint(20) NOT NULL,
+  `parent_id` bigint(20) DEFAULT NULL,
   `uri` varchar(200) NOT NULL COMMENT 'Represents page''s full URL.',
   `template_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of page
+-- ----------------------------
+INSERT INTO `page` VALUES ('1', null, '/', '1');
+INSERT INTO `page` VALUES ('2', '1', '/news', '1');
 
 -- ----------------------------
 -- Table structure for `page_block`
@@ -36,7 +66,14 @@ CREATE TABLE `page_block` (
   KEY `block` (`block_id`),
   CONSTRAINT `block` FOREIGN KEY (`block_id`) REFERENCES `block` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `page` FOREIGN KEY (`page_id`) REFERENCES `page` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='Table represents mapping between page block and specific page.';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='Table represents mapping between page block and specific page.';
+
+-- ----------------------------
+-- Records of page_block
+-- ----------------------------
+INSERT INTO `page_block` VALUES ('1', '1', '1', 'This is page content [[DEV_TEST_PAGES]] contained in CONTENT block.  [[DEV_TEST_PAGES]] ');
+INSERT INTO `page_block` VALUES ('2', '2', '1', 'This is news page.');
+INSERT INTO `page_block` VALUES ('3', '1', '2', 'Super Cool Title');
 
 -- ----------------------------
 -- Table structure for `role`
@@ -51,15 +88,49 @@ CREATE TABLE `role` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+-- Records of role
+-- ----------------------------
+INSERT INTO `role` VALUES ('1', 'user', 'Login privileges, granted after account confirmation');
+INSERT INTO `role` VALUES ('2', 'admin', 'Administrative user, has access to everything.');
+
+-- ----------------------------
+-- Table structure for `snippet`
+-- ----------------------------
+DROP TABLE IF EXISTS `snippet`;
+CREATE TABLE `snippet` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(50) NOT NULL,
+  `service` varchar(200) NOT NULL,
+  `method` varchar(100) NOT NULL,
+  `template_id` int(11) unsigned NOT NULL,
+  `params` varchar(500) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `templated_id_idx` (`template_id`),
+  CONSTRAINT `template_id_fk` FOREIGN KEY (`template_id`) REFERENCES `template` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of snippet
+-- ----------------------------
+INSERT INTO `snippet` VALUES ('1', 'DEV_TEST_PAGES', 'swifter_front.service.devtest', 'getPages', '2', '{\"start\":2,\"end\":5}');
+
+-- ----------------------------
 -- Table structure for `template`
 -- ----------------------------
 DROP TABLE IF EXISTS `template`;
 CREATE TABLE `template` (
-  `id` bigint(20) NOT NULL,
+  `id` int(11) unsigned NOT NULL,
   `title` varchar(100) NOT NULL,
   `path` varchar(200) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of template
+-- ----------------------------
+INSERT INTO `template` VALUES ('1', 'Main Template', 'index.html');
+INSERT INTO `template` VALUES ('2', 'Uris', 'SwifterFrontBundle:DevTest:pages.html.twig');
 
 -- ----------------------------
 -- Table structure for `user`
@@ -77,6 +148,12 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
+-- Records of user
+-- ----------------------------
+INSERT INTO `user` VALUES ('cmser_admin_1@mailinator.com', '0f0a9a777952ceb5b629ec5a901df612c7bf2cd66a63ef2d80228d5557ca8dca', 'Cmser Admin 1', '', null);
+INSERT INTO `user` VALUES ('cmser_user_1@mailinator.com', '0f0a9a777952ceb5b629ec5a901df612c7bf2cd66a63ef2d80228d5557ca8dca', 'Cmser User 1', '', null);
+
+-- ----------------------------
 -- Table structure for `user_role`
 -- ----------------------------
 DROP TABLE IF EXISTS `user_role`;
@@ -89,6 +166,12 @@ CREATE TABLE `user_role` (
   CONSTRAINT `role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
   CONSTRAINT `user` FOREIGN KEY (`user_email`) REFERENCES `user` (`email`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of user_role
+-- ----------------------------
+INSERT INTO `user_role` VALUES ('cmser_admin_1@mailinator.com', '1');
+INSERT INTO `user_role` VALUES ('cmser_user_1@mailinator.com', '2');
 
 -- ----------------------------
 -- Table structure for `user_token`
@@ -106,3 +189,21 @@ CREATE TABLE `user_token` (
   KEY `fk_user_email` (`user_email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8;
 
+-- ----------------------------
+-- Records of user_token
+-- ----------------------------
+INSERT INTO `user_token` VALUES ('44', 'dummy@mail.com', 'da39a3ee5e6b4b0d3255bfef95601890afd80709', 'df4ed7297a2db98cec927647f46505d74ef75f8f', '0', '1385740031');
+INSERT INTO `user_token` VALUES ('46', 'tavelyky@gmail.com', '30943b39e0c5b981478e480b9277538cb86ca4a4', '5f49c1c6e8115675521c74c6b0cd5269d245082e', '0', '1385743124');
+INSERT INTO `user_token` VALUES ('55', 'tavelyky@gmail.com', '5c89949a3bc004f86ee7912d7c6d086c4feba7c7', '9ac6cee13d6c3eb5efe56796a4dec6093d55d0da', '0', '1386332613');
+INSERT INTO `user_token` VALUES ('56', 'tavelyky@gmail.com', '5c89949a3bc004f86ee7912d7c6d086c4feba7c7', 'e2c668367b98d0ea152b171b03a5608717cc1d6f', '0', '1386333025');
+INSERT INTO `user_token` VALUES ('57', 'tavelyky@gmail.com', '5c89949a3bc004f86ee7912d7c6d086c4feba7c7', '23947fea87fa423e0b494122dae4d2df006d70f9', '0', '1386333026');
+INSERT INTO `user_token` VALUES ('58', 'tavelyky@gmail.com', '5c89949a3bc004f86ee7912d7c6d086c4feba7c7', '00aa130a01fc51d4692accece253600f6a7e48b0', '0', '1386333028');
+INSERT INTO `user_token` VALUES ('59', 'tavelyky@gmail.com', '5c89949a3bc004f86ee7912d7c6d086c4feba7c7', '9d30c9d93966848f4174272f926e0d4cbd9f32c7', '0', '1386333029');
+INSERT INTO `user_token` VALUES ('60', 'tavelyky@gmail.com', '5c89949a3bc004f86ee7912d7c6d086c4feba7c7', '25e8cffdb9ce733a03e219519fdbee143b274233', '0', '1386333086');
+INSERT INTO `user_token` VALUES ('61', 'cmser_user_1@mailinator.com', '5c89949a3bc004f86ee7912d7c6d086c4feba7c7', 'c8249711138409c16da9a5d9f481b7962eb1f563', '0', '1386333413');
+INSERT INTO `user_token` VALUES ('63', 'cmser_user_1@mailinator.com', '5c89949a3bc004f86ee7912d7c6d086c4feba7c7', 'f8dd2fdb985b736c4d9d0146f54507afc176c497', '0', '1386334096');
+INSERT INTO `user_token` VALUES ('66', 'cmser_user_1@mailinator.com', '5c89949a3bc004f86ee7912d7c6d086c4feba7c7', 'f9b1dbbac4bcc3ffaa0c2e5290d75c5dc5972ba7', '0', '1386339730');
+INSERT INTO `user_token` VALUES ('68', 'cmser_admin_1@mailinator.com', '5c89949a3bc004f86ee7912d7c6d086c4feba7c7', '2567389eb169cf16035f73fedc859b2e24eb4887', '0', '1386342789');
+INSERT INTO `user_token` VALUES ('70', 'tavelyky@gmail.com', '40111fb86247032d0422c35e58c32ab3d02bbafb', '3d8a366b67410c46c5e01d6b30dc28aa2e4add0e', '0', '1386929049');
+INSERT INTO `user_token` VALUES ('85', 'cmser_admin_1@mailinator.com', 'aa7f970efc771c1c4cab4ab84060e62c11c44f3d', '29ef0f92df2979eb75db78ac40969319cd588530', '0', '1387460815');
+INSERT INTO `user_token` VALUES ('91', 'cmser_admin_1@mailinator.com', '40111fb86247032d0422c35e58c32ab3d02bbafb', '1d2482fd7f09e1b8bdd9088d77cf94e10d1e4b86', '0', '1387964909');

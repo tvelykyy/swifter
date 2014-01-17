@@ -14,7 +14,7 @@ services:
 
     swifter_front.controller.dispatcher:
         class: %swifter_front.controller.dispatcher.class%
-        arguments: ["@swifter_front.service.snippet"]
+        arguments: ["@twig", "@swifter_front.service.snippet"]
         calls:
             -  [setContainer, ["@service_container"]]
 

@@ -4,13 +4,17 @@ namespace Swifter\FrontBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Swifter\FrontBundle\Service\SnippetService;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class DispatcherController extends Controller
 {
+    protected $twig;
     protected $snippetService;
 
-    public function __construct(SnippetService $snippetService)
+
+    public function __construct(\Twig_Environment $twig, SnippetService $snippetService)
     {
+        $this->twig = $twig;
         $this->snippetService = $snippetService;
     }
 
@@ -23,7 +27,10 @@ class DispatcherController extends Controller
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found.');
+
         }
+
+        $this->mergeWithParentPageBlocks($page);
 
         $this->snippetService->resolveSnippetsForPage($page);
 
@@ -35,6 +42,25 @@ class DispatcherController extends Controller
     private function leadWithSlash($uri)
     {
         return '/'.$uri;
+    }
+
+    private function mergeWithParentPageBlocks($page)
+    {
+        $currentPageBlocks = $page->getPageBlocks();
+        $parent = $page->getParent();
+        $blocksToAdd = $parent->getPageBlocks()->filter(
+            function($pageBlock) use ($currentPageBlocks) {
+                return !$currentPageBlocks->exists(
+                    function($index, $currentPageBlock) use ($pageBlock) {
+                        return $currentPageBlock->getBlock()->getTitle() === $pageBlock->getBlock()->getTitle();
+                    }
+                );
+            }
+        );
+
+        $page->setPageBlocks(new ArrayCollection(
+            array_merge($page->getPageBlocks()->toArray(), $blocksToAdd->toArray())
+        ));
     }
 
     private function convertPageBlocksToAssociativeArray($pageBlocks)

@@ -17,6 +17,10 @@ class Page
      */
     protected $id;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Page")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     */
     protected $parent;
 
     /**
@@ -38,6 +42,16 @@ class Page
     public function getId()
     {
         return $this->id;
+    }
+
+    public function setParent($parent)
+    {
+        $this->parent = $parent;
+    }
+
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     public function setUri($uri)
