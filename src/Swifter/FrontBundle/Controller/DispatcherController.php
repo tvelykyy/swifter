@@ -47,10 +47,9 @@ class DispatcherController extends Controller
     private function mergeWithParentPageBlocks($page)
     {
         $currentPageBlocks = $page->getPageBlocks();
+        $parent = $page->getParent();
 
         do {
-            $parent = $page->getParent();
-
             if (isset($parent)) {
                 $blocksToAdd = $parent->getPageBlocks()->filter(
                     function($pageBlock) use ($currentPageBlocks) {
@@ -62,12 +61,14 @@ class DispatcherController extends Controller
                     }
                 );
 
-                $page->setPageBlocks(new ArrayCollection(
-                    array_merge($page->getPageBlocks()->toArray(), $blocksToAdd->toArray())
-                ));
+                $currentPageBlocks = new ArrayCollection(
+                    array_merge($currentPageBlocks->toArray(), $blocksToAdd->toArray())
+                );
             }
-            $page = $parent;
+            $parent = $parent->getParent();
         } while (isset($parent));
+
+        $page->setPageBlocks($currentPageBlocks);
     }
 
     private function convertPageBlocksToAssociativeArray($pageBlocks)
