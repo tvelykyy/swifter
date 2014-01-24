@@ -36,7 +36,7 @@ class DispatcherController extends Controller
 
         $blocks = $this->convertPageBlocksToAssociativeArray($page->getPageBlocks());
 
-        return $this->render('SwifterFrontBundle:Default:index.html.twig', $blocks);
+        return $this->render('SwifterFrontBundle:DevTest:index.html.twig', $blocks);
     }
 
     private function leadWithSlash($uri)
@@ -47,20 +47,27 @@ class DispatcherController extends Controller
     private function mergeWithParentPageBlocks($page)
     {
         $currentPageBlocks = $page->getPageBlocks();
-        $parent = $page->getParent();
-        $blocksToAdd = $parent->getPageBlocks()->filter(
-            function($pageBlock) use ($currentPageBlocks) {
-                return !$currentPageBlocks->exists(
-                    function($index, $currentPageBlock) use ($pageBlock) {
-                        return $currentPageBlock->getBlock()->getTitle() === $pageBlock->getBlock()->getTitle();
+
+        do {
+            $parent = $page->getParent();
+
+            if (isset($parent)) {
+                $blocksToAdd = $parent->getPageBlocks()->filter(
+                    function($pageBlock) use ($currentPageBlocks) {
+                        return !$currentPageBlocks->exists(
+                            function($index, $currentPageBlock) use ($pageBlock) {
+                                return $currentPageBlock->getBlock()->getTitle() === $pageBlock->getBlock()->getTitle();
+                            }
+                        );
                     }
                 );
-            }
-        );
 
-        $page->setPageBlocks(new ArrayCollection(
-            array_merge($page->getPageBlocks()->toArray(), $blocksToAdd->toArray())
-        ));
+                $page->setPageBlocks(new ArrayCollection(
+                    array_merge($page->getPageBlocks()->toArray(), $blocksToAdd->toArray())
+                ));
+            }
+            $page = $parent;
+        } while (isset($parent));
     }
 
     private function convertPageBlocksToAssociativeArray($pageBlocks)
