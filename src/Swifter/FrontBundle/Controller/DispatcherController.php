@@ -3,6 +3,7 @@
 namespace Swifter\FrontBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Swifter\FrontBundle\Service\SnippetService;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -11,14 +12,13 @@ class DispatcherController extends Controller
     protected $twig;
     protected $snippetService;
 
-
     public function __construct(\Twig_Environment $twig, SnippetService $snippetService)
     {
         $this->twig = $twig;
         $this->snippetService = $snippetService;
     }
 
-    public function indexAction($uri)
+    public function indexAction($uri, Request $request)
     {
         $slashLeadedUri = $this->leadWithSlash($uri);
         $page = $this->getDoctrine()
@@ -27,16 +27,14 @@ class DispatcherController extends Controller
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found.');
-
         }
 
-        $this->mergeWithParentPageBlocks($page);
-
-        $this->snippetService->resolveSnippetsForPage($page);
-
+        $this->mergePageBlocksWithParents($page);
+        $queryParams = $request->query->all();
+        $this->snippetService->resolveSnippetsForPage($page, $queryParams);
         $blocks = $this->convertPageBlocksToAssociativeArray($page->getPageBlocks());
 
-        return $this->render('SwifterFrontBundle:DevTest:index.html.twig', $blocks);
+        return $this->render($page->getTemplate()->getPath(), $blocks);
     }
 
     private function leadWithSlash($uri)
@@ -44,31 +42,37 @@ class DispatcherController extends Controller
         return '/'.$uri;
     }
 
-    private function mergeWithParentPageBlocks($page)
+    private function mergePageBlocksWithParents($page)
     {
-        $currentPageBlocks = $page->getPageBlocks();
+        $mergedPageBlocks = $page->getPageBlocks();
         $parent = $page->getParent();
 
-        do {
-            if (isset($parent)) {
-                $blocksToAdd = $parent->getPageBlocks()->filter(
-                    function($pageBlock) use ($currentPageBlocks) {
-                        return !$currentPageBlocks->exists(
-                            function($index, $currentPageBlock) use ($pageBlock) {
-                                return $currentPageBlock->getBlock()->getTitle() === $pageBlock->getBlock()->getTitle();
-                            }
-                        );
+        while (isset($parent))
+        {
+            $deficientPageBlocks = $this->getDeficientBlocksFromParent($parent, $mergedPageBlocks);
+            $mergedPageBlocks = new ArrayCollection(array_merge($mergedPageBlocks->toArray(), $deficientPageBlocks->toArray()));
+            $parent = $parent->getParent();
+        }
+
+        $page->setPageBlocks($mergedPageBlocks);
+    }
+
+    /**
+     * Deficient blocks mean that it is absent in page block mapping. If pageBlock exists in current page and parent page
+     * it would not be treated as deficient and would not be returned.
+     */
+    private function getDeficientBlocksFromParent($parent, $childPageBlocks)
+    {
+        $deficientBlocks = $parent->getPageBlocks()->filter(
+            function ($pageBlock) use ($childPageBlocks) {
+                return !$childPageBlocks->exists(
+                    function ($index, $childPageBlock) use ($pageBlock) {
+                        return $childPageBlock->getBlock()->getTitle() === $pageBlock->getBlock()->getTitle();
                     }
                 );
-
-                $currentPageBlocks = new ArrayCollection(
-                    array_merge($currentPageBlocks->toArray(), $blocksToAdd->toArray())
-                );
             }
-            $parent = $parent->getParent();
-        } while (isset($parent));
-
-        $page->setPageBlocks($currentPageBlocks);
+        );
+        return $deficientBlocks;
     }
 
     private function convertPageBlocksToAssociativeArray($pageBlocks)

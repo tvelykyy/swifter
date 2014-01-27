@@ -13,9 +13,9 @@ class DevTestService
         $this->em = $entityManager;
     }
 
-    public function getPages()
+    public function getPages($offset = 0, $limit = 5)
     {
-        return $this->em->getRepository('SwifterFrontBundle:Page')->findAll();
+        return $this->em->getRepository('SwifterFrontBundle:Page')->findBy(array(), array(), $limit, $offset);
     }
 
 }

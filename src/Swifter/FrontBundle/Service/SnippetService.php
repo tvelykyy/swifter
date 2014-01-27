@@ -22,22 +22,22 @@ class SnippetService
         $this->em = $em;
     }
 
-    public function resolveSnippetsForPage(Page $page)
+    public function resolveSnippetsForPage(Page $page, $queryParams)
     {
         foreach($page->getPageBlocks()->toArray() as $pageBlock)
         {
-            $this->resolveSnippetsForPageBlock($pageBlock);
+            $this->resolveSnippetsForPageBlock($pageBlock, $queryParams);
         }
     }
 
-    private function resolveSnippetsForPageBlock(PageBlock $pageBlock)
+    private function resolveSnippetsForPageBlock(PageBlock $pageBlock, $queryParams)
     {
         $snippetsTitles = $this->getSnippetsTitlesFromPageBlockContent($pageBlock);
 
         foreach($snippetsTitles as $snippetTitle)
         {
             $snippet = $this->getSnippetFromRepository($snippetTitle);
-            $html = $this->resolveSnippet($snippet);
+            $html = $this->resolveSnippet($snippet, $queryParams);
             $this->updatePageBlockContentWithResolvedSnippet($pageBlock, $snippetTitle, $html);
         }
     }
@@ -65,19 +65,21 @@ class SnippetService
         return $snippet;
     }
 
-    private function resolveSnippet(Snippet $snippet)
+    private function resolveSnippet(Snippet $snippet, $queryParams)
     {
-        $executionResult = $this->executeSnippet($snippet);
+        $executionResult = $this->executeSnippet($snippet, $queryParams);
         $html = $this->render($snippet->getTemplate()->getPath(), $executionResult);
 
         return $html;
     }
 
-    private function executeSnippet(Snippet $snippet)
+    private function executeSnippet(Snippet $snippet, $queryParams)
     {
         $service = $this->container->get($snippet->getService());
         $paramsArray = json_decode($snippet->getParams(), true);
-        $result = call_user_func_array(array($service, $snippet->getMethod()), $paramsArray);
+
+        $mergedParams = array_merge($paramsArray, $queryParams);
+        $result = call_user_func_array(array($service, $snippet->getMethod()), $mergedParams);
 
         return $result;
     }
