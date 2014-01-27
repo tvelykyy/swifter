@@ -76,9 +76,9 @@ class SnippetService
     private function executeSnippet(Snippet $snippet, $queryParams)
     {
         $service = $this->container->get($snippet->getService());
-        $paramsArray = json_decode($snippet->getParams(), true);
+        $configuredParams = json_decode($snippet->getParams(), true);
+        $mergedParams = array_merge($configuredParams, $queryParams);
 
-        $mergedParams = array_merge($paramsArray, $queryParams);
         $result = call_user_func_array(array($service, $snippet->getMethod()), $mergedParams);
 
         return $result;
