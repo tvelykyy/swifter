@@ -1,0 +1,3 @@
+swifter_common_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: SwifterCommonBundle:Default:index }

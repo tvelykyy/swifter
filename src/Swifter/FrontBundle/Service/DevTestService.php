@@ -15,7 +15,7 @@ class DevTestService
 
     public function getPages($offset = 0, $limit = 5)
     {
-        return $this->em->getRepository('SwifterFrontBundle:Page')->findBy(array(), array(), $limit, $offset);
+        return $this->em->getRepository('SwifterCommonBundle:Page')->findBy(array(), array(), $limit, $offset);
     }
 
 }

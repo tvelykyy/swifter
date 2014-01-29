@@ -22,7 +22,7 @@ class DispatcherController extends Controller
     {
         $slashLeadedUri = $this->leadWithSlash($uri);
         $page = $this->getDoctrine()
-            ->getRepository('SwifterFrontBundle:Page')
+            ->getRepository('SwifterCommonBundle:Page')
             ->findOneByUri($slashLeadedUri);
 
         if (!$page) {

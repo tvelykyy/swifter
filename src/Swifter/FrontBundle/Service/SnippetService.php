@@ -2,9 +2,9 @@
 
 namespace Swifter\FrontBundle\Service;
 
-use Swifter\FrontBundle\Entity\Page;
-use Swifter\FrontBundle\Entity\PageBlock;
-use Swifter\FrontBundle\Entity\Snippet;
+use Swifter\CommonBundle\Entity\Page;
+use Swifter\CommonBundle\Entity\PageBlock;
+use Swifter\CommonBundle\Entity\Snippet;
 use Swifter\FrontBundle\Service;
 
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
@@ -60,7 +60,7 @@ class SnippetService
 
     private function getSnippetFromRepository($snippetTitle)
     {
-        $snippet = $this->em->getRepository('SwifterFrontBundle:Snippet')
+        $snippet = $this->em->getRepository('SwifterCommonBundle:Snippet')
             ->findOneByTitle($snippetTitle);
         return $snippet;
     }

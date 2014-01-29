@@ -1,6 +1,6 @@
 <?php
 
-namespace Swifter\FrontBundle\Entity;
+namespace Swifter\CommonBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

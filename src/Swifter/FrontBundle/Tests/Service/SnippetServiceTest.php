@@ -2,10 +2,10 @@
 
 namespace Swifter\FrontBundle\Tests\Service;
 
-use Swifter\FrontBundle\Entity\Page;
-use Swifter\FrontBundle\Entity\PageBlock;
-use Swifter\FrontBundle\Entity\Snippet;
-use Swifter\FrontBundle\Entity\Template;
+use Swifter\CommonBundle\Entity\Page;
+use Swifter\CommonBundle\Entity\PageBlock;
+use Swifter\CommonBundle\Entity\Snippet;
+use Swifter\CommonBundle\Entity\Template;
 use Swifter\FrontBundle\Service\SnippetService;
 
 class SnippetServiceTest extends \PHPUnit_Framework_TestCase
@@ -26,7 +26,7 @@ class SnippetServiceTest extends \PHPUnit_Framework_TestCase
         $snippetService = new SnippetService($container, $em);
 
         /* When. */
-        $snippetService->resolveSnippetsForPage($page);
+        $snippetService->resolveSnippetsForPage($page, array());
 
         /* Then. */
         $actualPageBlocksArray = $page->getPageBlocks()->toArray();
@@ -94,7 +94,7 @@ class SnippetServiceTest extends \PHPUnit_Framework_TestCase
         $snippetService = new SnippetService($container, $em);
 
         /* When. */
-        $snippetService->resolveSnippetsForPage($page);
+        $snippetService->resolveSnippetsForPage($page, array());
 
         /* Then. */
         $actualPageBlocksArray = $page->getPageBlocks()->toArray();
