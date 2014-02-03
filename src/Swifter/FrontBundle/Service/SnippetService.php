@@ -75,13 +75,20 @@ class SnippetService
 
     private function executeSnippet(Snippet $snippet, $queryParams)
     {
+        $mergedParams = $this->mergeConfiguredAndQueryParams($snippet, $queryParams);
         $service = $this->container->get($snippet->getService());
-        $configuredParams = json_decode($snippet->getParams(), true);
-        $mergedParams = array_merge($configuredParams, $queryParams);
 
         $result = call_user_func_array(array($service, $snippet->getMethod()), $mergedParams);
 
         return $result;
+    }
+
+    private function mergeConfiguredAndQueryParams(Snippet $snippet, $queryParams)
+    {
+        $configuredParams = json_decode($snippet->getParams(), true);
+        $mergedParams = array_merge($configuredParams, $queryParams);
+
+        return $mergedParams;
     }
 
     private function render($templatePath, $params)
@@ -97,4 +104,6 @@ class SnippetService
                 $pageBlock->getContent())
         );
     }
+
+
 }
