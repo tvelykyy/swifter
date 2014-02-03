@@ -2,15 +2,15 @@
 Navicat MySQL Data Transfer
 
 Source Server         : localhost
-Source Server Version : 50534
+Source Server Version : 50535
 Source Host           : localhost:3306
 Source Database       : swifter
 
 Target Server Type    : MYSQL
-Target Server Version : 50534
+Target Server Version : 50535
 File Encoding         : 65001
 
-Date: 2014-01-17 10:20:19
+Date: 2014-01-31 16:06:57
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,16 +23,14 @@ CREATE TABLE `block` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Represents page''s field unique identifier.',
   `title` varchar(100) NOT NULL COMMENT 'Represents page''s block title.',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 -- Records of block
 -- ----------------------------
 INSERT INTO `block` VALUES ('1', 'MAIN_CONTENT');
 INSERT INTO `block` VALUES ('2', 'TITLE');
-INSERT INTO `block` VALUES ('17', 'FOOTER');
-INSERT INTO `block` VALUES ('35', 'Test With Id5');
-INSERT INTO `block` VALUES ('36', 'Test Noty');
+INSERT INTO `block` VALUES ('3', 'FOOTER');
 
 -- ----------------------------
 -- Table structure for `page`
@@ -44,13 +42,14 @@ CREATE TABLE `page` (
   `uri` varchar(200) NOT NULL COMMENT 'Represents page''s full URL.',
   `template_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of page
 -- ----------------------------
 INSERT INTO `page` VALUES ('1', null, '/', '1');
 INSERT INTO `page` VALUES ('2', '1', '/news', '1');
+INSERT INTO `page` VALUES ('3', '2', '/news/first', '1');
 
 -- ----------------------------
 -- Table structure for `page_block`
@@ -66,7 +65,7 @@ CREATE TABLE `page_block` (
   KEY `block` (`block_id`),
   CONSTRAINT `block` FOREIGN KEY (`block_id`) REFERENCES `block` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `page` FOREIGN KEY (`page_id`) REFERENCES `page` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='Table represents mapping between page block and specific page.';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='Table represents mapping between page block and specific page.';
 
 -- ----------------------------
 -- Records of page_block
@@ -74,6 +73,8 @@ CREATE TABLE `page_block` (
 INSERT INTO `page_block` VALUES ('1', '1', '1', 'This is page content [[DEV_TEST_PAGES]] contained in CONTENT block.  [[DEV_TEST_PAGES]] ');
 INSERT INTO `page_block` VALUES ('2', '2', '1', 'This is news page.');
 INSERT INTO `page_block` VALUES ('3', '1', '2', 'Super Cool Title');
+INSERT INTO `page_block` VALUES ('4', '3', '3', 'This is super cool footer.');
+INSERT INTO `page_block` VALUES ('5', '2', '3', 'Medium footer.');
 
 -- ----------------------------
 -- Table structure for `role`
@@ -112,7 +113,7 @@ CREATE TABLE `snippet` (
 -- ----------------------------
 -- Records of snippet
 -- ----------------------------
-INSERT INTO `snippet` VALUES ('1', 'DEV_TEST_PAGES', 'swifter_front.service.devtest', 'getPages', '2', '{\"start\":2,\"end\":5}');
+INSERT INTO `snippet` VALUES ('1', 'DEV_TEST_PAGES', 'swifter_front.service.devtest', 'getPages', '2', '{\"offset\":5, \"limit\":2}');
 
 -- ----------------------------
 -- Table structure for `template`
@@ -129,7 +130,7 @@ CREATE TABLE `template` (
 -- ----------------------------
 -- Records of template
 -- ----------------------------
-INSERT INTO `template` VALUES ('1', 'Main Template', 'index.html');
+INSERT INTO `template` VALUES ('1', 'Main Template', 'SwifterFrontBundle:DevTest:index.html.twig');
 INSERT INTO `template` VALUES ('2', 'Uris', 'SwifterFrontBundle:DevTest:pages.html.twig');
 
 -- ----------------------------
