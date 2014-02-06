@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50535
 File Encoding         : 65001
 
-Date: 2014-01-31 16:06:57
+Date: 2014-02-06 16:00:15
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -70,9 +70,9 @@ CREATE TABLE `page_block` (
 -- ----------------------------
 -- Records of page_block
 -- ----------------------------
-INSERT INTO `page_block` VALUES ('1', '1', '1', 'This is page content [[DEV_TEST_PAGES]] contained in CONTENT block.  [[DEV_TEST_PAGES]] ');
+INSERT INTO `page_block` VALUES ('1', '1', '1', 'Так-Так. This is page content [[DEV_TEST_PAGES]] contained in CONTENT block.');
 INSERT INTO `page_block` VALUES ('2', '2', '1', 'This is news page.');
-INSERT INTO `page_block` VALUES ('3', '1', '2', 'Super Cool Title');
+INSERT INTO `page_block` VALUES ('3', '1', '2', 'Заголовок кирилиця.');
 INSERT INTO `page_block` VALUES ('4', '3', '3', 'This is super cool footer.');
 INSERT INTO `page_block` VALUES ('5', '2', '3', 'Medium footer.');
 
@@ -113,7 +113,7 @@ CREATE TABLE `snippet` (
 -- ----------------------------
 -- Records of snippet
 -- ----------------------------
-INSERT INTO `snippet` VALUES ('1', 'DEV_TEST_PAGES', 'swifter_front.service.devtest', 'getPages', '2', '{\"offset\":5, \"limit\":2}');
+INSERT INTO `snippet` VALUES ('1', 'DEV_TEST_PAGES', 'swifter_front.service.devtest', 'getPages', '2', '{\"offset\":0, \"limit\":5}');
 
 -- ----------------------------
 -- Table structure for `template`

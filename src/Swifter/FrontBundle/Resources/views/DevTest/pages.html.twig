@@ -1,9 +1,14 @@
-{% extends "SwifterFrontBundle:DevTest:base2.html.twig" %}
+{% extends "SwifterFrontBundle:DevTest:base.html.twig" %}
 
-{% block title %}
-    {% for param in params %}
-        <h3><b>{{ param.uri }}</b></h3>
+{% block pages %}
+    {{ parent() }}
+    {% if params %}
+        <ul>
+            {% for param in params %}
+                <li>{{ param.uri }}</li>
+            {% endfor %}
+        </ul>
     {% else %}
         No uris have been found.
-    {% endfor %}
+    {% endif %}
 {% endblock %}

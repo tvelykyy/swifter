@@ -1,7 +1,0 @@
-parameters:
-#    swifter_common.example.class: Swifter\CommonBundle\Example
-
-services:
-#    swifter_common.example:
-#        class: %swifter_common.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]

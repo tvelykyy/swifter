@@ -1,7 +1,3 @@
-swifter_common:
-    resource: "@SwifterCommonBundle/Resources/config/routing.yml"
-    prefix:   /
-
 swifter_front:
     resource: "@SwifterFrontBundle/Resources/config/routing.yml"
     prefix:   /
