@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50535
 File Encoding         : 65001
 
-Date: 2014-02-06 16:00:15
+Date: 2014-02-07 16:26:29
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -138,21 +138,21 @@ INSERT INTO `template` VALUES ('2', 'Uris', 'SwifterFrontBundle:DevTest:pages.ht
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `email` varchar(127) NOT NULL,
-  `password` varchar(64) NOT NULL,
-  `username` varchar(32) NOT NULL DEFAULT '',
+  `password` char(128) NOT NULL,
+  `name` varchar(32) NOT NULL DEFAULT '',
   `enabled` bit(1) NOT NULL DEFAULT b'0',
   `last_login` int(10) unsigned DEFAULT NULL,
-  PRIMARY KEY (`email`),
-  UNIQUE KEY `uniq_username` (`username`) USING BTREE,
+  PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_email` (`email`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('cmser_admin_1@mailinator.com', '0f0a9a777952ceb5b629ec5a901df612c7bf2cd66a63ef2d80228d5557ca8dca', 'Cmser Admin 1', '', null);
-INSERT INTO `user` VALUES ('cmser_user_1@mailinator.com', '0f0a9a777952ceb5b629ec5a901df612c7bf2cd66a63ef2d80228d5557ca8dca', 'Cmser User 1', '', null);
+INSERT INTO `user` VALUES ('1', 'admin@m.com', 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec', 'Cmser Admin 1', '', null);
+INSERT INTO `user` VALUES ('2', 'user@m.com', 'b14361404c078ffd549c03db443c3fede2f3e534d73f78f77301ed97d4a436a9fd9db05ee8b325c0ad36438b43fec8510c204fc1c1edb21d0941c00e9e2c1ce2', 'Cmser User 1', '', null);
 
 -- ----------------------------
 -- Table structure for `user_role`
@@ -171,8 +171,8 @@ CREATE TABLE `user_role` (
 -- ----------------------------
 -- Records of user_role
 -- ----------------------------
-INSERT INTO `user_role` VALUES ('cmser_admin_1@mailinator.com', '1');
-INSERT INTO `user_role` VALUES ('cmser_user_1@mailinator.com', '2');
+INSERT INTO `user_role` VALUES ('admin@m.com', '1');
+INSERT INTO `user_role` VALUES ('user@m.com', '2');
 
 -- ----------------------------
 -- Table structure for `user_token`

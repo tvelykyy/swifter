@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Swifter\FrontBundle\SwifterFrontBundle(),
             new Swifter\CommonBundle\SwifterCommonBundle(),
+            new Swifter\UserBundle\SwifterUserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
