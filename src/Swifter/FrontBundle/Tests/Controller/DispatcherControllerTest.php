@@ -14,8 +14,6 @@ class DispatcherControllerTest extends WebTestCase
     }
     public function testShouldRenderMainPageWithNoQueryParams()
     {
-        /* Given. */
-
         /* When. */
         $crawler = $this->client->request('GET', '/');
 
@@ -25,13 +23,10 @@ class DispatcherControllerTest extends WebTestCase
         $this->assertEquals('/', $li->eq(0)->text());
         $this->assertEquals('/news', $li->eq(1)->text());
         $this->assertEquals('/news/first', $li->eq(2)->text());
-//        $this->assertTrue($crawler->filter('html:contains("Hello Fabien")')->count() > 0);
     }
 
     public function testShouldRenderCyrillicTitle()
     {
-        /* Given. */
-
         /* When. */
         $crawler = $this->client->request('GET', '/');
 
@@ -41,8 +36,6 @@ class DispatcherControllerTest extends WebTestCase
 
     public function testShouldReturn404OnNotFoundPage()
     {
-        /* Given. */
-
         /* When. */
         $this->client->request('GET', '/not-found');
 
@@ -52,13 +45,34 @@ class DispatcherControllerTest extends WebTestCase
 
     public function testShouldRenderPageWithTemplateInheritance()
     {
-        /* Given. */
-
         /* When. */
         $crawler = $this->client->request('GET', '/news');
 
         /* Then. */
         $this->assertContains('This is a news page.', $crawler->filter('section')->text());
         $this->assertContains('Medium footer.', $crawler->filter('footer')->text());
+        $this->assertEquals('Заголовок кирилиця і буква І!', $crawler->filter('title')->text());
+    }
+
+    public function testShouldRenderPageWithMergingDeficientBlocks()
+    {
+        /* When. */
+        $crawler = $this->client->request('GET', '/news/first');
+
+        /* Then. */
+        $this->assertContains('This is a news page.', $crawler->filter('section')->text());
+        $this->assertContains('This is super cool footer.', $crawler->filter('footer')->text());
+        $this->assertEquals('Заголовок кирилиця і буква І!', $crawler->filter('title')->text());
+    }
+
+    public function testShouldRenderPageWithQueryParams()
+    {
+        /* When. */
+        $crawler = $this->client->request('GET', '/', array('offset' => 1, 'limit' => 1));
+
+        /* Then. */
+        $li = $crawler->filter('li');
+        $this->assertEquals(1, $li->count());
+        $this->assertEquals('/news', $li->eq(0)->text());
     }
 }
