@@ -1,0 +1,5 @@
+swifter_login_form:
+    pattern:  /login
+    defaults: { _controller: swifter_user.controller.login:indexAction }
+    methods:  [GET]
+
