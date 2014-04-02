@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- The styles -->
-    <link id="bs-css" href="" rel="stylesheet">
+    <link id="bs-css" href="{{ app.request.getBaseURL() }}/admin/css/bootstrap-cerulean.css" rel="stylesheet">
     <style type="text/css">
         body {
             padding-bottom: 40px;
@@ -32,7 +32,7 @@
                 <div class="alert alert-info">
                     Please login with your Username and Password.
                 </div>
-                <form class="form-horizontal" action='' method="post">
+                <form class="form-horizontal" action="{{ path('swifter_login') }}" method="post">
                     <fieldset>
                         <div class="input-prepend" title="Username" data-rel="tooltip">
                             <span class="add-on"><i class="icon-user"></i></span><input autofocus class="input-large span10" name="email" id="email" type="text" />

@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class LoginController extends Controller
 {
-    public function indexAction()
+    public function renderLoginPageAction()
     {
         return $this->render('SwifterUserBundle:Main:login.html.twig');
     }

@@ -1,5 +1,11 @@
 swifter_login_form:
-    pattern:  /login
-    defaults: { _controller: swifter_user.controller.login:indexAction }
+    pattern:  /admin/login
+    defaults: { _controller: swifter_user.controller.login:renderLoginPageAction }
     methods:  [GET]
 
+swifter_login:
+    pattern:  /admin/login
+    methods:  [POST]
+
+swifter_logout:
+    pattern: /admin/logout
