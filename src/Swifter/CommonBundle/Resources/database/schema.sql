@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50535
 File Encoding         : 65001
 
-Date: 2014-02-07 16:26:29
+Date: 2014-04-02 17:00:55
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -91,8 +91,8 @@ CREATE TABLE `role` (
 -- ----------------------------
 -- Records of role
 -- ----------------------------
-INSERT INTO `role` VALUES ('1', 'user', 'Login privileges, granted after account confirmation');
-INSERT INTO `role` VALUES ('2', 'admin', 'Administrative user, has access to everything.');
+INSERT INTO `role` VALUES ('1', 'ROLE_USER', 'Login privileges, granted after registration.');
+INSERT INTO `role` VALUES ('2', 'ROLE_ADMIN', 'Administrative user.');
 
 -- ----------------------------
 -- Table structure for `snippet`
@@ -152,27 +152,27 @@ CREATE TABLE `user` (
 -- Records of user
 -- ----------------------------
 INSERT INTO `user` VALUES ('1', 'admin@m.com', 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec', 'Cmser Admin 1', '', null);
-INSERT INTO `user` VALUES ('2', 'user@m.com', 'b14361404c078ffd549c03db443c3fede2f3e534d73f78f77301ed97d4a436a9fd9db05ee8b325c0ad36438b43fec8510c204fc1c1edb21d0941c00e9e2c1ce2', 'Cmser User 1', '', null);
+INSERT INTO `user` VALUES ('2', 'user@m.com', 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec', 'Cmser User 1', '', null);
 
 -- ----------------------------
 -- Table structure for `user_role`
 -- ----------------------------
 DROP TABLE IF EXISTS `user_role`;
 CREATE TABLE `user_role` (
-  `user_email` varchar(127) NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
   `role_id` tinyint(3) unsigned NOT NULL,
-  PRIMARY KEY (`user_email`,`role_id`),
-  UNIQUE KEY `unique_row` (`user_email`,`role_id`),
-  KEY `role` (`role_id`),
-  CONSTRAINT `role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
-  CONSTRAINT `user` FOREIGN KEY (`user_email`) REFERENCES `user` (`email`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`user_id`,`role_id`),
+  UNIQUE KEY `unique_row` (`user_id`,`role_id`) USING BTREE,
+  KEY `role` (`role_id`) USING BTREE,
+  CONSTRAINT `user_role_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`),
+  CONSTRAINT `user_role_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 -- Records of user_role
 -- ----------------------------
-INSERT INTO `user_role` VALUES ('admin@m.com', '1');
-INSERT INTO `user_role` VALUES ('user@m.com', '2');
+INSERT INTO `user_role` VALUES ('2', '1');
+INSERT INTO `user_role` VALUES ('1', '2');
 
 -- ----------------------------
 -- Table structure for `user_token`
