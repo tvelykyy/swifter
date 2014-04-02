@@ -24,7 +24,7 @@ security:
                 password_parameter: password
             logout:
                 path:   swifter_logout
-                target: /
+                target: swifter_login
             anonymous: ~
 
     access_control:

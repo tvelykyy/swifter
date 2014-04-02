@@ -4,7 +4,6 @@ namespace Swifter\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -45,6 +44,16 @@ class User implements UserInterface, \Serializable
      */
     protected $lastLogin;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Role")
+     * @ORM\JoinTable(name="user_role",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")}
+     *      )
+     */
+    protected $roles;
+
+
     public function serialize()
     {
         return serialize(array(
@@ -68,7 +77,8 @@ class User implements UserInterface, \Serializable
      */
     public function getRoles()
     {
-        return array('ROLE_USER', 'ROLE_ADMIN');
+//        return array('ROLE_USER', 'ROLE_ADMIN');
+        return $this->roles->toArray();
     }
 
     /**
