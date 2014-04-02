@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- The styles -->
-    <link id="bs-css" href="{{ app.request.getBaseURL() }}/admin/css/bootstrap-cerulean.css" rel="stylesheet">
+    {% stylesheets
+        'bundles/swifteruser/css/*'
+        'bundles/swifteruser/css/bootstrap-responsive.css'
+        'bundles/swifteruser/css/bootstrap-cerulean.css'
+        filter='cssrewrite' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
     <style type="text/css">
         body {
             padding-bottom: 40px;
