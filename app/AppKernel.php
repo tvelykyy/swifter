@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Swifter\FrontBundle\SwifterFrontBundle(),
             new Swifter\CommonBundle\SwifterCommonBundle(),
             new Swifter\UserBundle\SwifterUserBundle(),
+            new Swifter\AdminBundle\SwifterAdminBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

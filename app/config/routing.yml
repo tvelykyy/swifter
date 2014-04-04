@@ -1,3 +1,7 @@
+swifter_admin:
+    resource: "@SwifterAdminBundle/Resources/config/routing.yml"
+    prefix:   /
+
 swifter_user:
     resource: "@SwifterUserBundle/Resources/config/routing.yml"
     prefix:   /

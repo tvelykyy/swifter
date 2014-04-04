@@ -1,0 +1,7 @@
+parameters:
+#    swifter_admin.example.class: Swifter\AdminBundle\Example
+
+services:
+#    swifter_admin.example:
+#        class: %swifter_admin.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

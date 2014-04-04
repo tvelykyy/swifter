@@ -4,8 +4,8 @@ swifter_login_form:
     methods:  [GET]
 
 swifter_login:
-    pattern:  /admin/login
+    pattern:  /login
     methods:  [POST]
 
 swifter_logout:
-    pattern: /admin/logout
+    pattern: /logout
