@@ -1,8 +1,14 @@
 parameters:
-    swifter_admin.controller.login.class: Swifter\AdminBundle\Controller\LoginController
+    admin.controller.login.class: Swifter\AdminBundle\Controller\LoginController
+    admin.controller.landing.class: Swifter\AdminBundle\Controller\LandingController
 
 services:
-    swifter_admin.controller.login:
-        class: %swifter_admin.controller.login.class%
+    admin.controller.login:
+        class: %admin.controller.login.class%
         calls:
             -  [setContainer, ["@service_container"]]
+
+    admin.controller.landing:
+          class: %admin.controller.landing.class%
+          calls:
+              -  [setContainer, ["@service_container"]]

@@ -1,20 +1,20 @@
 parameters:
-    swifter_front.controller.dispatcher.class: Swifter\FrontBundle\Controller\DispatcherController
-    swifter_front.service.snippet.class: Swifter\FrontBundle\Service\SnippetService
-    swifter_front.service.devtest.class: Swifter\FrontBundle\Service\DevTestService
+    front.controller.dispatcher.class: Swifter\FrontBundle\Controller\DispatcherController
+    front.service.snippet.class: Swifter\FrontBundle\Service\SnippetService
+    front.service.devtest.class: Swifter\FrontBundle\Service\DevTestService
 
 services:
-    swifter_front.service.devtest:
-        class: %swifter_front.service.devtest.class%
+    front.service.devtest:
+        class: %front.service.devtest.class%
         arguments: ["@doctrine.orm.entity_manager"]
 
-    swifter_front.service.snippet:
-        class: %swifter_front.service.snippet.class%
+    front.service.snippet:
+        class: %front.service.snippet.class%
         arguments: ["@service_container", "@doctrine.orm.entity_manager"]
 
-    swifter_front.controller.dispatcher:
-        class: %swifter_front.controller.dispatcher.class%
-        arguments: ["@twig", "@swifter_front.service.snippet"]
+    front.controller.dispatcher:
+        class: %front.controller.dispatcher.class%
+        arguments: ["@twig", "@front.service.snippet"]
         calls:
             -  [setContainer, ["@service_container"]]
 

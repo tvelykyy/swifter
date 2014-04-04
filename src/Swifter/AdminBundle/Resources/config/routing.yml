@@ -1,4 +1,9 @@
-swifter_login_form:
+admin_login_page:
     pattern:  /admin/login
-    defaults: { _controller: swifter_admin.controller.login:renderLoginPageAction }
+    defaults: { _controller: admin.controller.login:renderLoginPageAction }
+    methods:  [GET]
+
+admin_landing_page:
+    pattern:  /admin
+    defaults: { _controller: admin.controller.landing:renderLandingPageAction }
     methods:  [GET]

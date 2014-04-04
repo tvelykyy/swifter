@@ -18,16 +18,21 @@ security:
             pattern:    ^/
             provider: swifter_user_provider
             form_login:
-                check_path: swifter_login
-                login_path: swifter_login_form
+                check_path: login
+                login_path: admin_login_page
                 username_parameter: email
                 password_parameter: password
+
+                default_target_path: admin_landing_page
+                use_referer: true
+                #csrf
                 csrf_provider: form.csrf_provider
                 csrf_parameter: _csrf_security_token
                 intention: authenticate
+
             logout:
-                path:   swifter_logout
-                target: swifter_login
+                path:   logout
+                target: /
             remember_me:
                 key:      "%secret%"
                 lifetime: 604800 # 7 days in seconds

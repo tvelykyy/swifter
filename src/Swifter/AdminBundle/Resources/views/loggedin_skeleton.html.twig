@@ -1,0 +1,87 @@
+{% extends "SwifterAdminBundle::skeleton.html.twig" %}
+
+{%  block content %}
+    <!-- topbar starts -->
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="index.html"> <img alt="Charisma Logo" src="admin/img/logo20.png" /> <span>Charisma</span></a>
+
+                <!-- user dropdown starts -->
+                <div class="btn-group pull-right" >
+                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="icon-user"></i><span class="hidden-phone"> admin</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Profile</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{{ path('logout') }}">Logout</a></li>
+                    </ul>
+                </div>
+                <!-- user dropdown ends -->
+
+                <div class="top-nav nav-collapse">
+                    <ul class="nav">
+                        <li><a href="#">Visit Site</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+    <!-- topbar ends -->
+    <div class="container-fluid">
+        <div class="row-fluid">
+
+            <!-- left menu starts -->
+            <div class="span2 main-menu-span">
+                <div class="well nav-collapse sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked main-menu">
+                        <li class="nav-header hidden-tablet">Main</li>
+                        <li><a class="ajax-link" href="pages"><i class="icon-align-justify"></i><span class="hidden-tablet"> Pages</span></a></li>
+                        <li><a class="ajax-link" href="blocks"><i class="icon-th"></i><span class="hidden-tablet"> Blocks</span></a></li>
+                    </ul>
+                </div><!--/.well -->
+            </div><!--/span-->
+            <!-- left menu ends -->
+
+            <noscript>
+                <div class="alert alert-block span10">
+                    <h4 class="alert-heading">Warning!</h4>
+                    <p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
+                </div>
+            </noscript>
+
+            <div id="content" class="span10">
+                <!-- content starts -->
+
+                <div class="row-fluid sortable">
+                    <div class="box span12">
+                        <div class="box-header well" data-original-title>
+                            <h2><i class="icon-picture"></i>{{title}}</h2>
+                        </div>
+                        <div class="box-content">
+                            {% block main_content %}
+                            {% endblock %}
+                        </div>
+                    </div><!--/span-->
+
+                </div><!--/row-->
+
+
+                <!-- content ends -->
+            </div><!--/#content.span10-->
+        </div><!--/fluid-row-->
+
+        <footer>
+            <p class="pull-left">&copy; <a href="http://usman.it" target="_blank">Muhammad Usman</a> 2012</p>
+            <p class="pull-right">Powered by: <a href="http://usman.it/free-responsive-admin-template">Charisma</a></p>
+        </footer>
+
+    </div>
+{% endblock %}

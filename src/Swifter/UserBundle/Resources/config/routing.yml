@@ -1,6 +1,6 @@
-swifter_login:
+login:
     pattern:  /login
     methods:  [POST]
 
-swifter_logout:
+logout:
     pattern: /logout

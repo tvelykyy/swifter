@@ -8,6 +8,6 @@ class LoginController extends Controller
 {
     public function renderLoginPageAction()
     {
-        return $this->render('SwifterAdminBundle:Main:login.html.twig');
+        return $this->render('SwifterAdminBundle::login.html.twig');
     }
 }
