@@ -25,6 +25,11 @@ security:
             logout:
                 path:   swifter_logout
                 target: swifter_login
+            remember_me:
+                key:      "%secret%"
+                lifetime: 604800 # 7 days in seconds
+                path:     /
+                domain:   ~
             anonymous: ~
 
     access_control:
