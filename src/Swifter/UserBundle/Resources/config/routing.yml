@@ -1,8 +1,3 @@
-swifter_login_form:
-    pattern:  /admin/login
-    defaults: { _controller: swifter_user.controller.login:renderLoginPageAction }
-    methods:  [GET]
-
 swifter_login:
     pattern:  /login
     methods:  [POST]

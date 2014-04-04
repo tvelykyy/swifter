@@ -1,3 +1,4 @@
-swifter_admin_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: SwifterAdminBundle:Default:index }
+swifter_login_form:
+    pattern:  /admin/login
+    defaults: { _controller: swifter_admin.controller.login:renderLoginPageAction }
+    methods:  [GET]

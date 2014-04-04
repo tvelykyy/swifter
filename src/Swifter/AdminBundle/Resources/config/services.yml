@@ -1,7 +1,8 @@
 parameters:
-#    swifter_admin.example.class: Swifter\AdminBundle\Example
+    swifter_admin.controller.login.class: Swifter\AdminBundle\Controller\LoginController
 
 services:
-#    swifter_admin.example:
-#        class: %swifter_admin.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    swifter_admin.controller.login:
+        class: %swifter_admin.controller.login.class%
+        calls:
+            -  [setContainer, ["@service_container"]]

@@ -1,8 +1,0 @@
-parameters:
-    swifter_user.controller.login.class: Swifter\UserBundle\Controller\LoginController
-
-services:
-    swifter_user.controller.login:
-        class: %swifter_user.controller.login.class%
-        calls:
-            -  [setContainer, ["@service_container"]]
