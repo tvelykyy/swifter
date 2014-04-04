@@ -48,6 +48,8 @@
                         <div class="input-prepend">
                             <label class="remember" for="remember"><input type="checkbox" id="remember" name="_remember_me" />Remember me</label>
                         </div>
+
+                        <input type="hidden" name="_csrf_security_token" value="{{ csrf_token('authenticate') }}"/>
                         <div class="clearfix"></div>
 
                         <p class="center span5">

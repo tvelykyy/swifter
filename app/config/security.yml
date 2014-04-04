@@ -22,6 +22,9 @@ security:
                 login_path: swifter_login_form
                 username_parameter: email
                 password_parameter: password
+                csrf_provider: form.csrf_provider
+                csrf_parameter: _csrf_security_token
+                intention: authenticate
             logout:
                 path:   swifter_logout
                 target: swifter_login
