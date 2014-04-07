@@ -17,3 +17,13 @@ admin_retrieve_blocks:
     pattern:  /admin/blocks
     defaults: { _controller: admin.controller.blocks:retrieveBlocksAction }
     methods:  [GET]
+
+admin_save_block:
+    pattern:  /admin/blocks
+    defaults: { _controller: admin.controller.blocks:saveBlockAction }
+    methods:  [POST]
+
+admin_delete_block:
+    pattern:  /admin/blocks/{id}
+    defaults: { _controller: admin.controller.blocks:deleteBlockAction }
+    methods:  [DELETE]

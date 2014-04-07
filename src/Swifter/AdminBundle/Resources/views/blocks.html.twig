@@ -16,7 +16,7 @@
                 <td data-bind="text: title" class="center"></td>
                 <td>
                     <a data-bind="click: $parent.editBlock" class="btn btn-info edit" href="javascript:;"><i class="icon-edit icon-white"></i>Edit</a>
-                    <a class="btn btn-danger delete" href="javascript:;"><i class="icon-trash icon-white"></i>Delete</a>
+                    <a data-bind="click: $parent.deleteBlock" class="btn btn-danger delete" href="javascript:;"><i class="icon-trash icon-white"></i>Delete</a>
                 </td>
             </tr>
             </tbody>
@@ -52,19 +52,12 @@
 {% block js %}
     {{ parent() }}
     <script>
-
         var Block = function(id, title) {
 //        this.id = ko.protectedObservable(id);
 //        this.title = ko.protectedObservable(title);
             this.id = ko.observable(id);
             this.title = ko.observable(title);
         }
-
-        var initialData = [
-            {% for block in blocks %}
-            new Block({{block.id}}, '{{block.title}}'),
-            {% endfor %}
-        ];
 
         var BlockModel = function(blocks) {
             var self = this;
@@ -86,8 +79,8 @@
             self.saveBlock = function() {
                 $.ajax({
                     type: 'POST',
-                    url: '{{ baseurl }}/sadmin/block',
-                    data: ko.toJS(self.selectedBlock()),
+                    url: '{{ path('admin_save_block') }}',
+                    data: ko.toJSON(self.selectedBlock()),
                     success: function(data) {
                         if (!self.selectedBlock().id()) {
                             self.blocks.push(self.selectedBlock());
@@ -97,6 +90,16 @@
                 });
             };
 
+            self.deleteBlock = function(block) {
+                $.ajax({
+                    type: 'DELETE',
+                    url: '{{ path('admin_delete_block', {'id': 0}) }}'.replace('0', block.id),
+                    success: function(data) {
+                        self.blocks.remove(block);
+                    }
+                });
+            }
+
             self.editBlock = function(block) {
                 self.selectedBlock(block);
 
@@ -104,6 +107,9 @@
             };
         };
 
-        ko.applyBindings(new BlockModel(initialData));
+        $.get('{{ path('admin_retrieve_blocks') }}')
+            .done(function( data ) {
+                ko.applyBindings(new BlockModel(data));
+            });
     </script>
 {% endblock %}

@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new Swifter\CommonBundle\SwifterCommonBundle(),
             new Swifter\UserBundle\SwifterUserBundle(),
             new Swifter\AdminBundle\SwifterAdminBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
