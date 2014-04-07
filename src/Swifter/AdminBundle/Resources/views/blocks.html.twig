@@ -1,0 +1,109 @@
+{% extends "SwifterAdminBundle::loggedin_skeleton.html.twig" %}
+
+{%  block main_content %}
+    <div class="box-content">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody data-bind="foreach: blocks">
+            <tr>
+                <td data-bind="text: id"></td>
+                <td data-bind="text: title" class="center"></td>
+                <td>
+                    <a data-bind="click: $parent.editBlock" class="btn btn-info edit" href="javascript:;"><i class="icon-edit icon-white"></i>Edit</a>
+                    <a class="btn btn-danger delete" href="javascript:;"><i class="icon-trash icon-white"></i>Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <a id="add-block-button" data-bind="click: clearAndShowModalDialog" class="btn btn-success" href="javascript:;"><i class="icon-plus-sign icon-white"></i>Add</a>
+    </div>
+
+    <div class="modal hide fade" id="myModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            <h3>Add Block</h3>
+        </div>
+        <div class="modal-body" data-bind="with: selectedBlock">
+            <form id= "save-block-form" class="form-horizontal">
+                <fieldset>
+                    <div class="control-group">
+                        <input name="id" type="hidden" type="text" data-bind="value: id">
+                        <label class="control-label" for="focusedInput">Block Title</label>
+                        <div class="controls">
+                            <input name="title" id="focusedInput" class="input-xlarge focused" type="text" data-bind="value: title">
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <a href="javascript:;" class="btn" data-dismiss="modal">Close</a>
+            <a id="save-block-btn" data-bind="click: saveBlock" href="javascript:;" class="btn btn-success">Save changes</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+
+        var Block = function(id, title) {
+//        this.id = ko.protectedObservable(id);
+//        this.title = ko.protectedObservable(title);
+            this.id = ko.observable(id);
+            this.title = ko.observable(title);
+        }
+
+        var initialData = [
+            {% for block in blocks %}
+            new Block({{block.id}}, '{{block.title}}'),
+            {% endfor %}
+        ];
+
+        var BlockModel = function(blocks) {
+            var self = this;
+
+            self.blocks = ko.observableArray(blocks);
+
+            self.selectedBlock = ko.observable();
+            self.selectedBlock(new Block());
+
+            self.clearModalDialog = function() {
+                self.selectedBlock(new Block());
+            };
+
+            self.clearAndShowModalDialog = function() {
+                self.clearModalDialog();
+                $('#myModal').modal('show');
+            };
+
+            self.saveBlock = function() {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ baseurl }}/sadmin/block',
+                    data: ko.toJS(self.selectedBlock()),
+                    success: function(data) {
+                        if (!self.selectedBlock().id()) {
+                            self.blocks.push(self.selectedBlock());
+                        }
+                        $('#myModal').modal('hide');
+                    }
+                });
+            };
+
+            self.editBlock = function(block) {
+                self.selectedBlock(block);
+
+                $('#myModal').modal('show');
+            };
+        };
+
+        ko.applyBindings(new BlockModel(initialData));
+    </script>
+{% endblock %}

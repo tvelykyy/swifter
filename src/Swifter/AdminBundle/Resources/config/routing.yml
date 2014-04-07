@@ -7,3 +7,13 @@ admin_landing_page:
     pattern:  /admin
     defaults: { _controller: admin.controller.landing:renderLandingPageAction }
     methods:  [GET]
+
+admin_blocks_page:
+    pattern:  /admin/manage-blocks
+    defaults: { _controller: admin.controller.blocks:renderManagePageAction }
+    methods:  [GET]
+
+admin_retrieve_blocks:
+    pattern:  /admin/blocks
+    defaults: { _controller: admin.controller.blocks:retrieveBlocksAction }
+    methods:  [GET]

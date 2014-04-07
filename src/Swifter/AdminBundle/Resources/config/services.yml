@@ -1,6 +1,7 @@
 parameters:
     admin.controller.login.class: Swifter\AdminBundle\Controller\LoginController
     admin.controller.landing.class: Swifter\AdminBundle\Controller\LandingController
+    admin.controller.blocks.class:  Swifter\AdminBundle\Controller\BlocksController
 
 services:
     admin.controller.login:
@@ -12,3 +13,8 @@ services:
           class: %admin.controller.landing.class%
           calls:
               -  [setContainer, ["@service_container"]]
+
+    admin.controller.blocks:
+              class: %admin.controller.blocks.class%
+              calls:
+                  -  [setContainer, ["@service_container"]]
