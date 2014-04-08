@@ -29,7 +29,7 @@
             <button type="button" class="close" data-dismiss="modal">×</button>
             <h3>Add Block</h3>
         </div>
-        <div class="modal-body" data-bind="with: selectedBlock">
+        <div class="modal-body" data-bind="with: editingBlock">
             <form id= "save-block-form" class="form-horizontal">
                 <fieldset>
                     <div class="control-group">
@@ -52,23 +52,34 @@
 {% block js %}
     {{ parent() }}
     <script>
-        var Block = function(id, title) {
-//        this.id = ko.protectedObservable(id);
-//        this.title = ko.protectedObservable(title);
-            this.id = ko.observable(id);
-            this.title = ko.observable(title);
+        var Block = function(data) {
+            this.id = ko.observable();
+            this.title = ko.observable();
+
+            if (data) {
+                this.update(data);
+            }
         }
+
+        Block.prototype.update = function(data) {
+            this.id(data.id);
+            this.title(data.title);
+        };
 
         var BlockModel = function(blocks) {
             var self = this;
 
-            self.blocks = ko.observableArray(blocks);
+            self.blocks = ko.observableArray(ko.utils.arrayMap(blocks, function(data) {
+                return new Block(data);
+            }));
 
             self.selectedBlock = ko.observable();
-            self.selectedBlock(new Block());
+
+            self.editingBlock = ko.observable();
+            self.editingBlock(new Block());
 
             self.clearModalDialog = function() {
-                self.selectedBlock(new Block());
+                self.editingBlock(new Block());
             };
 
             self.clearAndShowModalDialog = function() {
@@ -80,28 +91,37 @@
                 $.ajax({
                     type: 'POST',
                     url: '{{ path('admin_save_block') }}',
-                    data: ko.toJSON(self.selectedBlock()),
+                    data: ko.toJSON(self.editingBlock()),
                     success: function(data) {
-                        if (!self.selectedBlock().id()) {
-                            self.blocks.push(self.selectedBlock());
-                        }
                         $('#myModal').modal('hide');
+                        var selected = self.selectedBlock(),
+                        edited = ko.toJS(self.editingBlock()); //clean copy of edited
+
+                        //apply updates from the edited item to the selected item
+                        selected.update(edited);
+                        if (!selected.id()) {
+                            selected.id(data);
+                            self.blocks.push(selected);
+                        }
                     }
                 });
             };
 
             self.deleteBlock = function(block) {
-                $.ajax({
-                    type: 'DELETE',
-                    url: '{{ path('admin_delete_block', {'id': 0}) }}'.replace('0', block.id),
-                    success: function(data) {
-                        self.blocks.remove(block);
-                    }
-                });
+                if (confirm('Sure?')) {
+                    $.ajax({
+                        type: 'DELETE',
+                        url: '{{ path('admin_delete_block', {'id': 0}) }}'.replace('0', block.id()),
+                        success: function() {
+                            self.blocks.remove(block);
+                        }
+                    });
+                }
             }
 
             self.editBlock = function(block) {
                 self.selectedBlock(block);
+                self.editingBlock(new Block(ko.toJS(block)))
 
                 $('#myModal').modal('show');
             };
@@ -110,6 +130,7 @@
         $.get('{{ path('admin_retrieve_blocks') }}')
             .done(function( data ) {
                 ko.applyBindings(new BlockModel(data));
-            });
+            }
+        );
     </script>
 {% endblock %}

@@ -37,21 +37,30 @@ class BlocksController extends Controller
             $block = $serializer->deserialize($postBody, 'Swifter\CommonBundle\Entity\Block', 'json');
 
             $em = $this->getDoctrine()->getManager();
+
+            $responseBody = null;
+            $responseStatus = null;
+
             if ($block->getId() == null)
             {
                 $em->persist($block);
+                $em->flush();
+                $responseBody = $block->getId();
+                $responseStatus = Response::HTTP_CREATED;
             }
             else
             {
                 $em->merge($block);
+                $responseStatus = Response::HTTP_NO_CONTENT;
             }
             $em->flush();
+
+            return new Response($responseBody, $responseStatus);
         }
     }
 
     public function deleteBlockAction($id)
     {
-//        $idToDelete = $this->get("request")->getContent();
         $blockToDelete = $this->getDoctrine()
             ->getRepository('SwifterCommonBundle:Block')
             ->find($id);
