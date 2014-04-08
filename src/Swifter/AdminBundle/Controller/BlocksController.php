@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class BlocksController extends Controller
+class BlocksController extends CrudController
 {
     public function renderManagePageAction()
     {
@@ -19,43 +19,20 @@ class BlocksController extends Controller
             ->getRepository('SwifterCommonBundle:Block')
             ->findAll();
 
-        $serializer = $this->container->get('serializer');
-        $blocksInJson = $serializer->serialize($blocks, 'json');
-
-        $response = new Response($blocksInJson);
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
+        return $this->generate200JsonResponseWithBody($blocks);
     }
 
-    public function saveBlockAction(Request $request)
+    public function saveBlockAction()
     {
-        $postBody = $this->get("request")->getContent();
-        if (!empty($postBody))
+        $block = $this->deserializeObjectFromRequest();
+
+        if ($block->getId() == null)
         {
-            $serializer = $this->container->get('serializer');
-            $block = $serializer->deserialize($postBody, 'Swifter\CommonBundle\Entity\Block', 'json');
-
-            $em = $this->getDoctrine()->getManager();
-
-            $responseBody = null;
-            $responseStatus = null;
-
-            if ($block->getId() == null)
-            {
-                $em->persist($block);
-                $em->flush();
-                $responseBody = $block->getId();
-                $responseStatus = Response::HTTP_CREATED;
-            }
-            else
-            {
-                $em->merge($block);
-                $responseStatus = Response::HTTP_NO_CONTENT;
-            }
-            $em->flush();
-
-            return new Response($responseBody, $responseStatus);
+            return $this->createObjectAndReturn201Response($block);
+        }
+        else
+        {
+            return $this->editObjectAndReturn204Response($block);
         }
     }
 
@@ -65,11 +42,7 @@ class BlocksController extends Controller
             ->getRepository('SwifterCommonBundle:Block')
             ->find($id);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($blockToDelete);
-
-        $em->flush();
-
-        return new Response('', Response::HTTP_NO_CONTENT);
+        return $this->deleteObjectAndReturn204Response($blockToDelete);
     }
+
 }
