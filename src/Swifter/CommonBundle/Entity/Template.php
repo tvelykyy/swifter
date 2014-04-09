@@ -3,6 +3,7 @@
 namespace Swifter\CommonBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
@@ -14,16 +15,22 @@ class Template
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Groups({"list", "details"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=100)
+     *
+     * @Groups({"list", "details"})
      */
     protected $title;
 
     /**
      * @ORM\Column(type="string", length=100)
+     *
+     * @Groups({"list", "details"})
      */
     protected $path;
 

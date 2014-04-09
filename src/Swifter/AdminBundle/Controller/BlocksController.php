@@ -19,7 +19,9 @@ class BlocksController extends CrudController
             ->getRepository('SwifterCommonBundle:Block')
             ->findAll();
 
-        return $this->generate200JsonResponseWithBody($blocks);
+        $blocksInJson = $this->serializeToJsonObjectByGroup($blocks, 'list');
+
+        return $this->generate200JsonResponse($blocksInJson);
     }
 
     public function saveBlockAction()

@@ -4,7 +4,7 @@ namespace Swifter\AdminBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
+use JMS\Serializer\SerializationContext;
 
 abstract class CrudController extends Controller
 {
@@ -40,20 +40,24 @@ abstract class CrudController extends Controller
         return Response::create('', Response::HTTP_NO_CONTENT);
     }
 
-    protected function generate200JsonResponseWithBody($object)
+    protected function generate200JsonResponse($jsonResponseBody)
     {
-        $jsonResponseBody = $this->serializeObjectToJson($object);
-
         $response = Response::create($jsonResponseBody, Response::HTTP_OK);
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
     }
 
-    protected function serializeObjectToJson($object)
+    protected function serializeToJsonObjectByGroup($object, $serializationGroup)
+    {
+        $serializationContext = SerializationContext::create()->setGroups(array($serializationGroup));
+        return $this->serializeToJsonObjectByContext($object, $serializationContext);
+    }
+
+    protected function serializeToJsonObjectByContext($object, $serializationContext)
     {
         $serializer = $this->container->get('serializer');
-        $json = $serializer->serialize($object, 'json');
+        $json = $serializer->serialize($object, 'json', $serializationContext);
 
         return $json;
     }

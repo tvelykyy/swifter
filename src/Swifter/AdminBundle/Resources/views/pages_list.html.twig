@@ -6,60 +6,60 @@
             <thead>
             <tr>
                 <th>Id</th>
+                <th>Name</th>
                 <th>Uri</th>
-                <th>Parent Id</th>
-                <th>Template Id</th>
+                <th>Template</th>
             </tr>
             </thead>
-            <tbody data-bind="foreach: blocks">
+            <tbody data-bind="foreach: pages">
             <tr>
                 <td data-bind="text: id"></td>
-                <td data-bind="text: title" class="center"></td>
+                <td data-bind="text: name" class="center"></td>
+                <td data-bind="text: uri" class="center"></td>
+                <td data-bind="text: templateTitle" class="center"></td>
                 <td>
-                    <a data-bind="click: $parent.editBlock" class="btn btn-info edit" href="javascript:;"><i class="icon-edit icon-white"></i>Edit</a>
-                    <a data-bind="click: $parent.deleteBlock" class="btn btn-danger delete" href="javascript:;"><i class="icon-trash icon-white"></i>Delete</a>
+                    <a class="btn btn-info edit" href="javascript:;"><i class="icon-edit icon-white"></i>Edit</a>
+                    <a class="btn btn-danger delete" href="javascript:;"><i class="icon-trash icon-white"></i>Delete</a>
                 </td>
             </tr>
             </tbody>
         </table>
-        <a id="add-block-button" data-bind="click: clearAndShowModalDialog" class="btn btn-success" href="javascript:;"><i class="icon-plus-sign icon-white"></i>Add</a>
+        <a id="add-block-button" class="btn btn-success" href="javascript:;"><i class="icon-plus-sign icon-white"></i>Add</a>
     </div>
 {% endblock %}
 
 {% block js %}
     {{ parent() }}
     <script>
-        var Block = function(data) {
+        var Page = function(data) {
             this.id = ko.observable();
-            this.title = ko.observable();
+            this.name = ko.observable();
+            this.uri = ko.observable();
+            this.templateTitle = ko.observable();
 
             if (data) {
                 this.update(data);
             }
         }
 
-        Block.prototype.update = function(data) {
+        Page.prototype.update = function(data) {
             this.id(data.id);
-            this.title(data.title);
+            this.name(data.name);
+            this.uri(data.uri);
+            this.templateTitle(data.template.title);
         };
 
-        var BlockModel = function(blocks) {
+        var PageModel = function(pages) {
             var self = this;
 
-            self.blocks = ko.observableArray(ko.utils.arrayMap(blocks, function(data) {
-                return new Block(data);
+            self.pages = ko.observableArray(ko.utils.arrayMap(pages, function(data) {
+                return new Page(data);
             }));
-
-            self.selectedBlock = ko.observable();
-
-            self.editingBlock = ko.observable();
-            self.editingBlock(new Block());
-
         };
 
-        $.get('{{ path('admin_retrieve_blocks') }}')
+        $.get('{{ path('admin_retrieve_pages') }}')
             .done(function( data ) {
-                ko.applyBindings(new BlockModel(data));
+                ko.applyBindings(new PageModel(data));
             }
         );
     </script>

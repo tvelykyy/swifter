@@ -8,6 +8,7 @@ admin_landing_page:
     defaults: { _controller: admin.controller.landing:renderLandingPageAction }
     methods:  [GET]
 
+#Blocks
 admin_blocks_page:
     pattern:  /admin/manage-blocks
     defaults: { _controller: admin.controller.blocks:renderManagePageAction }
@@ -27,3 +28,14 @@ admin_delete_block:
     pattern:  /admin/blocks/{id}
     defaults: { _controller: admin.controller.blocks:deleteBlockAction }
     methods:  [DELETE]
+
+#Pages
+admin_pages_page:
+    pattern:  /admin/manage-pages
+    defaults: { _controller: admin.controller.pages:renderManagePageAction }
+    methods:  [GET]
+
+admin_retrieve_pages:
+    pattern:  /admin/pages
+    defaults: { _controller: admin.controller.pages:retrievePagesAction }
+    methods:  [GET]
