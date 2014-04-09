@@ -26,15 +26,26 @@ class BlocksController extends CrudController
 
     public function saveBlockAction()
     {
-        $block = $this->deserializeObjectFromRequest();
+        $block = $this->deserializeObjectFromRequest('Swifter\CommonBundle\Entity\Block');
 
-        if ($block->getId() == null)
-        {
-            return $this->createObjectAndReturn201Response($block);
+        $validator = $this->get('validator');
+        $errors = $validator->validate($block);
+
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+
+            return Response::create($errorsString, Response::HTTP_BAD_REQUEST);
         }
         else
         {
-            return $this->editObjectAndReturn204Response($block);
+            if ($block->getId() == null)
+            {
+                return $this->createObjectAndReturn201Response($block);
+            }
+            else
+            {
+                return $this->editObjectAndReturn204Response($block);
+            }
         }
     }
 

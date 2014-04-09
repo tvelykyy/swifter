@@ -41,6 +41,8 @@
                     </div>
                 </fieldset>
             </form>
+            <div class="alert alert-error hide">
+            </div>
         </div>
         <div class="modal-footer">
             <a href="javascript:;" class="btn" data-dismiss="modal">Close</a>
@@ -104,6 +106,9 @@
                             selected.id(data);
                             self.blocks.push(selected);
                         }
+                    },
+                    error: function(data) {
+                        $('.alert-error').text(data.responseText).show();
                     }
                 });
             };

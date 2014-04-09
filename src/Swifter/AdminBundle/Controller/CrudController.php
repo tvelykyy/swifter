@@ -62,10 +62,10 @@ abstract class CrudController extends Controller
         return $json;
     }
 
-    protected function deserializeObjectFromRequest()
+    protected function deserializeObjectFromRequest($className)
     {
         $requestBody = $this->get('request')->getContent();
-        $object = $this->deserializeObjectFromJson($requestBody, 'Swifter\CommonBundle\Entity\Block');
+        $object = $this->deserializeObjectFromJson($requestBody, $className);
 
         return $object;
     }
