@@ -1,0 +1,66 @@
+{% extends "SwifterAdminBundle::loggedin_skeleton.html.twig" %}
+
+{%  block main_content %}
+    <div class="box-content">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Uri</th>
+                <th>Parent Id</th>
+                <th>Template Id</th>
+            </tr>
+            </thead>
+            <tbody data-bind="foreach: blocks">
+            <tr>
+                <td data-bind="text: id"></td>
+                <td data-bind="text: title" class="center"></td>
+                <td>
+                    <a data-bind="click: $parent.editBlock" class="btn btn-info edit" href="javascript:;"><i class="icon-edit icon-white"></i>Edit</a>
+                    <a data-bind="click: $parent.deleteBlock" class="btn btn-danger delete" href="javascript:;"><i class="icon-trash icon-white"></i>Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <a id="add-block-button" data-bind="click: clearAndShowModalDialog" class="btn btn-success" href="javascript:;"><i class="icon-plus-sign icon-white"></i>Add</a>
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ parent() }}
+    <script>
+        var Block = function(data) {
+            this.id = ko.observable();
+            this.title = ko.observable();
+
+            if (data) {
+                this.update(data);
+            }
+        }
+
+        Block.prototype.update = function(data) {
+            this.id(data.id);
+            this.title(data.title);
+        };
+
+        var BlockModel = function(blocks) {
+            var self = this;
+
+            self.blocks = ko.observableArray(ko.utils.arrayMap(blocks, function(data) {
+                return new Block(data);
+            }));
+
+            self.selectedBlock = ko.observable();
+
+            self.editingBlock = ko.observable();
+            self.editingBlock(new Block());
+
+        };
+
+        $.get('{{ path('admin_retrieve_blocks') }}')
+            .done(function( data ) {
+                ko.applyBindings(new BlockModel(data));
+            }
+        );
+    </script>
+{% endblock %}

@@ -10,7 +10,7 @@ class BlocksController extends CrudController
 {
     public function renderManagePageAction()
     {
-        return $this->render('SwifterAdminBundle::blocks.html.twig');
+        return $this->render('SwifterAdminBundle::blocks.html.twig', array('title' => 'Blocks Management'));
     }
 
     public function retrieveBlocksAction()

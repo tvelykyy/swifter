@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50535
 File Encoding         : 65001
 
-Date: 2014-04-02 17:00:55
+Date: 2014-04-09 14:23:49
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -23,7 +23,7 @@ CREATE TABLE `block` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Represents page''s field unique identifier.',
   `title` varchar(100) NOT NULL COMMENT 'Represents page''s block title.',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 -- Records of block
@@ -31,6 +31,11 @@ CREATE TABLE `block` (
 INSERT INTO `block` VALUES ('1', 'MAIN_CONTENT');
 INSERT INTO `block` VALUES ('2', 'TITLE');
 INSERT INTO `block` VALUES ('3', 'FOOTER');
+INSERT INTO `block` VALUES ('7', 'KEYWORDS');
+INSERT INTO `block` VALUES ('16', 'DESCRIPTION');
+INSERT INTO `block` VALUES ('18', 'Mixmarket54');
+INSERT INTO `block` VALUES ('19', 'Begun');
+INSERT INTO `block` VALUES ('21', 'Tizer');
 
 -- ----------------------------
 -- Table structure for `page`
@@ -38,8 +43,9 @@ INSERT INTO `block` VALUES ('3', 'FOOTER');
 DROP TABLE IF EXISTS `page`;
 CREATE TABLE `page` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Represent unique page identifier',
-  `parent_id` bigint(20) DEFAULT NULL,
+  `name` varchar(50) NOT NULL,
   `uri` varchar(200) NOT NULL COMMENT 'Represents page''s full URL.',
+  `parent_id` bigint(20) DEFAULT NULL,
   `template_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
@@ -47,9 +53,9 @@ CREATE TABLE `page` (
 -- ----------------------------
 -- Records of page
 -- ----------------------------
-INSERT INTO `page` VALUES ('1', null, '/', '1');
-INSERT INTO `page` VALUES ('2', '1', '/news', '1');
-INSERT INTO `page` VALUES ('3', '2', '/news/first', '1');
+INSERT INTO `page` VALUES ('1', '', '/', null, '1');
+INSERT INTO `page` VALUES ('2', '', '/news', '1', '1');
+INSERT INTO `page` VALUES ('3', '', '/news/first', '2', '1');
 
 -- ----------------------------
 -- Table structure for `page_block`
@@ -113,7 +119,7 @@ CREATE TABLE `snippet` (
 -- ----------------------------
 -- Records of snippet
 -- ----------------------------
-INSERT INTO `snippet` VALUES ('1', 'DEV_TEST_PAGES', 'swifter_front.service.devtest', 'getPages', '2', '{\"offset\":0, \"limit\":5}');
+INSERT INTO `snippet` VALUES ('1', 'DEV_TEST_PAGES', 'front.service.devtest', 'getPages', '2', '{\"offset\":0, \"limit\":5}');
 
 -- ----------------------------
 -- Table structure for `template`

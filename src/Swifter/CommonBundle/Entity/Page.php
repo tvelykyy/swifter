@@ -18,15 +18,20 @@ class Page
     protected $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="Page")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     * @ORM\Column(type="string", length=50)
      */
-    protected $parent;
+    protected $name;
 
     /**
      * @ORM\Column(type="string", length=200)
      */
     protected $uri;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Page")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
+     */
+    protected $parent;
 
     /**
      * @ORM\OneToMany(targetEntity="PageBlock", mappedBy="page")
@@ -44,14 +49,14 @@ class Page
         return $this->id;
     }
 
-    public function setParent($parent)
+    public function setName($name)
     {
-        $this->parent = $parent;
+        $this->name = $name;
     }
 
-    public function getParent()
+    public function getName()
     {
-        return $this->parent;
+        return $this->name;
     }
 
     public function setUri($uri)
@@ -64,6 +69,16 @@ class Page
     public function getUri()
     {
         return $this->uri;
+    }
+
+    public function setParent($parent)
+    {
+        $this->parent = $parent;
+    }
+
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     public function setPageBlocks($pageBlocks)
