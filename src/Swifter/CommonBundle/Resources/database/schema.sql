@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50535
 File Encoding         : 65001
 
-Date: 2014-04-09 14:23:49
+Date: 2014-04-09 21:12:51
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -21,7 +21,7 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `block`;
 CREATE TABLE `block` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Represents page''s field unique identifier.',
-  `title` varchar(100) NOT NULL COMMENT 'Represents page''s block title.',
+  `title` varchar(50) NOT NULL COMMENT 'Represents page''s block title.',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
@@ -53,9 +53,9 @@ CREATE TABLE `page` (
 -- ----------------------------
 -- Records of page
 -- ----------------------------
-INSERT INTO `page` VALUES ('1', '', '/', null, '1');
-INSERT INTO `page` VALUES ('2', '', '/news', '1', '1');
-INSERT INTO `page` VALUES ('3', '', '/news/first', '2', '1');
+INSERT INTO `page` VALUES ('1', 'Головна сторінка', '/', null, '1');
+INSERT INTO `page` VALUES ('2', 'Блок Новин', '/news', '1', '1');
+INSERT INTO `page` VALUES ('3', 'Супер перша новина', '/news/first', '2', '1');
 
 -- ----------------------------
 -- Table structure for `page_block`
