@@ -21,7 +21,7 @@ class BlocksController extends CrudController
 
         $blocksInJson = $this->serializeToJsonObjectByGroup($blocks, 'list');
 
-        return $this->generate200JsonResponse($blocksInJson);
+        return $this->generateJsonResponse($blocksInJson, Response::HTTP_OK);
     }
 
     public function saveBlockAction()
@@ -32,9 +32,13 @@ class BlocksController extends CrudController
         $errors = $validator->validate($block);
 
         if (count($errors) > 0) {
-            $errorsString = (string) $errors;
+            $errorArray = [];
+            foreach($errors as $error )
+            {
+                $errorArray[] = (object)array('field' => $error->getPropertyPath(), 'message' => $error->getMessage());
+            }
 
-            return Response::create($errorsString, Response::HTTP_BAD_REQUEST);
+            return $this->generateJsonResponse(json_encode($errorArray), Response::HTTP_BAD_REQUEST);
         }
         else
         {

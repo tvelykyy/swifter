@@ -40,9 +40,9 @@ abstract class CrudController extends Controller
         return Response::create('', Response::HTTP_NO_CONTENT);
     }
 
-    protected function generate200JsonResponse($jsonResponseBody)
+    protected function generateJsonResponse($jsonResponseBody, $status)
     {
-        $response = Response::create($jsonResponseBody, Response::HTTP_OK);
+        $response = Response::create($jsonResponseBody, $status);
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
