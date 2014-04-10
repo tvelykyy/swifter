@@ -29,8 +29,9 @@ class Block
      *
      * @Groups({"list", "details"})
      *
-     * @Assert\Type(type="string")
-     * @Assert\Length(min=3, max=50)
+     * @Assert\Type(type="string", message="The value {{ value }} is not a valid {{ type }}")
+     * @Assert\Length(min=3, max=50, minMessage="Block title must be at least {{ limit }} characters length"
+            maxMessage="Block title cannot be longer than {{ limit }} characters length")
      */
     protected $title;
 
