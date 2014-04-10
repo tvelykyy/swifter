@@ -8,7 +8,18 @@ use JMS\Serializer\SerializationContext;
 
 abstract class CrudController extends Controller
 {
-    protected function createObjectAndReturn201Response($object)
+    protected function saveAndGenerateResponse($block)
+    {
+        if ($block->getId() == null) {
+            $response = $this->createAndGenerate201Response($block);
+        } else {
+            $response = $this->editAndGenerate204Response($block);
+        }
+
+        return $response;
+    }
+
+    protected function createAndGenerate201Response($object)
     {
         $em = $this->getEM();
 
@@ -20,14 +31,14 @@ abstract class CrudController extends Controller
         return Response::create($responseBody, Response::HTTP_CREATED);
     }
 
-    protected function editObjectAndReturn204Response($object)
+    protected function editAndGenerate204Response($object)
     {
         $em = $this->getEM();
 
         $em->merge($object);
         $em->flush();
 
-        return Response::create('', Response::HTTP_NO_CONTENT);
+        return $this->generateEmptyResponse(Response::HTTP_NO_CONTENT);
     }
 
     protected function deleteObjectAndReturn204Response($object)
@@ -37,24 +48,44 @@ abstract class CrudController extends Controller
         $em->remove($object);
         $em->flush();
 
-        return Response::create('', Response::HTTP_NO_CONTENT);
+        return $this->generateEmptyResponse(Response::HTTP_NO_CONTENT);
     }
 
-    protected function generateJsonResponse($jsonResponseBody, $status)
+    protected function generateErrorsJsonResponse($errors)
     {
-        $response = Response::create($jsonResponseBody, $status);
+        $errorArray = [];
+        foreach ($errors as $error) {
+            $errorArray[] = (object)array('field' => $error->getPropertyPath(), 'message' => $error->getMessage());
+        }
+
+        return $this->generateJsonResponse(json_encode($errorArray), Response::HTTP_BAD_REQUEST);
+    }
+
+    protected function generateJsonResponse($jsonBody, $status, $headers = array())
+    {
+        $response = $this->generateResponse($jsonBody, $status, $headers);
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
     }
 
-    protected function serializeToJsonObjectByGroup($object, $serializationGroup)
+    protected function generateEmptyResponse($status, $headers = array())
     {
-        $serializationContext = SerializationContext::create()->setGroups(array($serializationGroup));
-        return $this->serializeToJsonObjectByContext($object, $serializationContext);
+        return $this->generateResponse('', $status, $headers);
     }
 
-    protected function serializeToJsonObjectByContext($object, $serializationContext)
+    protected function generateResponse($body, $status = Response::HTTP_OK, $headers = array())
+    {
+        return Response::create($body, $status, $headers);
+    }
+
+    protected function serializeToJsonByGroup($object, $serializationGroup)
+    {
+        $serializationContext = SerializationContext::create()->setGroups(array($serializationGroup));
+        return $this->serializeToJsonByContext($object, $serializationContext);
+    }
+
+    protected function serializeToJsonByContext($object, $serializationContext)
     {
         $serializer = $this->container->get('serializer');
         $json = $serializer->serialize($object, 'json', $serializationContext);
@@ -62,20 +93,28 @@ abstract class CrudController extends Controller
         return $json;
     }
 
-    protected function deserializeObjectFromRequest($className)
+    protected function deserializeFromRequest($className)
     {
         $requestBody = $this->get('request')->getContent();
-        $object = $this->deserializeObjectFromJson($requestBody, $className);
+        $object = $this->deserializeFromJson($requestBody, $className);
 
         return $object;
     }
 
-    protected function deserializeObjectFromJson($json, $className)
+    protected function deserializeFromJson($json, $className)
     {
         $serializer = $this->container->get('serializer');
         $object = $serializer->deserialize($json, $className, 'json');
 
         return $object;
+    }
+
+    protected function validate($object)
+    {
+        $validator = $this->get('validator');
+        $errors = $validator->validate($object);
+
+        return $errors;
     }
 
     protected function getEM()

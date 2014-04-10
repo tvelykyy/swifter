@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class BlocksController extends CrudController
 {
+    const BLOCK_CLASS_BUNDLE_PREFIX = 'SwifterCommonBundle:Block';
+    const BLOCK_CLASS = 'Swifter\CommonBundle\Entity\Block';
+
     public function renderManagePageAction()
     {
         return $this->render('SwifterAdminBundle::blocks.html.twig', array('title' => 'Blocks Management'));
@@ -16,47 +19,33 @@ class BlocksController extends CrudController
     public function retrieveBlocksAction()
     {
         $blocks = $this->getDoctrine()
-            ->getRepository('SwifterCommonBundle:Block')
+            ->getRepository(BLOCK_CLASS_BUNDLE_PREFIX)
             ->findAll();
 
-        $blocksInJson = $this->serializeToJsonObjectByGroup($blocks, 'list');
+        $jsonBlocks = $this->serializeToJsonByGroup($blocks, 'list');
 
-        return $this->generateJsonResponse($blocksInJson, Response::HTTP_OK);
+        return $this->generateJsonResponse($jsonBlocks, Response::HTTP_OK);
     }
 
     public function saveBlockAction()
     {
-        $block = $this->deserializeObjectFromRequest('Swifter\CommonBundle\Entity\Block');
+        $block = $this->deserializeFromRequest(BLOCK_CLASS);
 
-        $validator = $this->get('validator');
-        $errors = $validator->validate($block);
+        $errors = $this->validate($block);
 
         if (count($errors) > 0) {
-            $errorArray = [];
-            foreach($errors as $error )
-            {
-                $errorArray[] = (object)array('field' => $error->getPropertyPath(), 'message' => $error->getMessage());
-            }
-
-            return $this->generateJsonResponse(json_encode($errorArray), Response::HTTP_BAD_REQUEST);
+            return $this->generateErrorsJsonResponse($errors);
         }
         else
         {
-            if ($block->getId() == null)
-            {
-                return $this->createObjectAndReturn201Response($block);
-            }
-            else
-            {
-                return $this->editObjectAndReturn204Response($block);
-            }
+            return $this->saveAndGenerateResponse($block);
         }
     }
 
     public function deleteBlockAction($id)
     {
         $blockToDelete = $this->getDoctrine()
-            ->getRepository('SwifterCommonBundle:Block')
+            ->getRepository(BLOCK_CLASS_BUNDLE_PREFIX)
             ->find($id);
 
         return $this->deleteObjectAndReturn204Response($blockToDelete);
