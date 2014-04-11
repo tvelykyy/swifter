@@ -19,7 +19,7 @@ class BlocksController extends CrudController
     public function retrieveBlocksAction()
     {
         $blocks = $this->getDoctrine()
-            ->getRepository(BLOCK_CLASS_BUNDLE_PREFIX)
+            ->getRepository(self::BLOCK_CLASS_BUNDLE_PREFIX)
             ->findAll();
 
         $jsonBlocks = $this->serializeToJsonByGroup($blocks, 'list');
@@ -29,7 +29,7 @@ class BlocksController extends CrudController
 
     public function saveBlockAction()
     {
-        $block = $this->deserializeFromRequest(BLOCK_CLASS);
+        $block = $this->deserializeFromRequest(self::BLOCK_CLASS);
 
         $errors = $this->validate($block);
 
@@ -45,7 +45,7 @@ class BlocksController extends CrudController
     public function deleteBlockAction($id)
     {
         $blockToDelete = $this->getDoctrine()
-            ->getRepository(BLOCK_CLASS_BUNDLE_PREFIX)
+            ->getRepository(self::BLOCK_CLASS_BUNDLE_PREFIX)
             ->find($id);
 
         return $this->deleteObjectAndReturn204Response($blockToDelete);

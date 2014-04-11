@@ -53,7 +53,7 @@ abstract class CrudController extends Controller
 
     protected function generateErrorsJsonResponse($errors)
     {
-        $errorArray = [];
+        $errorArray = array();
         foreach ($errors as $error) {
             $errorArray[] = (object)array('field' => $error->getPropertyPath(), 'message' => $error->getMessage());
         }
