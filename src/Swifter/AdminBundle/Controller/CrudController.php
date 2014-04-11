@@ -8,47 +8,45 @@ use JMS\Serializer\SerializationContext;
 
 abstract class CrudController extends Controller
 {
-    protected function saveAndGenerateResponse($block)
+    protected function saveAndGenerateResponse($entity)
     {
-        if ($block->getId() == null) {
-            $response = $this->createAndGenerate201Response($block);
+        if ($entity->getId() == null) {
+            $response = $this->createAndGenerate201Response($entity);
         } else {
-            $response = $this->editAndGenerate204Response($block);
+            $response = $this->editAndGenerate204Response($entity);
         }
 
         return $response;
     }
 
-    protected function createAndGenerate201Response($object)
+    protected function createAndGenerate201Response($entity)
     {
-        $em = $this->getEM();
+        $this->doWithEntity('persist', $entity);
+        $responseBody = $entity->getId();
 
-        $em->persist($object);
-        $em->flush();
-
-        $responseBody = $object->getId();
-
-        return Response::create($responseBody, Response::HTTP_CREATED);
+        return $this->generateJsonResponse($responseBody, Response::HTTP_CREATED);
     }
 
-    protected function editAndGenerate204Response($object)
+    protected function editAndGenerate204Response($entity)
     {
-        $em = $this->getEM();
-
-        $em->merge($object);
-        $em->flush();
+        $this->doWithEntity('merge', $entity);
 
         return $this->generateEmptyResponse(Response::HTTP_NO_CONTENT);
     }
 
-    protected function deleteAndReturn204Response($object)
+    protected function deleteAndReturn204Response($entity)
     {
-        $em = $this->getEM();
-
-        $em->remove($object);
-        $em->flush();
+        $this->doWithEntity('remove', $entity);
 
         return $this->generateEmptyResponse(Response::HTTP_NO_CONTENT);
+    }
+
+    protected function doWithEntity($method, $entity)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        call_user_func(array($em, $method), $entity);
+        $em->flush();
     }
 
     protected function generateErrorsJsonResponse($errors)
@@ -79,16 +77,16 @@ abstract class CrudController extends Controller
         return Response::create($body, $status, $headers);
     }
 
-    protected function serializeToJsonByGroup($object, $serializationGroup)
+    protected function serializeToJsonByGroup($entity, $serializationGroup)
     {
         $serializationContext = SerializationContext::create()->setGroups(array($serializationGroup));
-        return $this->serializeToJsonByContext($object, $serializationContext);
+        return $this->serializeToJsonByContext($entity, $serializationContext);
     }
 
-    protected function serializeToJsonByContext($object, $serializationContext)
+    protected function serializeToJsonByContext($entity, $serializationContext)
     {
         $serializer = $this->container->get('serializer');
-        $json = $serializer->serialize($object, 'json', $serializationContext);
+        $json = $serializer->serialize($entity, 'json', $serializationContext);
 
         return $json;
     }
@@ -96,31 +94,25 @@ abstract class CrudController extends Controller
     protected function deserializeFromRequest($className)
     {
         $requestBody = $this->get('request')->getContent();
-        $object = $this->deserializeFromJson($requestBody, $className);
+        $entity = $this->deserializeFromJson($requestBody, $className);
 
-        return $object;
+        return $entity;
     }
 
     protected function deserializeFromJson($json, $className)
     {
         $serializer = $this->container->get('serializer');
-        $object = $serializer->deserialize($json, $className, 'json');
+        $entity = $serializer->deserialize($json, $className, 'json');
 
-        return $object;
+        return $entity;
     }
 
-    protected function validate($object)
+    protected function validate($entity)
     {
         $validator = $this->get('validator');
-        $errors = $validator->validate($object);
+        $errors = $validator->validate($entity);
 
         return $errors;
-    }
-
-    protected function getEM()
-    {
-        $em = $this->getDoctrine()->getManager();
-        return $em;
     }
 
 }
