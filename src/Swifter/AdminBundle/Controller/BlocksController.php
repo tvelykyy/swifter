@@ -2,9 +2,7 @@
 
 namespace Swifter\AdminBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 
 class BlocksController extends CrudController
 {
@@ -34,12 +32,14 @@ class BlocksController extends CrudController
         $errors = $this->validate($block);
 
         if (count($errors) > 0) {
-            return $this->generateErrorsJsonResponse($errors);
+            $response = $this->generateErrorsJsonResponse($errors);
         }
         else
         {
-            return $this->saveAndGenerateResponse($block);
+            $response = $this->saveAndGenerateResponse($block);
         }
+
+        return $response;
     }
 
     public function deleteBlockAction($id)
@@ -48,7 +48,7 @@ class BlocksController extends CrudController
             ->getRepository(self::BLOCK_CLASS_BUNDLE_PREFIX)
             ->find($id);
 
-        return $this->deleteObjectAndReturn204Response($blockToDelete);
+        return $this->deleteAndReturn204Response($blockToDelete);
     }
 
 }

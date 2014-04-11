@@ -19,9 +19,9 @@ class PagesController extends CrudController
             ->getRepository('SwifterCommonBundle:Page')
             ->findAll();
 
-        $pagesInJson = $this->serializeToJsonByGroup($pages, 'list');
+        $jsonPages = $this->serializeToJsonByGroup($pages, 'list');
 
-        return $this->generateJsonResponse($pagesInJson);
+        return $this->generateJsonResponse($jsonPages);
     }
 
 }

@@ -41,7 +41,7 @@ abstract class CrudController extends Controller
         return $this->generateEmptyResponse(Response::HTTP_NO_CONTENT);
     }
 
-    protected function deleteObjectAndReturn204Response($object)
+    protected function deleteAndReturn204Response($object)
     {
         $em = $this->getEM();
 
@@ -61,7 +61,7 @@ abstract class CrudController extends Controller
         return $this->generateJsonResponse(json_encode($errorArray), Response::HTTP_BAD_REQUEST);
     }
 
-    protected function generateJsonResponse($jsonBody, $status, $headers = array())
+    protected function generateJsonResponse($jsonBody, $status = Response::HTTP_OK, $headers = array())
     {
         $response = $this->generateResponse($jsonBody, $status, $headers);
         $response->headers->set('Content-Type', 'application/json');
