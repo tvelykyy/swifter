@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50535
 File Encoding         : 65001
 
-Date: 2014-04-13 21:51:35
+Date: 2014-04-13 23:17:31
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -48,9 +48,9 @@ CREATE TABLE `page` (
 -- ----------------------------
 -- Records of page
 -- ----------------------------
-INSERT INTO `page` VALUES ('1', '', null, '/', '1');
-INSERT INTO `page` VALUES ('2', '', '1', '/news', '1');
-INSERT INTO `page` VALUES ('3', '', '2', '/news/first', '1');
+INSERT INTO `page` VALUES ('1', 'Main', null, '/', '1');
+INSERT INTO `page` VALUES ('2', 'News', '1', '/news', '1');
+INSERT INTO `page` VALUES ('3', 'First News', '2', '/news/first', '1');
 
 -- ----------------------------
 -- Table structure for `page_block`
@@ -92,8 +92,8 @@ CREATE TABLE `role` (
 -- ----------------------------
 -- Records of role
 -- ----------------------------
-INSERT INTO `role` VALUES ('1', 'user', 'Login privileges, granted after account confirmation');
-INSERT INTO `role` VALUES ('2', 'admin', 'Administrative user, has access to everything.');
+INSERT INTO `role` VALUES ('1', 'ROLE_USER', 'Login privileges, granted after registration.');
+INSERT INTO `role` VALUES ('2', 'ROLE_ADMIN', 'Administrative user.');
 
 -- ----------------------------
 -- Table structure for `snippet`

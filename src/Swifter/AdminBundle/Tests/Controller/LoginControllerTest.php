@@ -11,7 +11,7 @@ class LoginControllerTest extends ControllerTest
         $crawler = $this->client->request('GET', $this->generateRoute('admin_login_page'));
 
         /* Then. */
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->assertEquals(200, $this->getResponse()->getStatusCode());
         $this->assertEquals('Login', $crawler->filter('button[type=submit]')->first()->text());
         $this->assertNotEmpty($crawler->filter('input[type=hidden][name=_csrf_security_token]')->first()->attr('value'));
         $this->assertEquals(1, count($crawler->filter('input[name=email]')));
@@ -21,20 +21,14 @@ class LoginControllerTest extends ControllerTest
     public function testShouldRedirectToLandingPageIfRequestingLoginPageBeingAuthenticated()
     {
         /* Given. */
-        $crawler = $this->client->request('GET', $this->generateRoute('admin_login_page'));
-        $loginButton = $crawler->selectButton('Login');
-        $form = $loginButton->form(array(
-            'email'     => 'admin@m.com',
-            'password'  => 'admin',
-        ));
-        $this->client->submit($form);
+        $this->authenticateAsAdmin();
 
         /* When. */
         $crawler = $this->client->request('GET', $this->generateRoute('admin_login_page'));
 
         /* Then. */
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
-        $this->assertNotEmpty($this->client->getResponse()->headers->get('Location'));
+        $this->assertEquals(302, $this->getResponse()->getStatusCode());
+        $this->assertNotEmpty($this->getResponse()->headers->get('Location'));
     }
 
 }
