@@ -16,7 +16,7 @@ class SnippetServiceTest extends \PHPUnit_Framework_TestCase
     const TWIG_ENGINE_CLASS = 'Symfony\Bundle\TwigBundle\TwigEngine';
     const DOCTRINE_COLLECTION_CLASS = 'Doctrine\Common\Collections\Collection';
 
-    /* Tested behaviour contants. */
+    /* Tested behaviour constants. */
     const DEV_TEST_SERVICE_RESULT = 'DevTestServiceResult';
     const SNIPPET_TITLE = 'SNIPPET';
     const SKELETON_PAGE_BLOCK_CONTENT = 'Page block content {} with snippet.';
