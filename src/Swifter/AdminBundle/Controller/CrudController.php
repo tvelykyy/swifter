@@ -2,12 +2,20 @@
 
 namespace Swifter\AdminBundle\Controller;
 
+use Swifter\AdminBundle\Service\ResponseService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use JMS\Serializer\SerializationContext;
 
 abstract class CrudController extends Controller
 {
+    protected $responseService;
+
+    public function __construct(ResponseService $responseService)
+    {
+        $this->responseService = $responseService;
+    }
+
     protected function saveAndGenerateResponse($entity)
     {
         if ($entity->getId() == null) {
@@ -24,21 +32,21 @@ abstract class CrudController extends Controller
         $this->doWithEntity('persist', $entity);
         $responseBody = $entity->getId();
 
-        return $this->generateJsonResponse($responseBody, Response::HTTP_CREATED);
+        return $this->responseService->generateJsonResponse($responseBody, Response::HTTP_CREATED);
     }
 
     protected function editAndGenerate204Response($entity)
     {
         $this->doWithEntity('merge', $entity);
 
-        return $this->generateEmptyResponse(Response::HTTP_NO_CONTENT);
+        return $this->responseService->generateEmptyResponse(Response::HTTP_NO_CONTENT);
     }
 
     protected function deleteAndReturn204Response($entity)
     {
         $this->doWithEntity('remove', $entity);
 
-        return $this->generateEmptyResponse(Response::HTTP_NO_CONTENT);
+        return $this->responseService->generateEmptyResponse(Response::HTTP_NO_CONTENT);
     }
 
     protected function doWithEntity($method, $entity)
@@ -47,34 +55,6 @@ abstract class CrudController extends Controller
 
         call_user_func(array($em, $method), $entity);
         $em->flush();
-    }
-
-    protected function generateErrorsJsonResponse($errors)
-    {
-        $errorArray = array();
-        foreach ($errors as $error) {
-            $errorArray[] = (object)array('field' => $error->getPropertyPath(), 'message' => $error->getMessage());
-        }
-
-        return $this->generateJsonResponse(json_encode($errorArray), Response::HTTP_BAD_REQUEST);
-    }
-
-    protected function generateJsonResponse($jsonBody, $status = Response::HTTP_OK, $headers = array())
-    {
-        $response = $this->generateResponse($jsonBody, $status, $headers);
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
-    }
-
-    protected function generateEmptyResponse($status, $headers = array())
-    {
-        return $this->generateResponse('', $status, $headers);
-    }
-
-    protected function generateResponse($body, $status = Response::HTTP_OK, $headers = array())
-    {
-        return Response::create($body, $status, $headers);
     }
 
     protected function serializeToJsonByGroup($entity, $serializationGroup)

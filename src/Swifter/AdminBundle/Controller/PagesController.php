@@ -21,7 +21,7 @@ class PagesController extends CrudController
 
         $jsonPages = $this->serializeToJsonByGroup($pages, 'list');
 
-        return $this->generateJsonResponse($jsonPages);
+        return $this->responseService->generateJsonResponse($jsonPages);
     }
 
 }

@@ -13,9 +13,9 @@ abstract class ControllerTest extends WebTestCase
         $this->client = static::createClient();
     }
 
-    protected function generateRoute($routeName)
+    protected function generateRoute($routeName, $parameters = array())
     {
-        return $this->client->getContainer()->get('router')->generate($routeName);
+        return $this->client->getContainer()->get('router')->generate($routeName, $parameters);
     }
 
     protected function authenticateAsAdmin()

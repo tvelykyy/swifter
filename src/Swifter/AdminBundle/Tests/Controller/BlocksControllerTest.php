@@ -33,8 +33,10 @@ class BlocksControllerTest extends ControllerTest
         /* Given. */
 
         /* When. */
+//        $crawler = $this->client->request('DELETE', $this->generateRoute('admin_delete_block', array('id' => 1)));
 
         /* Then. */
+//        $this->assertEquals(204, $this->getResponse()->getStatusCode());
     }
 
 }

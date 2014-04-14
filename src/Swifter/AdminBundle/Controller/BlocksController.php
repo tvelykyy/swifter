@@ -22,7 +22,7 @@ class BlocksController extends CrudController
 
         $jsonBlocks = $this->serializeToJsonByGroup($blocks, 'list');
 
-        return $this->generateJsonResponse($jsonBlocks, Response::HTTP_OK);
+        return $this->responseService->generateJsonResponse($jsonBlocks, Response::HTTP_OK);
     }
 
     public function saveBlockAction()
@@ -32,7 +32,7 @@ class BlocksController extends CrudController
         $errors = $this->validate($block);
 
         if (count($errors) > 0) {
-            $response = $this->generateErrorsJsonResponse($errors);
+            $response = $this->responseService->generateErrorsJsonResponse($errors);
         }
         else
         {
