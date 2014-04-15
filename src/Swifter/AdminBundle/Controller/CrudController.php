@@ -10,6 +10,7 @@ use JMS\Serializer\SerializationContext;
 abstract class CrudController extends Controller
 {
     protected $responseService;
+    protected $serializationService;
 
     public function __construct(ResponseService $responseService)
     {
@@ -55,36 +56,6 @@ abstract class CrudController extends Controller
 
         call_user_func(array($em, $method), $entity);
         $em->flush();
-    }
-
-    protected function serializeToJsonByGroup($entity, $serializationGroup)
-    {
-        $serializationContext = SerializationContext::create()->setGroups(array($serializationGroup));
-        return $this->serializeToJsonByContext($entity, $serializationContext);
-    }
-
-    protected function serializeToJsonByContext($entity, $serializationContext)
-    {
-        $serializer = $this->container->get('serializer');
-        $json = $serializer->serialize($entity, 'json', $serializationContext);
-
-        return $json;
-    }
-
-    protected function deserializeFromRequest($className)
-    {
-        $requestBody = $this->get('request')->getContent();
-        $entity = $this->deserializeFromJson($requestBody, $className);
-
-        return $entity;
-    }
-
-    protected function deserializeFromJson($json, $className)
-    {
-        $serializer = $this->container->get('serializer');
-        $entity = $serializer->deserialize($json, $className, 'json');
-
-        return $entity;
     }
 
     protected function validate($entity)

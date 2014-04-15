@@ -1,13 +1,17 @@
 parameters:
-    admin.service.response.class:   Swifter\AdminBundle\Service\ResponseService
-    admin.controller.login.class:   Swifter\AdminBundle\Controller\LoginController
-    admin.controller.landing.class: Swifter\AdminBundle\Controller\LandingController
-    admin.controller.blocks.class:  Swifter\AdminBundle\Controller\BlocksController
-    admin.controller.pages.class:   Swifter\AdminBundle\Controller\PagesController
+    admin.service.response.class:         Swifter\AdminBundle\Service\ResponseService
+    admin.service.serialization.class:    Swifter\AdminBundle\Service\SerializationService
+    admin.controller.login.class:         Swifter\AdminBundle\Controller\LoginController
+    admin.controller.landing.class:       Swifter\AdminBundle\Controller\LandingController
+    admin.controller.blocks.class:        Swifter\AdminBundle\Controller\BlocksController
+    admin.controller.pages.class:         Swifter\AdminBundle\Controller\PagesController
 
 services:
     admin.service.response:
         class: %admin.service.response.class%
+
+    admin.service.serialization:
+            class: %admin.service.serialization.class%
 
     admin.controller.login:
         class: %admin.controller.login.class%
@@ -21,12 +25,12 @@ services:
 
     admin.controller.blocks:
         class: %admin.controller.blocks.class%
-        arguments: ["@admin.service.response"]
+        arguments: ["@admin.service.response", "@admin.service.serialization"]
         calls:
             -  [setContainer, ["@service_container"]]
 
     admin.controller.pages:
         class: %admin.controller.pages.class%
-        arguments: ["@admin.service.response"]
+        arguments: ["@admin.service.response", "@admin.service.serialization"]
         calls:
             -  [setContainer, ["@service_container"]]
