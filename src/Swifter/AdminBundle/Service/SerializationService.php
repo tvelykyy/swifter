@@ -3,13 +3,13 @@
 namespace Swifter\AdminBundle\Service;
 
 use JMS\Serializer\SerializationContext;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class SerializationService
 {
     protected $container;
 
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
