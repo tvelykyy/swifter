@@ -11,7 +11,8 @@ services:
         class: %admin.service.response.class%
 
     admin.service.serialization:
-            class: %admin.service.serialization.class%
+        class: %admin.service.serialization.class%
+        arguments: ["@service_container"]
 
     admin.controller.login:
         class: %admin.controller.login.class%

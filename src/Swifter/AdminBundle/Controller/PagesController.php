@@ -2,10 +2,6 @@
 
 namespace Swifter\AdminBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-
 class PagesController extends CrudController
 {
     public function renderManagePageAction()
@@ -19,7 +15,7 @@ class PagesController extends CrudController
             ->getRepository('SwifterCommonBundle:Page')
             ->findAll();
 
-        $jsonPages = $this->serializeToJsonByGroup($pages, 'list');
+        $jsonPages = $this->serializationService->serializeToJsonByGroup($pages, 'list');
 
         return $this->responseService->generateJsonResponse($jsonPages);
     }

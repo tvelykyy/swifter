@@ -2,8 +2,18 @@
 
 namespace Swifter\AdminBundle\Service;
 
+use JMS\Serializer\SerializationContext;
+use Symfony\Component\DependencyInjection\Container;
+
 class SerializationService
 {
+    protected $container;
+
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+    }
+
     public function serializeToJsonByGroup($entity, $serializationGroup)
     {
         $serializationContext = SerializationContext::create()->setGroups(array($serializationGroup));
@@ -16,14 +26,6 @@ class SerializationService
         $json = $serializer->serialize($entity, 'json', $serializationContext);
 
         return $json;
-    }
-
-    public function deserializeFromRequest($className)
-    {
-        $requestBody = $this->get('request')->getContent();
-        $entity = $this->deserializeFromJson($requestBody, $className);
-
-        return $entity;
     }
 
     public function deserializeFromJson($json, $className)

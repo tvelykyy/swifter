@@ -20,14 +20,14 @@ class BlocksController extends CrudController
             ->getRepository(self::BLOCK_CLASS_BUNDLE_PREFIX)
             ->findAll();
 
-        $jsonBlocks = $this->serializeToJsonByGroup($blocks, 'list');
+        $jsonBlocks = $this->serializationService->serializeToJsonByGroup($blocks, 'list');
 
         return $this->responseService->generateJsonResponse($jsonBlocks, Response::HTTP_OK);
     }
 
     public function saveBlockAction()
     {
-        $block = $this->deserializeFromRequest(self::BLOCK_CLASS);
+        $block = $this->serializationService->deserializeFromJson($this->get('request')->getContent(), self::BLOCK_CLASS);
 
         $errors = $this->validate($block);
 
