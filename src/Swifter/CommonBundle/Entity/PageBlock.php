@@ -3,6 +3,7 @@
 namespace Swifter\CommonBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
@@ -14,25 +15,37 @@ class PageBlock
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Groups({"list", "details"})
      */
     protected $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="Page", inversedBy="pageBlocks")
      * @ORM\JoinColumn(name="page_id", referencedColumnName="id")
+     *
      **/
     protected $page;
 
     /**
      * @ORM\ManyToOne(targetEntity="Block")
      * @ORM\JoinColumn(name="block_id", referencedColumnName="id")
+     *
+     * @Groups({"list", "details"})
      **/
     protected $block;
 
     /**
      * @ORM\Column(type="text")
+     *
+     *  @Groups({"list", "details"})
      */
     protected $content;
+
+    public function getId()
+    {
+        return $this->id;
+    }
 
     public function setPage($page)
     {
