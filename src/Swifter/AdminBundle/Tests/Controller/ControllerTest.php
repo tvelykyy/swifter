@@ -10,7 +10,7 @@ abstract class ControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->client = static::createClient();
+        $this->client = ControllerWebTestCase::createClient();
     }
 
     protected function generateRoute($routeName, $parameters = array())
