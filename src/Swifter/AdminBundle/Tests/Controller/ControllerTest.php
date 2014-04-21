@@ -2,14 +2,13 @@
 
 namespace Swifter\AdminBundle\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-
-abstract class ControllerTest extends WebTestCase
+abstract class ControllerTest extends \PHPUnit_Extensions_Database_TestCase
 {
     protected $client;
 
     protected function setUp()
     {
+        parent::setUp();
         $this->client = ControllerWebTestCase::createClient();
     }
 
@@ -33,6 +32,16 @@ abstract class ControllerTest extends WebTestCase
     protected function getResponse()
     {
         return $this->client->getResponse();
+    }
+
+    protected function getConnection()
+    {
+        return ControllerWebTestCase::getDbConnection();
+    }
+
+    protected function getDataSet()
+    {
+
     }
 
 }

@@ -10,4 +10,13 @@ abstract class ControllerWebTestCase extends WebTestCase
     {
         return WebTestCase::createClient();
     }
+
+    public static function getDbConnection()
+    {
+        if (null === static::$kernel) {
+            static::$kernel = static::createKernel();
+            static::$kernel->boot();
+        }
+        static::$kernel->getContainer()->get('database_connection');
+    }
 }
