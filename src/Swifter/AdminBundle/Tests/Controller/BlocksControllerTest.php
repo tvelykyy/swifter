@@ -2,6 +2,8 @@
 
 namespace Swifter\AdminBundle\Tests\Controller;
 
+use Swifter\CommonBundle\Entity\Block;
+
 class BlocksControllerTest extends ControllerTest
 {
     protected function setUp()
@@ -33,13 +35,52 @@ class BlocksControllerTest extends ControllerTest
         $blocksBeforeDelete = $this->retrieveBlocks();
 
         /* When. */
-        $crawler = $this->client->request('DELETE', $this->generateRoute('admin_delete_block', array('id' => 1)));
-        $responseCode = $this->getResponse()->getStatusCode();
+        $this->client->request('DELETE', $this->generateRoute('admin_delete_block', array('id' => 1)));
+        $response = $this->getResponse();
         $blocksAfterDelete = $this->retrieveBlocks();
 
         /* Then. */
-        $this->assertEquals(204, $responseCode);
+        $this->assertEquals(204, $response->getStatusCode());
         $this->assertEquals(sizeof($blocksBeforeDelete), sizeof($blocksAfterDelete) + 1);
+    }
+
+    public function testShouldReturn400SavingInvalidBlock()
+    {
+        /* Given. */
+        $block = new Block();
+        $block->setTitle('Ti');
+
+        $blocksBeforeSave = $this->retrieveBlocks();
+
+        $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, 'list');
+        /* When. */
+        $this->doSaveRequest($serializedBlock);
+        $response = $this->getResponse();
+        $blocksAfterSave = $this->retrieveBlocks();
+
+        /* Then. */
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals($blocksBeforeSave, $blocksAfterSave);
+    }
+
+    public function testShouldCreateBlock()
+    {
+        /* Given. */
+        $block = new Block();
+        $block->setTitle('Valid Title');
+
+        $blocksBeforeSave = $this->retrieveBlocks();
+
+        $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, 'list');
+        /* When. */
+        $this->doSaveRequest($serializedBlock);
+        $response = $this->getResponse();
+        $blocksAfterSave = $this->retrieveBlocks();
+
+        /* Then. */
+        $this->assertEquals(201, $response->getStatusCode());
+        $this->assertGreaterThan(0, $response->getContent());
+        $this->assertEquals(sizeof($blocksBeforeSave) + 1, sizeof($blocksAfterSave));
     }
 
     protected function retrieveBlocks()
@@ -48,6 +89,23 @@ class BlocksControllerTest extends ControllerTest
         $blocks = json_decode($this->getResponse()->getContent());
 
         return $blocks;
+    }
+
+    protected function getSerializator()
+    {
+        return $this->getContainer()->get('admin.service.serialization');
+    }
+
+    protected function doSaveRequest($json)
+    {
+        $this->client->request(
+            'POST',
+            $this->generateRoute('admin_save_block'),
+            array(),
+            array(),
+            array(),
+            $json
+        );
     }
 
 }
