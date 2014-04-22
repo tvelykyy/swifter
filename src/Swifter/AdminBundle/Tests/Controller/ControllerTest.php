@@ -42,4 +42,9 @@ abstract class ControllerTest extends WebTestCase
         return $this->client->getResponse();
     }
 
+    protected function getSerializator()
+    {
+        return $this->getContainer()->get('admin.service.serialization');
+    }
+
 }

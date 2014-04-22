@@ -83,17 +83,36 @@ class BlocksControllerTest extends ControllerTest
         $this->assertEquals(sizeof($blocksBeforeSave) + 1, sizeof($blocksAfterSave));
     }
 
+    public function testShouldEditBlock()
+    {
+        /* Given. */
+        $blocksBeforeSave = $this->retrieveBlocks();
+        $block = new Block();
+        $block->setId($blocksBeforeSave[0]->id);
+
+        $newTitle = 'NEW_TITLE';
+        $block->setTitle($newTitle);
+
+        $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, 'list');
+
+        /* When. */
+        $this->doSaveRequest($serializedBlock);
+        $response = $this->getResponse();
+        $blocksAfterSave = $this->retrieveBlocks();
+
+        /* Then. */
+        $this->assertEquals(204, $response->getStatusCode());
+        $this->assertEquals(sizeof($blocksBeforeSave), sizeof($blocksAfterSave));
+        $this->assertEquals($newTitle, $blocksAfterSave[0]->title);
+    }
+
+
     protected function retrieveBlocks()
     {
         $this->client->request('GET', $this->generateRoute('admin_retrieve_blocks'));
         $blocks = json_decode($this->getResponse()->getContent());
 
         return $blocks;
-    }
-
-    protected function getSerializator()
-    {
-        return $this->getContainer()->get('admin.service.serialization');
     }
 
     protected function doSaveRequest($json)
