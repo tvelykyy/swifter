@@ -2,7 +2,7 @@
 
 namespace Swifter\FrontBundle\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Liip\FunctionalTestBundle\Test\WebTestCase;
 
 class DispatcherControllerTest extends WebTestCase
 {
@@ -11,7 +11,13 @@ class DispatcherControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->client = static::createClient();
+
+        $classes = array(
+            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData'
+        );
+        $this->loadFixtures($classes);
     }
+
     public function testShouldRenderMainPageWithNoQueryParams()
     {
         /* When. */

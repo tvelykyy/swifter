@@ -13,8 +13,7 @@ class BlocksControllerTest extends ControllerTest
     public function testShouldReturnAllBlocksInJson()
     {
         /* When. */
-        $crawler = $this->client->request('GET', $this->generateRoute('admin_retrieve_blocks'));
-        $blocks = json_decode($this->getResponse()->getContent());
+        $blocks = $this->retrieveBlocks();
 
         /* Then. */
         $this->assertEquals(200, $this->getResponse()->getStatusCode());
@@ -31,12 +30,24 @@ class BlocksControllerTest extends ControllerTest
     public function testShouldDeleteBlock()
     {
         /* Given. */
+        $blocksBeforeDelete = $this->retrieveBlocks();
 
         /* When. */
-//        $crawler = $this->client->request('DELETE', $this->generateRoute('admin_delete_block', array('id' => 1)));
+        $crawler = $this->client->request('DELETE', $this->generateRoute('admin_delete_block', array('id' => 1)));
+        $responseCode = $this->getResponse()->getStatusCode();
+        $blocksAfterDelete = $this->retrieveBlocks();
 
         /* Then. */
-//        $this->assertEquals(204, $this->getResponse()->getStatusCode());
+        $this->assertEquals(204, $responseCode);
+        $this->assertEquals(sizeof($blocksBeforeDelete), sizeof($blocksAfterDelete) + 1);
+    }
+
+    protected function retrieveBlocks()
+    {
+        $this->client->request('GET', $this->generateRoute('admin_retrieve_blocks'));
+        $blocks = json_decode($this->getResponse()->getContent());
+
+        return $blocks;
     }
 
 }

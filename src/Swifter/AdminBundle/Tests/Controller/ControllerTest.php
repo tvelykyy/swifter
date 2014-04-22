@@ -2,14 +2,22 @@
 
 namespace Swifter\AdminBundle\Tests\Controller;
 
-abstract class ControllerTest extends \PHPUnit_Extensions_Database_TestCase
+use Liip\FunctionalTestBundle\Test\WebTestCase;
+
+abstract class ControllerTest extends WebTestCase
 {
     protected $client;
 
     protected function setUp()
     {
         parent::setUp();
-        $this->client = ControllerWebTestCase::createClient();
+        $this->client = static::createClient();
+
+        $classes = array(
+            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData',
+            'Swifter\CommonBundle\DataFixtures\Test\LoadUsersData'
+        );
+        $this->loadFixtures($classes);
     }
 
     protected function generateRoute($routeName, $parameters = array())
@@ -32,16 +40,6 @@ abstract class ControllerTest extends \PHPUnit_Extensions_Database_TestCase
     protected function getResponse()
     {
         return $this->client->getResponse();
-    }
-
-    protected function getConnection()
-    {
-        return ControllerWebTestCase::getDbConnection();
-    }
-
-    protected function getDataSet()
-    {
-
     }
 
 }

@@ -40,7 +40,7 @@ class User implements UserInterface, \Serializable
     protected $enabled;
 
     /**
-     * @ORM\Column(name="last_login", type="date")
+     * @ORM\Column(name="last_login", type="date", nullable=true)
      */
     protected $lastLogin;
 
@@ -77,7 +77,6 @@ class User implements UserInterface, \Serializable
      */
     public function getRoles()
     {
-//        return array('ROLE_USER', 'ROLE_ADMIN');
         return $this->roles->toArray();
     }
 
@@ -87,6 +86,11 @@ class User implements UserInterface, \Serializable
     public function getPassword()
     {
         return $this->password;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = $password;
     }
 
     /**
@@ -112,4 +116,55 @@ class User implements UserInterface, \Serializable
     {
         // TODO: Implement eraseCredentials() method.
     }
+
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+    }
+
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+    }
+
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+    public function setLastLogin($lastLogin)
+    {
+        $this->lastLogin = $lastLogin;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
+    public function getLastLogin()
+    {
+        return $this->lastLogin;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
 }

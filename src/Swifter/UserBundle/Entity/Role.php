@@ -34,17 +34,24 @@ class Role implements RoleInterface
         return $this->id;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getRole()
     {
         return $this->title;
     }
 
+    public function setRole($role)
+    {
+        $this->title = $role;
+    }
+
     public function getDescription()
     {
         return $this->description;
+    }
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
     }
 
 }
