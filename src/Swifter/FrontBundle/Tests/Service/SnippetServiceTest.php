@@ -9,7 +9,7 @@ use Swifter\CommonBundle\Entity\Snippet;
 use Swifter\CommonBundle\Entity\Template;
 use Swifter\FrontBundle\Service\SnippetService;
 
-class SnippetServiceTest extends WebTestCase
+class SnippetServiceTest extends \PHPUnit_Framework_TestCase
 {
     /* Symfony constants. */
     const ENTITY_MANAGER_CLASS = 'Doctrine\ORM\EntityManager';
@@ -26,14 +26,6 @@ class SnippetServiceTest extends WebTestCase
     const SNIPPET_SERVICE = 'swifter_front.service.devtest';
     const SNIPPET_METHOD = 'getPages';
     const SNIPPET_PARAMS = '{"start":2,"end":5}';
-
-    protected function setUp()
-    {
-        $classes = array(
-            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData'
-        );
-        $this->loadFixtures($classes);
-    }
 
     public function testShouldLeavePageBlockWithChangesIfNoSnippets()
     {

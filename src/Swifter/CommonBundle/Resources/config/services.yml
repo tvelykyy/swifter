@@ -1,0 +1,7 @@
+parameters:
+    common.service.template.class: Swifter\CommonBundle\Service\TemplateService
+
+services:
+    common.service.template:
+        class: %common.service.template.class%
+        arguments: ["@service_container"]

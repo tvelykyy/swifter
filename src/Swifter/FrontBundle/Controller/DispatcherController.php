@@ -34,6 +34,7 @@ class DispatcherController extends Controller
         $this->snippetService->resolveSnippetsForPage($page, $queryParams);
         $blocks = $this->convertPageBlocksToAssociativeArray($page->getPageBlocks());
 
+        $this->container->get('common.service.template')->getCompleteTemplate();
         return $this->render($page->getTemplate()->getPath(), $blocks);
     }
 
