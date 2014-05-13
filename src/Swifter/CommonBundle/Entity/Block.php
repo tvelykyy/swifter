@@ -30,6 +30,7 @@ class Block
      * @Groups({"list", "details"})
      *
      * @Assert\Type(type="string")
+     * @Assert\NotBlank
      * @Assert\Length(min=3, max=50)
      */
     protected $title;
