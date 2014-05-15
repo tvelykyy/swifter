@@ -19,31 +19,36 @@ class TemplateService
 
     public function getCompleteTemplate()
     {
-        $path = $this->getTemplatePath('SwifterFrontBundle:DevTest:pages.html.twig');
-        $templateContents = file_get_contents($path);
+        $contents = $this->getContents('SwifterFrontBundle:DevTest:pages.html.twig');
+        $parent = $this->getParentTitle($contents);
 
-        preg_match(static::EXTENDS_REGEX, $templateContents, $matchedParent);
-
-        if (isset($matchedParent[1]))
+        if (isset($parent))
         {
-            $parentPath = $this->getTemplatePath($matchedParent[1]);
-            $parentContents = file_get_contents($parentPath);
+            $parentContents = $this->getContents($parent);
 
-            preg_match_all(static::BLOCK_CONTENTS_REGEX, $templateContents, $blocks);
-            foreach($blocks[1] as $index => $blockTitle)
+            $blocks = $this->getBlocks($contents);
+            foreach($blocks as $blockTitle => $blockContents)
             {
-                if (strpos($blocks[2][$index], static::PARENT_PATTERN) !== false)
+                if (strpos($blockContents, static::PARENT_PATTERN) !== false)
                 {
                     $parentBlockRegex = $this->getBlockRegexByTitle($blockTitle);
                     preg_match($parentBlockRegex, $parentContents, $parentBlock);
-                    $mergedBlock = str_replace(static::PARENT_PATTERN, $parentBlock[1], $blocks[2][$index]);
+                    $mergedBlock = str_replace(static::PARENT_PATTERN, $parentBlock[1], $blockContents);
                     preg_replace($parentBlockRegex, '$1'.$mergedBlock.'$2$3', $parentContents);
                 }
             }
         }
     }
 
-    protected function getTemplatePath($templateName)
+    protected function getContents($template)
+    {
+        $path = $this->getPath($template);
+        $contents = file_get_contents($path);
+
+        return $contents;
+    }
+
+    protected function getPath($templateName)
     {
         $parser = $this->container->get('templating.name_parser');
         $locator = $this->container->get('templating.locator');
@@ -51,8 +56,27 @@ class TemplateService
         return $locator->locate($parser->parse($templateName));
     }
 
+    protected function getBlocks($contents)
+    {
+        preg_match_all(static::BLOCK_CONTENTS_REGEX, $contents, $matches);
+        $blocks = array();
+        foreach($matches[1] as $index => $title)
+        {
+            $blocks[$title] = $matches[2][$index];
+        }
+        return $blocks;
+    }
+
+    protected function getParentTitle($contents)
+    {
+        preg_match(static::EXTENDS_REGEX, $contents, $parent);
+
+        return $parent[1];
+    }
+
     protected function getBlockRegexByTitle($title)
     {
         return str_replace('_title_', $title, static::BLOCK_BY_TITLE_REGEX);
     }
+
 }
