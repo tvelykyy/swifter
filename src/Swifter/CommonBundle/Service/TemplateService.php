@@ -9,7 +9,7 @@ class TemplateService
     protected $container;
     const EXTENDS_REGEX = '/{%.?extends "(.+)".?%}/';
     const BLOCK_CONTENTS_REGEX = '/{% block ([a-zA-Z]+) %}\n((\n|.)+?)\n{% endblock %}/m';
-    const BLOCK_BY_TITLE_REGEX = '/{% block _title_ %}\n((\n|.)+?)\n{% endblock %}/m';
+    const BLOCK_BY_TITLE_REGEX = '/({% block _title_ %})((\n|.)+?)({% endblock %})/m';
     const PARENT_PATTERN = '{{ parent() }}';
 
     public function __construct(Container $container)
@@ -20,24 +20,7 @@ class TemplateService
     public function getCompleteTemplate()
     {
         $contents = $this->getContents('SwifterFrontBundle:DevTest:pages.html.twig');
-        $parent = $this->getParentTitle($contents);
-
-        if (isset($parent))
-        {
-            $parentContents = $this->getContents($parent);
-
-            $blocks = $this->getBlocks($contents);
-            foreach($blocks as $blockTitle => $blockContents)
-            {
-                if (strpos($blockContents, static::PARENT_PATTERN) !== false)
-                {
-                    $parentBlockRegex = $this->getBlockRegexByTitle($blockTitle);
-                    preg_match($parentBlockRegex, $parentContents, $parentBlock);
-                    $mergedBlock = str_replace(static::PARENT_PATTERN, $parentBlock[1], $blockContents);
-                    preg_replace($parentBlockRegex, '$1'.$mergedBlock.'$2$3', $parentContents);
-                }
-            }
-        }
+        return $this->mergeWithParent($contents);
     }
 
     protected function getContents($template)
@@ -46,6 +29,28 @@ class TemplateService
         $contents = file_get_contents($path);
 
         return $contents;
+    }
+
+    protected function mergeWithParent($contents)
+    {
+        $parent = $this->getParentTitle($contents);
+
+        if ($parent) {
+            $parentContents = $this->getContents($parent);
+            $blocks = $this->getBlocks($contents);
+
+            foreach ($blocks as $blockTitle => $blockContents) {
+                $parentBlockRegex = $this->getBlockRegexByTitle($blockTitle);
+                if (strpos($blockContents, static::PARENT_PATTERN) !== false) {
+                    preg_match($parentBlockRegex, $parentContents, $parentBlock);
+                    $blockContents = str_replace(static::PARENT_PATTERN, $parentBlock[2], $blockContents);
+                }
+                $parentContents = preg_replace($parentBlockRegex, '$1' . $blockContents . '$4', $parentContents);
+            }
+            return $this->mergeWithParent($parentContents);
+        } else {
+            return $contents;
+        }
     }
 
     protected function getPath($templateName)
@@ -71,7 +76,7 @@ class TemplateService
     {
         preg_match(static::EXTENDS_REGEX, $contents, $parent);
 
-        return $parent[1];
+        return empty($parent) ? null : $parent[1];
     }
 
     protected function getBlockRegexByTitle($title)
