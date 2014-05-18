@@ -8,7 +8,7 @@ class TemplateService
 {
     protected $container;
     const EXTENDS_REGEX = '/{%.?extends "(.+)".?%}/';
-    const BLOCK_CONTENTS_REGEX = '/{% block ([a-zA-Z]+) %}\n((\n|.)+?)\n{% endblock %}/m';
+    const BLOCK_CONTENTS_REGEX = '/{% block ([a-zA-Z]+) %}((\n|.)+?){% endblock %}/m';
     const BLOCK_BY_TITLE_REGEX = '/({% block _title_ %})((\n|.)+?)({% endblock %})/m';
     const PARENT_PATTERN = '{{ parent() }}';
 
