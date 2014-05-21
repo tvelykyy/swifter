@@ -9,7 +9,7 @@ class TemplateServiceTest extends \PHPUnit_Framework_TestCase
     public function testShouldCheckCompleteTemplateWithInheritance()
     {
         /* Given. */
-        $templateService = new TemplateService();
+//        $templateService = new TemplateService();
 
 
         /* When. */

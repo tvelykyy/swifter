@@ -34,9 +34,7 @@ class DispatcherController extends Controller
         $this->snippetService->resolveSnippetsForPage($page, $queryParams);
         $blocks = $this->convertPageBlocksToAssociativeArray($page->getPageBlocks());
 
-        print_r('---<br>');
-        print_r($this->container->get('common.service.template')->getCompleteTemplate());
-        print_r('<br>---');
+//        print_r($this->container->get('common.service.template')->getCompleteTemplate('SwifterFrontBundle:DevTest:pages.html.twig'));
         return $this->render($page->getTemplate()->getPath(), $blocks);
     }
 

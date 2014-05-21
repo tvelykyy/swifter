@@ -6,24 +6,26 @@ use Symfony\Component\DependencyInjection\Container;
 
 class TemplateService
 {
-    protected $container;
+    private $container;
+
     const EXTENDS_REGEX = '/{%.?extends "(.+)".?%}/';
     const BLOCK_CONTENTS_REGEX = '/{% block ([a-zA-Z]+) %}((\n|.)+?){% endblock %}/m';
     const BLOCK_BY_TITLE_REGEX = '/({% block _title_ %})((\n|.)+?)({% endblock %})/m';
-    const PARENT_PATTERN = '{{ parent() }}';
+    const PARENT_PLACEHOLDER = '{{ parent() }}';
+    const TITLE_PLACEHOLDER = '_title_';
 
     public function __construct(Container $container)
     {
         $this->container = $container;
     }
 
-    public function getCompleteTemplate()
+    public function getCompleteTemplate($title)
     {
-        $contents = $this->getContents('SwifterFrontBundle:DevTest:pages.html.twig');
-        return $this->mergeWithParent($contents);
+        $contents = $this->getContents($title);
+        return $this->mergeWithParentIfHas($contents);
     }
 
-    protected function getContents($template)
+    private function getContents($template)
     {
         $path = $this->getPath($template);
         $contents = file_get_contents($path);
@@ -31,29 +33,7 @@ class TemplateService
         return $contents;
     }
 
-    protected function mergeWithParent($contents)
-    {
-        $parent = $this->getParentTitle($contents);
-
-        if ($parent) {
-            $parentContents = $this->getContents($parent);
-            $blocks = $this->getBlocks($contents);
-
-            foreach ($blocks as $blockTitle => $blockContents) {
-                $parentBlockRegex = $this->getBlockRegexByTitle($blockTitle);
-                if (strpos($blockContents, static::PARENT_PATTERN) !== false) {
-                    preg_match($parentBlockRegex, $parentContents, $parentBlock);
-                    $blockContents = str_replace(static::PARENT_PATTERN, $parentBlock[2], $blockContents);
-                }
-                $parentContents = preg_replace($parentBlockRegex, '$1' . $blockContents . '$4', $parentContents);
-            }
-            return $this->mergeWithParent($parentContents);
-        } else {
-            return $contents;
-        }
-    }
-
-    protected function getPath($templateName)
+    private function getPath($templateName)
     {
         $parser = $this->container->get('templating.name_parser');
         $locator = $this->container->get('templating.locator');
@@ -61,7 +41,73 @@ class TemplateService
         return $locator->locate($parser->parse($templateName));
     }
 
-    protected function getBlocks($contents)
+    private function mergeWithParentIfHas($contents)
+    {
+        $parent = $this->getParentTitle($contents);
+
+        if ($parent) {
+            $contents = $this->mergeWithParent($contents, $parent);
+        }
+
+        return $contents;
+    }
+
+    private function mergeWithParent($contents, $parent)
+    {
+        $parentContents = $this->getContents($parent);
+        $blocks = $this->getBlocks($contents);
+        $parentContents = $this->mergeAllBlockWithParentOnes($blocks, $parentContents);
+
+        $contents = $this->mergeWithParentIfHas($parentContents);
+        return $contents;
+    }
+
+    private function mergeAllBlockWithParentOnes($blocks, $parentContents)
+    {
+        foreach ($blocks as $blockTitle => $blockContents) {
+            $blockContents = $this->mergeBlockWithParentIfNecessary($blockTitle, $blockContents, $parentContents);
+            $parentContents = $this->updateBlockInTemplate($blockTitle, $blockContents, $parentContents);
+        }
+
+        return $parentContents;
+    }
+
+    private function mergeBlockWithParentIfNecessary($blockTitle, $blockContents, $parentContents)
+    {
+        if ($this->isBlockUsesParentPlaceholder($blockContents)) {
+            $blockRegex = $this->getBlockRegexByTitle($blockTitle);
+            $blockContents = $this->mergeBlockWithParent($blockRegex, $parentContents, $blockContents);
+        }
+        return $blockContents;
+    }
+
+    private function updateBlockInTemplate($blockTitle, $blockContents, $contents)
+    {
+        $blockRegex = $this->getBlockRegexByTitle($blockTitle);
+        return preg_replace($blockRegex, '$1' . $blockContents . '$4', $contents);
+    }
+
+    private function isBlockUsesParentPlaceholder($blockContents)
+    {
+        return strpos($blockContents, static::PARENT_PLACEHOLDER) !== false;
+    }
+
+    private function mergeBlockWithParent($parentBlockRegex, $parentContents, $blockContents)
+    {
+        preg_match($parentBlockRegex, $parentContents, $parentBlock);
+        $blockContents = str_replace(static::PARENT_PLACEHOLDER, $parentBlock[2], $blockContents);
+
+        return $blockContents;
+    }
+
+    private function getParentTitle($contents)
+    {
+        preg_match(static::EXTENDS_REGEX, $contents, $parent);
+
+        return empty($parent) ? null : $parent[1];
+    }
+
+    private function getBlocks($contents)
     {
         preg_match_all(static::BLOCK_CONTENTS_REGEX, $contents, $matches);
         $blocks = array();
@@ -72,16 +118,9 @@ class TemplateService
         return $blocks;
     }
 
-    protected function getParentTitle($contents)
+    private function getBlockRegexByTitle($title)
     {
-        preg_match(static::EXTENDS_REGEX, $contents, $parent);
-
-        return empty($parent) ? null : $parent[1];
-    }
-
-    protected function getBlockRegexByTitle($title)
-    {
-        return str_replace('_title_', $title, static::BLOCK_BY_TITLE_REGEX);
+        return str_replace(static::TITLE_PLACEHOLDER, $title, static::BLOCK_BY_TITLE_REGEX);
     }
 
 }
