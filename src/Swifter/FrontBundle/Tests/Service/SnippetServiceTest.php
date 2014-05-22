@@ -2,7 +2,6 @@
 
 namespace Swifter\FrontBundle\Tests\Service;
 
-use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Swifter\CommonBundle\Entity\Page;
 use Swifter\CommonBundle\Entity\PageBlock;
 use Swifter\CommonBundle\Entity\Snippet;
@@ -27,7 +26,7 @@ class SnippetServiceTest extends \PHPUnit_Framework_TestCase
     const SNIPPET_METHOD = 'getPages';
     const SNIPPET_PARAMS = '{"start":2,"end":5}';
 
-    public function testShouldLeavePageBlockWithChangesIfNoSnippets()
+    public function testShouldLeavePageBlockWithNoChangesIfNoSnippets()
     {
         /* Given. */
         $pageBlockContent = 'Page block content with no snippets.';

@@ -1,0 +1,9 @@
+{% extends "parent" %}
+{% block first %}
+    child first
+{% endblock %}
+
+{% block second %}
+    {{ parent() }}
+    child second
+{% endblock %}

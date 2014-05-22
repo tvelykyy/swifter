@@ -2,7 +2,7 @@
 
 namespace Swifter\CommonBundle\Service;
 
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
 class TemplateService
 {
@@ -33,7 +33,7 @@ class TemplateService
         return $contents;
     }
 
-    private function getPath($templateName)
+    public function getPath($templateName)
     {
         $parser = $this->container->get('templating.name_parser');
         $locator = $this->container->get('templating.locator');
@@ -44,7 +44,6 @@ class TemplateService
     private function mergeWithParentIfHas($contents)
     {
         $parent = $this->getParentTitle($contents);
-
         if ($parent) {
             $contents = $this->mergeWithParent($contents, $parent);
         }
