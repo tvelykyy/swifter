@@ -39,3 +39,9 @@ admin_retrieve_pages:
     pattern:  /admin/pages
     defaults: { _controller: admin.controller.pages:retrievePagesAction }
     methods:  [GET]
+
+#Templates
+admin_get_complete_template:
+    pattern:  /admin/templates/{id}
+    defaults: { _controller: admin.controller.templates:getCompleteTemplateAction }
+    methods: [GET]

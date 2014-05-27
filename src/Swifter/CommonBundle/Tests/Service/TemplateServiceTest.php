@@ -19,7 +19,7 @@ namespace Swifter\CommonBundle\Tests\Service;
  *
  * + goes for current block content.
  * ++ goes for current block content and parent block content.
- * - means that current block doesn't overrides parent block.
+ * - means that current block doesn't override parent block.
  * x means that template isn't used in test.
  */
 class TemplateServiceTest extends \PHPUnit_Framework_TestCase

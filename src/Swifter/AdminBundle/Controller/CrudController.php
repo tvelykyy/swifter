@@ -4,17 +4,15 @@ namespace Swifter\AdminBundle\Controller;
 
 use Swifter\AdminBundle\Service\ResponseService;
 use Swifter\AdminBundle\Service\SerializationService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class CrudController extends Controller
+abstract class CrudController extends BaseController
 {
-    protected $responseService;
     protected $serializationService;
 
     public function __construct(ResponseService $responseService, SerializationService $serializationService)
     {
-        $this->responseService = $responseService;
+        parent::__constructor($responseService);
         $this->serializationService = $serializationService;
     }
 

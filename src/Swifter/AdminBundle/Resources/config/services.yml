@@ -5,6 +5,7 @@ parameters:
     admin.controller.landing.class:       Swifter\AdminBundle\Controller\LandingController
     admin.controller.blocks.class:        Swifter\AdminBundle\Controller\BlocksController
     admin.controller.pages.class:         Swifter\AdminBundle\Controller\PagesController
+    admin.controller.templates.class:    Swifter\AdminBundle\Controller\TemplatesController
 
 services:
     admin.service.response:
@@ -13,6 +14,12 @@ services:
     admin.service.serialization:
         class: %admin.service.serialization.class%
         arguments: ["@service_container"]
+
+    admin.controller.templates:
+        class: %admin.controller.templates.class%
+        arguments: ["@common.service.template", "@admin.service.response"]
+        calls:
+            -  [setContainer, ["@service_container"]]
 
     admin.controller.login:
         class: %admin.controller.login.class%
