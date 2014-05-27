@@ -12,7 +12,7 @@ abstract class CrudController extends BaseController
 
     public function __construct(ResponseService $responseService, SerializationService $serializationService)
     {
-        parent::__constructor($responseService);
+        parent::__construct($responseService);
         $this->serializationService = $serializationService;
     }
 
