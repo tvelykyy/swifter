@@ -9,7 +9,7 @@ abstract class BaseController extends Controller
 {
     protected $responseService;
 
-    protected function __construct(ResponseService $responseService)
+    public function __construct(ResponseService $responseService)
     {
         $this->responseService = $responseService;
     }

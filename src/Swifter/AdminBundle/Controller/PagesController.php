@@ -9,6 +9,11 @@ class PagesController extends CrudController
         return $this->render('SwifterAdminBundle::pages_list.html.twig', array('title' => 'Pages Management'));
     }
 
+    public function renderPageFormAction()
+    {
+        return $this->render('SwifterAdminBundle::page_form.html.twig', array('title' => 'Pages Form'));
+    }
+
     public function retrievePagesAction()
     {
         $pages = $this->getDoctrine()
