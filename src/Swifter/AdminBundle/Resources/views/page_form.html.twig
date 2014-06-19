@@ -2,11 +2,11 @@
 
 {%  block main_content %}
     <div class="box-content">
-        <form class="form-inline">
+        <form class="form-inline" data-bind="with: page">
             <div class="control-group">
                 <label class="control-label" for="name">Name</label>
                 <div class="controls">
-                    <input id="name" class="input-xlarge focused" type="text">
+                    <input id="name" class="input-xlarge focused" type="text" data-bind="value: name"/>
                 </div>
             </div>
             <div class="control-group">
@@ -14,24 +14,31 @@
                 <div class="controls">
                     <div class="input-prepend">
                         <span class="add-on">/swifter/</span>
-                        <input id="uri" type="text" size="16">
+                        <input id="uri" type="text" size="16" data-bind="value: uri"/>
                     </div>
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" for="selectError">Modern Select</label>
+                <label class="control-label" for="parent">Parent Page</label>
                 <div class="controls">
-                    <select id="selectError" data-rel="chosen">
-                        <option>Option 1</option>
-                        <option>Option 2</option>
-                        <option>Option 3</option>
-                        <option>Option 4</option>
-                        <option>Option 5</option>
+                    <select id="parent" data-rel="chosen" data-bind="options: $parent.availablePages,
+                        optionsText: 'name',
+                        optionsValue: 'id',
+                        value: parent,
+                        optionsCaption: 'Choose...'">
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="template">Template</label>
+                <div class="controls">
+                    <select id="template" data-rel="chosen">
+                        <option value="1">Main</option>
                     </select>
                 </div>
             </div>
         </form>
-        <a id="add-block-button" class="btn btn-success" href="javascript:;"><i class="icon-plus-sign icon-white"></i>Add</a>
+        <a id="add-block-button" class="btn btn-success" href="javascript:;" data-bind="click: savePage"><i class="icon-plus-sign icon-white"></i>Add</a>
     </div>
 {% endblock %}
 
@@ -39,10 +46,9 @@
     {{ parent() }}
     <script>
         var Page = function(data) {
-            this.id = ko.observable();
             this.name = ko.observable();
             this.uri = ko.observable();
-            this.templateTitle = ko.observable();
+            this.parent = ko.observable();
 
             if (data) {
                 this.update(data);
@@ -50,24 +56,32 @@
         }
 
         Page.prototype.update = function(data) {
-            this.id(data.id);
             this.name(data.name);
             this.uri(data.uri);
-            this.templateTitle(data.template.title);
+            this.parent(data.parent.id)
         };
 
-        var PageModel = function(pages) {
+        var PageModel = function(data) {
             var self = this;
 
-            self.pages = ko.observableArray(ko.utils.arrayMap(pages, function(data) {
-                return new Page(data);
-            }));
+            self.page = ko.observable();
+            self.page(new Page(data));
+
+            self.savePage = function() {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ path('admin_save_block') }}',
+                    data: ko.toJSON(self.page())
+                });
+            };
+
+            self.availablePages = ko.observableArray([
+                {id: 1, name: 'Main'}, {id: 2, name: 'News'}, {id: 3, name: 'News First'}
+            ]);
         };
 
-        $.get('{{ path('admin_retrieve_pages') }}')
-            .done(function( data ) {
-                ko.applyBindings(new PageModel(data));
-            }
-        );
+        var pageModel = new PageModel();
+        ko.applyBindings(pageModel);
+
     </script>
 {% endblock %}
