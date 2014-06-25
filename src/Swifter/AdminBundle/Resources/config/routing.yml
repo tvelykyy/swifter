@@ -45,6 +45,11 @@ admin_retrieve_pages:
     defaults: { _controller: admin.controller.pages:retrievePagesAction }
     methods:  [GET]
 
+admin_save_page:
+    pattern:  /admin/pages
+    defaults: { _controller: admin.controller.pages:savePageAction }
+    methods:  [POST]
+
 #Templates
 admin_get_complete_template:
     pattern:  /admin/templates/{id}

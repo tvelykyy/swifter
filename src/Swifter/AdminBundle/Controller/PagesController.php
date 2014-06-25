@@ -4,6 +4,8 @@ namespace Swifter\AdminBundle\Controller;
 
 class PagesController extends CrudController
 {
+    const PAGE_CLASS = 'Swifter\CommonBundle\Entity\Page';
+
     public function renderManagePageAction()
     {
         return $this->render('SwifterAdminBundle::pages_list.html.twig', array('title' => 'Pages Management'));
@@ -23,6 +25,23 @@ class PagesController extends CrudController
         $jsonPages = $this->serializationService->serializeToJsonByGroup($pages, 'list');
 
         return $this->responseService->generateJsonResponse($jsonPages);
+    }
+
+    public function savePageAction()
+    {
+        $page = $this->serializationService->deserializeFromJson($this->get('request')->getContent(), static::PAGE_CLASS);
+
+        $errors = $this->validate($page);
+
+        if (count($errors) > 0) {
+            $response = $this->responseService->generateErrorsJsonResponse($errors);
+        }
+        else
+        {
+            $response = $this->saveAndGenerateResponse($page);
+        }
+
+        return $response;
     }
 
 }

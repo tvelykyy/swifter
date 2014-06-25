@@ -20,19 +20,20 @@
             </div>
             <div class="control-group">
                 <label class="control-label" for="parent">Parent Page</label>
-                <div class="controls">
-                    <select id="parent" data-rel="chosen" data-bind="options: $parent.availablePages,
+                <div class="controls" data-bind="with: parent">
+                    <select id="parent" data-rel="chosen" data-bind="
+                        options: $parents[1].availableParents,
                         optionsText: 'name',
                         optionsValue: 'id',
-                        value: parent,
+                        value: id,
                         optionsCaption: 'Choose...'">
                     </select>
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label" for="template">Template</label>
-                <div class="controls">
-                    <select id="template" data-rel="chosen">
+                <div class="controls" data-bind="with: template">
+                    <select id="template" data-rel="chosen" data-bind="value: id">
                         <option value="1">Main</option>
                     </select>
                 </div>
@@ -48,7 +49,9 @@
         var Page = function(data) {
             this.name = ko.observable();
             this.uri = ko.observable();
-            this.parent = ko.observable();
+            this.parent = ko.observable({id: null});
+            this.template = ko.observable({id: null});
+//            this.parent = ko.observable();
 
             if (data) {
                 this.update(data);
@@ -58,7 +61,8 @@
         Page.prototype.update = function(data) {
             this.name(data.name);
             this.uri(data.uri);
-            this.parent(data.parent.id)
+            this.parent(data.parent)
+            this.template(data.template)
         };
 
         var PageModel = function(data) {
@@ -70,12 +74,12 @@
             self.savePage = function() {
                 $.ajax({
                     type: 'POST',
-                    url: '{{ path('admin_save_block') }}',
+                    url: '{{ path('admin_save_page') }}',
                     data: ko.toJSON(self.page())
                 });
             };
 
-            self.availablePages = ko.observableArray([
+            self.availableParents = ko.observableArray([
                 {id: 1, name: 'Main'}, {id: 2, name: 'News'}, {id: 3, name: 'News First'}
             ]);
         };

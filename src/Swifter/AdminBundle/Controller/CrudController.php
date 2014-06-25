@@ -29,7 +29,7 @@ abstract class CrudController extends BaseController
 
     protected function createAndGenerate201Response($entity)
     {
-        $this->doWithEntity('persist', $entity);
+        $this->doWithEntity('merge', $entity);
         $responseBody = $entity->getId();
 
         return $this->responseService->generateJsonResponse($responseBody, Response::HTTP_CREATED);
