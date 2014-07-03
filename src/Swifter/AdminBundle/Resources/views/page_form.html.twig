@@ -2,44 +2,64 @@
 
 {%  block main_content %}
     <div class="box-content">
-        <form class="form-inline" data-bind="with: page">
-            <div class="control-group">
-                <label class="control-label" for="name">Name</label>
-                <div class="controls">
-                    <input id="name" class="input-xlarge focused" type="text" data-bind="value: name"/>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="uri">Uri</label>
-                <div class="controls">
-                    <div class="input-prepend">
-                        <span class="add-on">/swifter/</span>
-                        <input id="uri" type="text" size="16" data-bind="value: uri"/>
+        <div>
+            <div class="pull-left">
+                <form class="form-inline" data-bind="with: page">
+                    <div class="control-group">
+                        <label class="control-label" for="name">Name</label>
+                        <div class="controls">
+                            <input id="name" class="input-xlarge focused" type="text" data-bind="value: name"/>
+                        </div>
                     </div>
-                </div>
+                    <div class="control-group">
+                        <label class="control-label" for="uri">Uri</label>
+                        <div class="controls">
+                            <div class="input-prepend">
+                                <span class="add-on">/swifter/</span>
+                                <input id="uri" type="text" size="16" data-bind="value: uri"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="parent">Parent Page</label>
+                        <div class="controls" data-bind="with: parent">
+                            <select id="parent" data-rel="chosen" data-bind="
+                                options: $parents[1].availableParents,
+                                optionsText: 'name',
+                                optionsValue: 'id',
+                                value: id,
+                                optionsCaption: 'Choose...'">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="template">Template</label>
+                        <div class="controls" data-bind="with: template">
+                            <select id="template" data-rel="chosen" data-bind="
+                                {#event: {change: $parent.loadTemplate},#}
+                                options: $parents[1].availableTemplates,
+                                optionsText: 'name',
+                                optionsValue: 'id',
+                                value: id,
+                                optionsCaption: 'Choose...'">
+                            </select>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="control-group">
-                <label class="control-label" for="parent">Parent Page</label>
-                <div class="controls" data-bind="with: parent">
-                    <select id="parent" data-rel="chosen" data-bind="
-                        options: $parents[1].availableParents,
-                        optionsText: 'name',
-                        optionsValue: 'id',
-                        value: id,
-                        optionsCaption: 'Choose...'">
-                    </select>
-                </div>
+            <div id="template-source">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+                qui officia deserunt mollit anim id est laborum
             </div>
-            <div class="control-group">
-                <label class="control-label" for="template">Template</label>
-                <div class="controls" data-bind="with: template">
-                    <select id="template" data-rel="chosen" data-bind="value: id">
-                        <option value="1">Main</option>
-                    </select>
-                </div>
-            </div>
-        </form>
-        <a id="add-block-button" class="btn btn-success" href="javascript:;" data-bind="click: savePage"><i class="icon-plus-sign icon-white"></i>Add</a>
+        </div>
+        <div class="clear"></div>
+        <div>
+            <a id="add-block-button" class="btn btn-success" href="javascript:;" data-bind="click: savePage"><i class="icon-plus-sign icon-white"></i>Add</a>
+        </div>
     </div>
 {% endblock %}
 
@@ -50,19 +70,30 @@
             this.name = ko.observable();
             this.uri = ko.observable();
             this.parent = ko.observable({id: null});
-            this.template = ko.observable({id: null});
-//            this.parent = ko.observable();
+            this.template = ko.observable({id: ko.observable()});
 
             if (data) {
                 this.update(data);
             }
+
+            this.template().id.subscribe(function(newId) {
+                if (newId) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '{{ path('admin_get_complete_template', {'id': 0}) }}'.replace('0', newId)
+                    })
+                    .done(function(response){
+                        $('#template-source').text(response);
+                    })
+                }
+            });
         }
 
         Page.prototype.update = function(data) {
             this.name(data.name);
             this.uri(data.uri);
             this.parent(data.parent)
-            this.template(data.template)
+            this.template(data.template);
         };
 
         var PageModel = function(data) {
@@ -82,6 +113,12 @@
             self.availableParents = ko.observableArray([
                 {id: 1, name: 'Main'}, {id: 2, name: 'News'}, {id: 3, name: 'News First'}
             ]);
+
+            self.availableTemplates = ko.observableArray([
+                {id: 1, name: 'Main'}, {id: 2, name: 'Uris'}
+            ]);
+
+
         };
 
         var pageModel = new PageModel();
