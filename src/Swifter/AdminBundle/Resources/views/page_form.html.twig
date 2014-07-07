@@ -2,8 +2,8 @@
 
 {%  block main_content %}
     <div class="box-content">
-        <div>
-            <div class="pull-left">
+        <div style="display:table; width:100%">
+            <div style="display:table-cell; width:30%">
                 <form class="form-inline" data-bind="with: page">
                     <div class="control-group">
                         <label class="control-label" for="name">Name</label>
@@ -47,13 +47,17 @@
                     </div>
                 </form>
             </div>
-            <div id="template-source">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
-                qui officia deserunt mollit anim id est laborum
+            <div id="template-source" style="display:table-cell; width:70%">
+                <pre style="font-family: monospace;">
+                    <code>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+                        qui officia deserunt mollit anim id est laborum
+                    </code>
+                </pre>
             </div>
         </div>
         <div class="clear"></div>
@@ -83,7 +87,8 @@
                         url: '{{ path('admin_get_complete_template', {'id': 0}) }}'.replace('0', newId)
                     })
                     .done(function(response){
-                        $('#template-source').text(response);
+                        $('#template-source pre code').text(response);
+                        $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
                     })
                 }
             });
