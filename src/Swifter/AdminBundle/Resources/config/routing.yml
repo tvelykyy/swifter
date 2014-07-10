@@ -50,7 +50,7 @@ admin_save_page:
     defaults: { _controller: admin.controller.pages:savePageAction }
     methods:  [POST]
 
-admin_save_page:
+admin_get_parent_blocks:
     pattern:  /admin/pages/{id}/parent
     defaults: { _controller: admin.controller.pages:getParentAction }
     methods:  [GET]
