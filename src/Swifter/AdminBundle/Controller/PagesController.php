@@ -44,4 +44,16 @@ class PagesController extends CrudController
         return $response;
     }
 
+    public function getParentAction($id)
+    {
+        $page = $this->getDoctrine()
+            ->getRepository('SwifterCommonBundle:Page')
+            ->find($id);
+
+        $parent = $page->getParent();
+        $jsonParent = $this->serializationService->serializeToJsonByGroup($parent, 'parentBlocks');
+
+        return $this->responseService->generateJsonResponse($jsonParent);
+    }
+
 }

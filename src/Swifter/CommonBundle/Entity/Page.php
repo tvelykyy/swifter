@@ -38,14 +38,14 @@ class Page
      * @ORM\OneToOne(targetEntity="Page")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      *
-     * @Groups("details")
+     * @Groups({"details", "parentBlocks"})
      */
     protected $parent;
 
     /**
      * @ORM\OneToMany(targetEntity="PageBlock", mappedBy="page")
      *
-     * @Groups("details")
+     * @Groups({"details", "parentBlocks"})
      **/
     protected $pageBlocks;
 

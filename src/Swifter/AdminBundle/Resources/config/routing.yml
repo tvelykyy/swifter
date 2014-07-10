@@ -50,6 +50,11 @@ admin_save_page:
     defaults: { _controller: admin.controller.pages:savePageAction }
     methods:  [POST]
 
+admin_save_page:
+    pattern:  /admin/pages/{id}/parent
+    defaults: { _controller: admin.controller.pages:getParentAction }
+    methods:  [GET]
+
 #Templates
 admin_get_complete_template:
     pattern:  /admin/templates/{id}

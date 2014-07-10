@@ -17,7 +17,7 @@ class PageBlock
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Groups({"list", "details"})
-     */
+     **/
     protected $id;
 
     /**
@@ -31,15 +31,15 @@ class PageBlock
      * @ORM\ManyToOne(targetEntity="Block")
      * @ORM\JoinColumn(name="block_id", referencedColumnName="id")
      *
-     * @Groups({"list", "details"})
+     * @Groups({"list", "details", "parentBlocks"})
      **/
     protected $block;
 
     /**
      * @ORM\Column(type="text")
      *
-     *  @Groups({"list", "details"})
-     */
+     * @Groups({"list", "details", "parentBlocks"})
+     **/
     protected $content;
 
     public function getId()
