@@ -60,10 +60,10 @@
         </div>
     </div>
     <script type="text/html" id="block-template">
-        <div class="control-group">
+        <div class="control-group" data-bind="with: block">
             <label class="control-label" for="template" data-bind="text: title"></label>
             <div class="controls">
-                <textarea data-bind="value: content" class="autogrow"></textarea>
+                <textarea data-bind="value: $parent.content" class="autogrow"></textarea>
             </div>
         </div>
     </script>
@@ -87,17 +87,27 @@
             self.template().id.subscribe(function(newId) {
                 if (newId) {
                     $.ajax({
-                        type: 'GET',
                         url: '{{ path('admin_get_complete_template', {'id': 0}) }}'.replace('0', newId)
                     })
                     .done(function(response){
                         $('#template-source pre code').text(response);
                         $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
 
-                        var blockTitleRegExp = new RegExp("{" + "{\\s([A-Z]+)[|\\sa-zA-z]*}}", 'g')
+                        var blockTitleRegExp = new RegExp("{" + "{\\s([A-Z_]+)[|\\sa-zA-z]*}}", 'g');
+                        var titles = '';
                         while (match = blockTitleRegExp.exec(response)) {
-                            self.pageBlocks.push({title: match[1], content: match[1]});
+                            titles += match[1] + ';';
                         }
+
+                        $.ajax({
+                            url: '{{ path('admin_get_blocks_by_titles', {'semicolonSeparatedTitles': 0}) }}'.replace('0', titles)
+                        })
+                        .done(function(response){
+                            self.pageBlocks.removeAll();
+                            for(var i in response) {
+                                self.pageBlocks.push({id: null, block: {id: response[i].id, title: response[i].title}, content: null});
+                            }
+                        })
                     })
                 }
             });

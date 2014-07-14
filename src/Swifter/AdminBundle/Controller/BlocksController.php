@@ -2,6 +2,7 @@
 
 namespace Swifter\AdminBundle\Controller;
 
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Component\HttpFoundation\Response;
 
 class BlocksController extends CrudController
@@ -22,7 +23,7 @@ class BlocksController extends CrudController
 
         $jsonBlocks = $this->serializationService->serializeToJsonByGroup($blocks, 'list');
 
-        return $this->responseService->generateJsonResponse($jsonBlocks, Response::HTTP_OK);
+        return $this->responseService->generateJsonResponse($jsonBlocks);
     }
 
     public function saveBlockAction()
@@ -49,6 +50,22 @@ class BlocksController extends CrudController
             ->find($id);
 
         return $this->deleteAndReturn204Response($blockToDelete);
+    }
+
+    public function getBlocksByTitlesAction($semicolonSeparatedTitles)
+    {
+        $titles = explode(';', $semicolonSeparatedTitles);
+
+        $qb = $this->getDoctrine()
+            ->getRepository(static::BLOCK_CLASS_BUNDLE_PREFIX)->createQueryBuilder('b');
+
+        $blocks = $qb->where($qb->expr()->in('b.title', $titles))
+            ->getQuery()
+            ->getResult();
+
+        $jsonBlocks = $this->serializationService->serializeToJsonByGroup($blocks, 'list');
+
+        return $this->responseService->generateJsonResponse($jsonBlocks);
     }
 
 }

@@ -29,6 +29,11 @@ admin_delete_block:
     defaults: { _controller: admin.controller.blocks:deleteBlockAction }
     methods:  [DELETE]
 
+admin_get_blocks_by_titles:
+    pattern:  /admin/blocks/titles/{semicolonSeparatedTitles}
+    defaults: { _controller: admin.controller.blocks:getBlocksByTitlesAction }
+    methods:  [GET]
+
 #Pages
 admin_pages_page:
     pattern:  /admin/manage-pages

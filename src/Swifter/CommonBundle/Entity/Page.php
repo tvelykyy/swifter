@@ -4,6 +4,7 @@ namespace Swifter\CommonBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity
@@ -43,8 +44,8 @@ class Page
     protected $parent;
 
     /**
-     * @ORM\OneToMany(targetEntity="PageBlock", mappedBy="page")
-     *
+     * @ORM\OneToMany(targetEntity="PageBlock", mappedBy="page", cascade={"all"})
+     * @SerializedName("pageBlocks")
      * @Groups({"details", "parentBlocks"})
      **/
     protected $pageBlocks;

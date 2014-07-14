@@ -25,7 +25,7 @@ class Block
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(name="title", type="string", length=50)
      *
      * @Groups({"list", "details", "parentBlocks"})
      *
