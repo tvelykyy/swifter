@@ -179,3 +179,6 @@ CREATE TABLE `user_role` (
 -- ----------------------------
 INSERT INTO `user_role` VALUES ('2', '1');
 INSERT INTO `user_role` VALUES ('1', '2');
+
+
+ALTER TABLE `page` ADD UNIQUE `unique_uri` (`uri`) comment '';
