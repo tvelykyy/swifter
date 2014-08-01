@@ -76,9 +76,10 @@
             var self = this;
             self.name = ko.observable();
             self.uri = ko.observable();
-            self.parent = ko.observable({id: null});
+            self.parent = ko.observable({id: ko.observable()});
             self.template = ko.observable({id: ko.observable()});
             self.pageBlocks = ko.observableArray();
+            self.selectedParentPageBlocks = ko.observableArray();
 
             if (data) {
                 self.update(data);
@@ -105,9 +106,28 @@
                         .done(function(response){
                             self.pageBlocks.removeAll();
                             for(var i in response) {
-                                self.pageBlocks.push({id: null, block: {id: response[i].id, title: response[i].title}, content: null});
+                                var block = response[i];
+                                self.pageBlocks.push({
+                                        id: null,
+                                        block: {id: block.id, title: block.title},
+                                        content: ko.computed(function() {
+                                            return self.selectedParentPageBlocks()[this.id];
+                                        }, block)
+                                    }
+                                );
                             }
                         })
+                    })
+                }
+            });
+
+            self.parent().id.subscribe(function(newId) {
+                if (newId) {
+                    $.ajax({
+                        url: '{{ path('admin_get_page_blocks', {'id': 0}) }}'.replace('0', newId)
+                    })
+                    .done(function(response){
+                        self.selectedParentPageBlocks(response);
                     })
                 }
             });

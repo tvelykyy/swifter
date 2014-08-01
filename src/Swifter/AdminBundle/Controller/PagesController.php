@@ -44,7 +44,7 @@ class PagesController extends CrudController
         return $response;
     }
 
-    public function getParentAction($id)
+    public function getParentBlocksAction($id)
     {
         $page = $this->getDoctrine()
             ->getRepository('SwifterCommonBundle:Page')
@@ -55,5 +55,37 @@ class PagesController extends CrudController
 
         return $this->responseService->generateJsonResponse($jsonParent);
     }
+
+    public function getBlocksAction($id)
+    {
+        $page = $this->getDoctrine()
+            ->getRepository('SwifterCommonBundle:Page')
+            ->find($id);
+
+        $blocks = array();
+
+        $this->appendDeficientBlocks($page->getPageBlocks(), $blocks);
+        $currentPage = $page;
+        while ($currentPage->getParent())
+        {
+            $currentPage = $currentPage->getParent();
+            $this->appendDeficientBlocks($currentPage->getPageBlocks(), $blocks);
+        }
+        $json = json_encode($blocks);
+
+        return $this->responseService->generateJsonResponse($json);
+    }
+
+    private function appendDeficientBlocks($pageBlocks, & $appendTo)
+    {
+        foreach ($pageBlocks as $pageBlock)
+        {
+            if (!isset($appendTo[$pageBlock->getBlock()->getId()]))
+            {
+                $appendTo[$pageBlock->getBlock()->getId()] = $pageBlock->getContent();
+            }
+        }
+    }
+
 
 }
