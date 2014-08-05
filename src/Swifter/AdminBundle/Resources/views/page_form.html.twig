@@ -62,8 +62,14 @@
     <script type="text/html" id="block-template">
         <div class="control-group" data-bind="with: block">
             <label class="control-label" for="template" data-bind="text: title"></label>
+            <div class="checkbox" style="float: right; padding-right:100px">
+                <label>
+                    <input type="checkbox" data-bind="checked: $parent.override">
+                    Override
+                </label>
+            </div>
             <div class="controls">
-                <textarea data-bind="value: $parent.content" class="autogrow"></textarea>
+                <textarea data-bind="value: $parent.tempContent, enable: $parent.override" class="autogrow"></textarea>
             </div>
         </div>
     </script>
@@ -87,6 +93,7 @@
 
             self.template().id.subscribe(function(newId) {
                 if (newId) {
+                    self.pageBlocks.removeAll();
                     $.ajax({
                         url: '{{ path('admin_get_complete_template', {'id': 0}) }}'.replace('0', newId)
                     })
@@ -104,17 +111,27 @@
                             url: '{{ path('admin_get_blocks_by_titles', {'semicolonSeparatedTitles': 0}) }}'.replace('0', titles)
                         })
                         .done(function(response){
-                            self.pageBlocks.removeAll();
                             for(var i in response) {
                                 var block = response[i];
-                                self.pageBlocks.push({
+                                self.pageBlocks.push((function(){
+                                     var pageBlock = {
                                         id: null,
                                         block: {id: block.id, title: block.title},
-                                        content: ko.computed(function() {
-                                            return self.selectedParentPageBlocks()[this.id];
-                                        }, block)
+                                        content: ko.observable(),
+                                        override: ko.observable(false)
                                     }
-                                );
+                                    pageBlock.tempContent = ko.computed({
+                                        read: function() {
+                                            return self.selectedParentPageBlocks()[this.block.id];
+                                        },
+                                        write: function(newValue) {
+                                            this.content(newValue);
+                                        },
+                                        owner: pageBlock
+                                    });
+
+                                    return pageBlock;
+                                })());
                             }
                         })
                     })
@@ -140,6 +157,17 @@
             this.template(data.template);
             this.pageBlocks(data.pageBlocks);
         };
+
+        Page.prototype.toJSON = function() {
+            var page = ko.toJS(this);
+            delete page.selectedParentPageBlocks;
+
+            page.pageBlocks = $.grep(page.pageBlocks, function(block){
+                return block.override;
+            });
+
+            return page;
+        }
 
         var PageModel = function(data) {
             var self = this;
