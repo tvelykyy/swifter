@@ -17,7 +17,7 @@ class Block
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"list", "details", "parentBlocks"})
+     * @Groups({"list", "details", "page-no-parent-template"})
      *
      * @Assert\Type(type="integer")
      * @Assert\GreaterThan(value=0)
@@ -27,7 +27,7 @@ class Block
     /**
      * @ORM\Column(name="title", type="string", length=50)
      *
-     * @Groups({"list", "details", "parentBlocks"})
+     * @Groups({"list", "details", "page-no-parent-template"})
      *
      * @Assert\Type(type="string")
      * @Assert\NotBlank

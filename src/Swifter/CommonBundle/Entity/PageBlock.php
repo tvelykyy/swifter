@@ -16,7 +16,7 @@ class PageBlock
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"list", "details"})
+     * @Groups({"list", "details", "page-no-parent-template"})
      **/
     protected $id;
 
@@ -31,14 +31,14 @@ class PageBlock
      * @ORM\ManyToOne(targetEntity="Block")
      * @ORM\JoinColumn(name="block_id", referencedColumnName="id")
      *
-     * @Groups({"list", "details", "parentBlocks"})
+     * @Groups({"list", "page-no-parent-template"})
      **/
     protected $block;
 
     /**
      * @ORM\Column(type="text")
      *
-     * @Groups({"list", "details", "parentBlocks"})
+     * @Groups({"list", "page-no-parent-template"})
      **/
     protected $content;
 

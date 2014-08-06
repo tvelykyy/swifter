@@ -1,7 +1,11 @@
 parameters:
     common.service.template.class: Swifter\CommonBundle\Service\TemplateService
+    common.service.pageBlock.class: Swifter\CommonBundle\Service\PageBlockService
 
 services:
     common.service.template:
         class: %common.service.template.class%
         arguments: ["@service_container"]
+
+    common.service.pageBlock:
+        class: %common.service.pageBlock.class%

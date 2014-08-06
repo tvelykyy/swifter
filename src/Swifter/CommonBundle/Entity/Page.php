@@ -17,21 +17,21 @@ class Page
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"list", "details"})
+     * @Groups({"list", "page-no-parent-template"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=50)
      *
-     * @Groups({"list", "details"})
+     * @Groups({"list", "page-no-parent-template"})
      */
     protected $name;
 
     /**
      * @ORM\Column(type="string", length=200)
      *
-     * @Groups({"list", "details"})
+     * @Groups({"list", "page-no-parent-template"})
      */
     protected $uri;
 
@@ -39,14 +39,14 @@ class Page
      * @ORM\OneToOne(targetEntity="Page")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      *
-     * @Groups({"details", "parentBlocks"})
+     * @Groups({"details"})
      */
     protected $parent;
 
     /**
      * @ORM\OneToMany(targetEntity="PageBlock", mappedBy="page", cascade={"all"})
      * @SerializedName("pageBlocks")
-     * @Groups({"details", "parentBlocks"})
+     * @Groups({"details", "page-no-parent-template"})
      **/
     protected $pageBlocks;
 

@@ -39,6 +39,7 @@ services:
 
     admin.controller.pages:
         class: %admin.controller.pages.class%
-        arguments: ["@admin.service.response", "@admin.service.serialization"]
+        arguments: ["@admin.service.response", "@admin.service.serialization", "@common.service.pageBlock"]
         calls:
             -  [setContainer, ["@service_container"]]
+

@@ -55,11 +55,6 @@ admin_save_page:
     defaults: { _controller: admin.controller.pages:savePageAction }
     methods:  [POST]
 
-admin_get_page_parent_blocks:
-    pattern:  /admin/pages/{id}/parent/blocks
-    defaults: { _controller: admin.controller.pages:getParentBlocksAction }
-    methods:  [GET]
-
 admin_get_page_blocks:
     pattern:  /admin/pages/{id}/blocks
     defaults: { _controller: admin.controller.pages:getBlocksAction }

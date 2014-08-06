@@ -14,7 +14,7 @@ services:
 
     front.controller.dispatcher:
         class: %front.controller.dispatcher.class%
-        arguments: ["@twig", "@front.service.snippet"]
+        arguments: ["@twig", "@front.service.snippet", "@common.service.pageBlock"]
         calls:
             -  [setContainer, ["@service_container"]]
 

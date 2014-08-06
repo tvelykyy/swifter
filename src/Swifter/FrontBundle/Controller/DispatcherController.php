@@ -2,20 +2,22 @@
 
 namespace Swifter\FrontBundle\Controller;
 
+use Swifter\CommonBundle\Service\PageBlockService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Swifter\FrontBundle\Service\SnippetService;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class DispatcherController extends Controller
 {
     protected $twig;
     protected $snippetService;
+    protected $pageBlockService;
 
-    public function __construct(\Twig_Environment $twig, SnippetService $snippetService)
+    public function __construct(\Twig_Environment $twig, SnippetService $snippetService, PageBlockService $pageBlockService)
     {
         $this->twig = $twig;
         $this->snippetService = $snippetService;
+        $this->pageBlockService = $pageBlockService;
     }
 
     public function indexAction($uri, Request $request)
@@ -29,51 +31,17 @@ class DispatcherController extends Controller
             throw $this->createNotFoundException('Page not found.');
         }
 
-        $this->mergePageBlocksWithParents($page);
+        $this->pageBlockService->mergePageBlocksWithParents($page);
         $queryParams = $request->query->all();
         $this->snippetService->resolveSnippetsForPage($page, $queryParams);
         $blocks = $this->convertPageBlocksToAssociativeArray($page->getPageBlocks());
 
-//        print_r($this->container->get('common.service.template')->getCompleteTemplate('SwifterFrontBundle:DevTest:pages.html.twig'));
         return $this->render($page->getTemplate()->getPath(), $blocks);
     }
 
     private function leadWithSlash($uri)
     {
         return '/'.$uri;
-    }
-
-    private function mergePageBlocksWithParents($page)
-    {
-        $mergedPageBlocks = $page->getPageBlocks();
-        $parent = $page->getParent();
-
-        while (isset($parent))
-        {
-            $deficientPageBlocks = $this->getDeficientBlocksFromParent($parent, $mergedPageBlocks);
-            $mergedPageBlocks = new ArrayCollection(array_merge($mergedPageBlocks->toArray(), $deficientPageBlocks->toArray()));
-            $parent = $parent->getParent();
-        }
-
-        $page->setPageBlocks($mergedPageBlocks);
-    }
-
-    /**
-     * Deficient blocks mean that it is absent in page block mapping. If pageBlock exists in current page and parent page
-     * it would not be treated as deficient and would not be returned.
-     */
-    private function getDeficientBlocksFromParent($parent, $childPageBlocks)
-    {
-        $deficientBlocks = $parent->getPageBlocks()->filter(
-            function ($pageBlock) use ($childPageBlocks) {
-                return !$childPageBlocks->exists(
-                    function ($index, $childPageBlock) use ($pageBlock) {
-                        return $childPageBlock->getBlock()->getTitle() === $pageBlock->getBlock()->getTitle();
-                    }
-                );
-            }
-        );
-        return $deficientBlocks;
     }
 
     private function convertPageBlocksToAssociativeArray($pageBlocks)
