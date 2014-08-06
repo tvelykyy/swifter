@@ -15,8 +15,8 @@
                         <label class="control-label" for="uri">Uri</label>
                         <div class="controls">
                             <div class="input-prepend">
-                                <span class="add-on">/swifter/</span>
-                                <input type="text" size="16" data-bind="value: uri"/>
+                                <span class="add-on" data-bind="text: parentUri"></span>
+                                <input type="text" size="16" data-bind="value: pageUri"/>
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,11 @@
         var Page = function(data) {
             var self = this;
             self.name = ko.observable();
-            self.uri = ko.observable();
+            self.parentUri = ko.observable();
+            self.pageUri = ko.observable();
+            self.uri = ko.computed(function() {
+                return self.parentUri() + self.pageUri();
+            });
             self.parent = ko.observable({id: ko.observable()});
             self.template = ko.observable({id: ko.observable()});
             self.pageBlocks = ko.observableArray();
@@ -150,6 +154,11 @@
                     })
                     .done(function(response){
                         self.parentPageBlocks(response.pageBlocks);
+
+                        if (response.uri != '/') {
+                            response.uri = response.uri + '/';
+                        }
+                        self.parentUri(response.uri);
                     })
                 }
             });
@@ -166,6 +175,8 @@
         Page.prototype.toJSON = function() {
             var page = ko.toJS(this);
             delete page.parentPageBlocks;
+            delete page.parentUri;
+            delete page.pageUri;
 
             page.pageBlocks = $.grep(page.pageBlocks, function(block){
                 return block.override;
