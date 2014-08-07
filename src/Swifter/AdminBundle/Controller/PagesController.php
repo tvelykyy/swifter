@@ -9,6 +9,7 @@ use Swifter\CommonBundle\Service\PageBlockService;
 class PagesController extends CrudController
 {
     const PAGE_CLASS = 'Swifter\CommonBundle\Entity\Page';
+    const PAGE_CLASS_BUNDLE_NOTATION = 'SwifterCommonBundle:Page';
 
     protected $pageBlockService;
 
@@ -32,7 +33,7 @@ class PagesController extends CrudController
     public function retrievePagesAction()
     {
         $pages = $this->getDoctrine()
-            ->getRepository('SwifterCommonBundle:Page')
+            ->getRepository(static::PAGE_CLASS_BUNDLE_NOTATION)
             ->findAll();
 
         $jsonPages = $this->serializationService->serializeToJsonByGroup($pages, 'list');
@@ -60,12 +61,27 @@ class PagesController extends CrudController
     public function getBlocksAction($id)
     {
         $page = $this->getDoctrine()
-            ->getRepository('SwifterCommonBundle:Page')
+            ->getRepository(static::PAGE_CLASS_BUNDLE_NOTATION)
             ->find($id);
 
         $this->pageBlockService->mergePageBlocksWithParents($page);
 
         $json = $this->serializationService->serializeToJsonByGroup($page, 'page-no-parent-template');
+
+        return $this->responseService->generateJsonResponse($json);
+    }
+
+    public function getPagesByNameLike($name)
+    {
+        $pages = $this->getDoctrine()
+            ->getRepository(static::PAGE_CLASS_BUNDLE_NOTATION)
+            ->createQueryBuilder('p')
+            ->where('p.name LIKE :name')
+            ->setParameter('name', '%'.$name.'%')
+            ->getQuery()
+            ->getResult();
+
+        $json = $this->serializationService->serializeToJsonByGroup($pages, 'list');
 
         return $this->responseService->generateJsonResponse($json);
     }

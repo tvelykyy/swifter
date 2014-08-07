@@ -60,6 +60,11 @@ admin_get_page_blocks:
     defaults: { _controller: admin.controller.pages:getBlocksAction }
     methods:  [GET]
 
+admin_get_pages_by_title_like:
+    pattern:  /admin/pages/name/{name}
+    defaults: { _controller: admin.controller.pages:getPagesByNameLike }
+    methods:  [GET]
+
 #Templates
 admin_get_complete_template:
     pattern:  /admin/templates/{id}
