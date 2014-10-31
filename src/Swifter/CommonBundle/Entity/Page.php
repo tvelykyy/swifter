@@ -17,14 +17,14 @@ class Page
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"list", "page-no-parent-template"})
+     * @Groups({"basic", "list", "page-no-parent-template"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=50)
      *
-     * @Groups({"list", "page-no-parent-template"})
+     * @Groups({"basic", "list", "page-no-parent-template"})
      */
     protected $name;
 

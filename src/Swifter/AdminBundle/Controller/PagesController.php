@@ -81,7 +81,7 @@ class PagesController extends CrudController
             ->getQuery()
             ->getResult();
 
-        $json = $this->serializationService->serializeToJsonByGroup($pages, 'list');
+        $json = $this->serializationService->serializeToJsonByGroup($pages, 'basic');
 
         return $this->responseService->generateJsonResponse($json);
     }

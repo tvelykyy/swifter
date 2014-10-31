@@ -22,7 +22,7 @@
                     </div>
                     <div class="control-group">
                         <label class="control-label" for="parent">Parent Page</label>
-                        <div class="controls" data-bind="with: parent">
+                        <div class="controls parent-page" data-bind="with: parent">
                             <select data-rel="chosen" data-bind="
                                 options: $parents[1].availableParents,
                                 optionsText: 'name',
@@ -199,9 +199,7 @@
                 });
             };
 
-            self.availableParents = ko.observableArray([
-                {id: 1, name: 'Main'}, {id: 2, name: 'News'}, {id: 3, name: 'News First'}
-            ]);
+            self.availableParents = ko.observableArray();
 
             self.availableTemplates = ko.observableArray([
                 {id: 1, name: 'Main'}, {id: 2, name: 'Uris'}
@@ -216,17 +214,26 @@
         $(document).ready(function() {
             var delay = (function(){
                 var timer = 0;
-                return function(callback, ms){
+                return function(callback, ms, params){
                     clearTimeout (timer);
-                    timer = setTimeout(callback, ms);
-                };
+                    timer = setTimeout(function() {callback(params)}, ms);
+                }
             })();
 
 
-            $('.chzn-search input').keyup(function() {
-                delay(function(){
-                    console.log('how how how');
-                }, 1000 );
+            $('.parent-page input').keyup(function() {
+                delay(function(name){
+                    $.ajax({
+                        url: '{{ path('admin_get_pages_by_title_like', {'name': 0}) }}'.replace('0', name)
+                    })
+                    .done(function(response){
+                        pageModel.availableParents.removeAll();
+                        for (var i in response) {
+                            pageModel.availableParents.push(response[i]);
+                        }
+                        $('.parent-page [data-rel="chosen"]').trigger("liszt:updated");
+                    });
+                }, 1000, $(this).val());
             });
         });
     </script>
