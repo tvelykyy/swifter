@@ -24,14 +24,14 @@ class Page
     /**
      * @ORM\Column(type="string", length=50)
      *
-     * @Groups({"basic", "list", "page-no-parent-template"})
+     * @Groups({"basic", "list", "details", "page-no-parent-template"})
      */
     protected $name;
 
     /**
      * @ORM\Column(type="string", length=200)
      *
-     * @Groups({"list", "page-no-parent-template"})
+     * @Groups({"list", "details", "page-no-parent-template"})
      */
     protected $uri;
 

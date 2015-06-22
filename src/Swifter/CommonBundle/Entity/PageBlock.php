@@ -31,14 +31,14 @@ class PageBlock
      * @ORM\ManyToOne(targetEntity="Block")
      * @ORM\JoinColumn(name="block_id", referencedColumnName="id")
      *
-     * @Groups({"list", "page-no-parent-template"})
+     * @Groups({"list", "details", "page-no-parent-template"})
      **/
     protected $block;
 
     /**
      * @ORM\Column(type="text")
      *
-     * @Groups({"list", "page-no-parent-template"})
+     * @Groups({"list", "details", "page-no-parent-template"})
      **/
     protected $content;
 

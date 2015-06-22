@@ -90,7 +90,7 @@ class SerializationServiceTest extends WebTestCase
         /* Given. */
         $expectedJson = '{"name":"'. self::PAGE_NAME_1 .'","uri":"'. self::PAGE_URI_1 .'",'.
             '"parent":{"name":"'. self::PAGE_NAME_2 .'","uri":"'. self::PAGE_URI_2 .'"},'.
-            '"page_blocks":[{"block":{"title":"'. self::BLOCK_TITLE_1 .'"},"content":"'. self::PAGE_BLOCK_CONTENT_1 .'"}],'.
+            '"pageBlocks":[{"block":{"title":"'. self::BLOCK_TITLE_1 .'"},"content":"'. self::PAGE_BLOCK_CONTENT_1 .'"}],'.
             '"template":{"title":"'. self::TEMPLATE_TITLE_1. '","path":"'. self::TEMPLATE_PATH_1 .'"}}';
 
         $page = $this->initFullPage();
@@ -107,7 +107,7 @@ class SerializationServiceTest extends WebTestCase
         /* Given. */
         $json = '{"id":"'. self::PAGE_ID_1 .'","name":"'. self::PAGE_NAME_1 .'","uri":"'. self::PAGE_URI_1 .'",'.
             '"parent":{"name":"'. self::PAGE_NAME_2 .'","uri":"'. self::PAGE_URI_2 .'"},'.
-            '"page_blocks":[{"id":"'. self::PAGE_BLOCK_ID_1 .'","block":{"title":"'. self::BLOCK_TITLE_1 .'"},"content":"'. self::PAGE_BLOCK_CONTENT_1 .'"}],'.
+            '"pageBlocks":[{"id":"'. self::PAGE_BLOCK_ID_1 .'","block":{"title":"'. self::BLOCK_TITLE_1 .'"},"content":"'. self::PAGE_BLOCK_CONTENT_1 .'"}],'.
             '"template":{"id":"'. self::TEMPLATE_ID_1 .'","title":"'. self::TEMPLATE_TITLE_1. '","path":"'. self::TEMPLATE_PATH_1 .'"}}';
 
         /* When */
@@ -186,7 +186,5 @@ class SerializationServiceTest extends WebTestCase
 
         return $block;
     }
-
-
 
 }
