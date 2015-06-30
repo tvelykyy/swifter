@@ -195,7 +195,10 @@
                 $.ajax({
                     type: 'POST',
                     url: '{{ path('admin_save_page') }}',
-                    data: ko.toJSON(self.page())
+                    data: ko.toJSON(self.page()),
+                    success: function() {
+                        window.location.replace('{{ path('admin_pages_page') }}');
+                    }
                 });
             };
 
