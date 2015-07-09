@@ -17,7 +17,7 @@ class Page
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"basic", "list", "page-no-parent-template"})
+     * @Groups({"basic", "list", "details", "page-no-parent-template"})
      */
     protected $id;
 

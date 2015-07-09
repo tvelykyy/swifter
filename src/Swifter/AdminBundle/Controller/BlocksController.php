@@ -49,7 +49,7 @@ class BlocksController extends CrudController
             ->getRepository(self::BLOCK_CLASS_BUNDLE_PREFIX)
             ->find($id);
 
-        return $this->deleteAndReturn204Response($blockToDelete);
+        return $this->deleteAndGenerate204Response($blockToDelete);
     }
 
     public function getBlocksByTitlesAction($semicolonSeparatedTitles)

@@ -18,13 +18,13 @@
                 <td data-bind="text: uri" class="center"></td>
                 <td data-bind="text: templateTitle" class="center"></td>
                 <td>
-                    <a class="btn btn-info edit" href="javascript:;"><i class="icon-edit icon-white"></i>Edit</a>
+                    <a data-bind="click: $parent.editPage" class="btn btn-info edit" href="javascript:;"><i class="icon-edit icon-white"></i>Edit</a>
                     <a class="btn btn-danger delete" href="javascript:;"><i class="icon-trash icon-white"></i>Delete</a>
                 </td>
             </tr>
             </tbody>
         </table>
-        <a id="add-block-button" class="btn btn-success" href="{{ path('admin_page_form') }}"><i class="icon-plus-sign icon-white"></i>Add</a>
+        <a id="add-block-button" class="btn btn-success" href="{{ path('admin_add_page_form') }}"><i class="icon-plus-sign icon-white"></i>Add</a>
     </div>
 {% endblock %}
 
@@ -55,6 +55,10 @@
             self.pages = ko.observableArray(ko.utils.arrayMap(pages, function(data) {
                 return new Page(data);
             }));
+
+            self.editPage = function(page) {
+                window.location.replace('{{ path('admin_edit_page_form', {'id': 0}) }}'.replace('0', page.id()));
+            }
         };
 
         $.get('{{ path('admin_retrieve_pages') }}')

@@ -42,7 +42,7 @@ abstract class CrudController extends BaseController
         return $this->responseService->generateEmptyResponse(Response::HTTP_NO_CONTENT);
     }
 
-    protected function deleteAndReturn204Response($entity)
+    protected function deleteAndGenerate204Response($entity)
     {
         $this->doWithEntity('remove', $entity);
 

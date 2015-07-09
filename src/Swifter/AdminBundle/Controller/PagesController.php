@@ -25,9 +25,19 @@ class PagesController extends CrudController
         return $this->render('SwifterAdminBundle::pages_list.html.twig', array('title' => 'Pages Management'));
     }
 
-    public function renderPageFormAction()
+    public function renderAddPageFormAction()
     {
         return $this->render('SwifterAdminBundle::page_form.html.twig', array('title' => 'Pages Form'));
+    }
+
+    public function renderEditPageFormAction($id)
+    {
+        $page = $this->getDoctrine()
+            ->getRepository(static::PAGE_CLASS_BUNDLE_NOTATION)
+            ->findOneBy(array('id' => $id));
+
+        $pageJson = $this->serializationService->serializeToJsonByGroup($page, 'details');
+        return $this->render('SwifterAdminBundle::page_form.html.twig', array('title' => 'Pages Form', 'page' => $pageJson));
     }
 
     public function retrievePagesAction()

@@ -36,13 +36,18 @@ admin_get_blocks_by_titles:
 
 #Pages
 admin_pages_page:
-    pattern:  /admin/manage-pages
+    pattern:  /admin/pages
     defaults: { _controller: admin.controller.pages:renderManagePageAction }
     methods:  [GET]
 
-admin_page_form:
+admin_add_page_form:
     pattern:  /admin/page-form
-    defaults: { _controller: admin.controller.pages:renderPageFormAction }
+    defaults: { _controller: admin.controller.pages:renderAddPageFormAction }
+    methods:  [GET]
+
+admin_edit_page_form:
+    pattern:  /admin/page-form/{id}
+    defaults: { _controller: admin.controller.pages:renderEditPageFormAction }
     methods:  [GET]
 
 admin_retrieve_pages:

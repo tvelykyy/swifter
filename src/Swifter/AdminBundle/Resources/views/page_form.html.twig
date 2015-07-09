@@ -83,23 +83,27 @@
             self.name = ko.observable();
             self.parentUri = ko.observable();
             self.pageUri = ko.observable();
-            self.uri = ko.computed(function() {
-                return self.parentUri() + self.pageUri();
+            self.uri = ko.computed({
+                read: function() {
+                    return self.parentUri() + self.pageUri();
+                },
+                write: function(value) {
+                    var pageUriIndex = value.lastIndexOf('/') + 1;
+                    self.pageUri(value.substring(pageUriIndex));
+                    self.parentUri(value.substring(0, pageUriIndex));
+                }
             });
             self.parent = ko.observable({id: ko.observable()});
             self.template = ko.observable({id: ko.observable()});
             self.pageBlocks = ko.observableArray();
             self.parentPageBlocks = ko.observableArray();
 
-            if (data) {
-                self.update(data);
-            }
-
             self.template().id.subscribe(function(newId) {
                 if (newId) {
                     self.pageBlocks.removeAll();
                     $.ajax({
-                        url: '{{ path('admin_get_complete_template', {'id': 0}) }}'.replace('0', newId)
+                        url: '{{ path('admin_get_complete_template', {'id': 0}) }}'.replace('0', newId),
+                        async: false
                     })
                     .done(function(response){
                         $('#template-source pre code').text(response);
@@ -112,9 +116,11 @@
                         }
 
                         $.ajax({
-                            url: '{{ path('admin_get_blocks_by_titles', {'semicolonSeparatedTitles': 0}) }}'.replace('0', titles)
+                            url: '{{ path('admin_get_blocks_by_titles', {'semicolonSeparatedTitles': 0}) }}'.replace('0', titles),
+                            async: false
                         })
-                        .done(function(response){
+                        .done(function(response) {
+                                    console.log("template");
                             for(var i in response) {
                                 var block = response[i];
                                 self.pageBlocks.push((function(){
@@ -126,6 +132,10 @@
                                     }
                                     pageBlock.tempContent = ko.computed({
                                         read: function() {
+                                            if (pageBlock.content()) {
+                                                return pageBlock.content();
+                                            }
+
                                             var blocks = self.parentPageBlocks();
                                             for (var i = 0; i < blocks.length; i++) {
                                                 if (blocks[i].block.id === this.block.id) {
@@ -134,7 +144,7 @@
                                             }
                                         },
                                         write: function(newValue) {
-                                            this.content(newValue);
+                                            pageBlock.content(newValue);
                                         },
                                         owner: pageBlock
                                     });
@@ -150,9 +160,11 @@
             self.parent().id.subscribe(function(newId) {
                 if (newId) {
                     $.ajax({
-                        url: '{{ path('admin_get_page_blocks', {'id': 0}) }}'.replace('0', newId)
+                        url: '{{ path('admin_get_page_blocks', {'id': 0}) }}'.replace('0', newId),
+                        async: false
                     })
-                    .done(function(response){
+                    .done(function(response) {
+                                console.log("parent");
                         self.parentPageBlocks(response.pageBlocks);
 
                         if (response.uri != '/') {
@@ -162,14 +174,31 @@
                     })
                 }
             });
+
+            if(data) {
+                self.update(data);
+            }
         }
 
         Page.prototype.update = function(data) {
+            this.id = data.id;
             this.name(data.name);
             this.uri(data.uri);
-            this.parent(data.parent)
-            this.template(data.template);
-            this.pageBlocks(data.pageBlocks);
+            this.parent().id(data.parent.id);
+            this.template().id(data.template.id);
+//            this.pageBlocks(data.pageBlocks);
+
+            console.log("update");
+            for (var i = 0; i < data.pageBlocks.length; i++)  {
+                var currentPageBlock = data.pageBlocks[i];
+                ko.utils.arrayForEach(this.pageBlocks(), function(resultPageBlock) {
+                    if (resultPageBlock.block.id === currentPageBlock.block.id) {
+                        resultPageBlock.id = currentPageBlock.id;
+                        resultPageBlock.tempContent(currentPageBlock.content);
+                        resultPageBlock.override(true);
+                    }
+                });
+            }
         };
 
         Page.prototype.toJSON = function() {
@@ -188,6 +217,15 @@
         var PageModel = function(data) {
             var self = this;
 
+            self.availableParents = ko.observableArray();
+            if (data) {
+                self.availableParents().push({"id": data.parent.id, "name": data.parent.name});
+            }
+
+            self.availableTemplates = ko.observableArray([
+                {id: 1, name: 'Main'}, {id: 2, name: 'Uris'}
+            ]);
+
             self.page = ko.observable();
             self.page(new Page(data));
 
@@ -201,17 +239,15 @@
                     }
                 });
             };
-
-            self.availableParents = ko.observableArray();
-
-            self.availableTemplates = ko.observableArray([
-                {id: 1, name: 'Main'}, {id: 2, name: 'Uris'}
-            ]);
-
-
         };
 
-        var pageModel = new PageModel();
+        var pageStr = "{{ page }}";
+        if (pageStr) {
+            var pageToEdit = JSON.parse(pageStr.replace(/&quot;/g, '"'));
+            var pageModel = new PageModel(pageToEdit);
+        } else {
+            var pageModel = new PageModel();
+        }
         ko.applyBindings(pageModel);
 
         $(document).ready(function() {
