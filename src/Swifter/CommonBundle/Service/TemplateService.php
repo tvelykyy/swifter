@@ -45,6 +45,7 @@ class TemplateService
     {
         $parent = $this->getParentTitle($contents);
         if ($parent) {
+
             $contents = $this->mergeWithParent($contents, $parent);
         }
 
@@ -54,10 +55,11 @@ class TemplateService
     private function mergeWithParent($contents, $parent)
     {
         $parentContents = $this->getContents($parent);
-        $blocks = $this->getBlocks($contents);
-        $parentContents = $this->mergeAllBlockWithParentOnes($blocks, $parentContents);
+        $parentContents = $this->mergeWithParentIfHas($parentContents);
 
-        $contents = $this->mergeWithParentIfHas($parentContents);
+        $blocks = $this->getBlocks($contents);
+        $contents = $this->mergeAllBlockWithParentOnes($blocks, $parentContents);
+
         return $contents;
     }
 
