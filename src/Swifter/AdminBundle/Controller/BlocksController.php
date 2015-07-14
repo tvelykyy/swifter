@@ -15,7 +15,7 @@ class BlocksController extends CrudController
         return $this->render('SwifterAdminBundle::blocks.html.twig', array('title' => 'Blocks Management'));
     }
 
-    public function retrieveBlocksAction()
+    public function getBlocksAction()
     {
         $blocks = $this->getDoctrine()
             ->getRepository(self::BLOCK_CLASS_BUNDLE_PREFIX)

@@ -137,7 +137,7 @@
             };
         };
 
-        $.get('{{ path('admin_retrieve_blocks') }}')
+        $.get('{{ path('admin_get_blocks') }}')
             .done(function( data ) {
                 ko.applyBindings(new BlockModel(data));
             }

@@ -15,7 +15,7 @@ class BlocksControllerTest extends ControllerTest
     public function testShouldReturnAllBlocksInJson()
     {
         /* When. */
-        $blocks = $this->retrieveBlocks();
+        $blocks = $this->getBlocks();
 
         /* Then. */
         $this->assertEquals(200, $this->getResponse()->getStatusCode());
@@ -32,12 +32,12 @@ class BlocksControllerTest extends ControllerTest
     public function testShouldDeleteBlock()
     {
         /* Given. */
-        $blocksBeforeDelete = $this->retrieveBlocks();
+        $blocksBeforeDelete = $this->getBlocks();
 
         /* When. */
         $this->client->request('DELETE', $this->generateRoute('admin_delete_block', array('id' => 1)));
         $response = $this->getResponse();
-        $blocksAfterDelete = $this->retrieveBlocks();
+        $blocksAfterDelete = $this->getBlocks();
 
         /* Then. */
         $this->assertEquals(204, $response->getStatusCode());
@@ -50,13 +50,13 @@ class BlocksControllerTest extends ControllerTest
         $block = new Block();
         $block->setTitle('Ti');
 
-        $blocksBeforeSave = $this->retrieveBlocks();
+        $blocksBeforeSave = $this->getBlocks();
 
         $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, 'list');
         /* When. */
         $this->doSaveRequest($serializedBlock);
         $response = $this->getResponse();
-        $blocksAfterSave = $this->retrieveBlocks();
+        $blocksAfterSave = $this->getBlocks();
 
         /* Then. */
         $this->assertEquals(400, $response->getStatusCode());
@@ -69,13 +69,13 @@ class BlocksControllerTest extends ControllerTest
         $block = new Block();
         $block->setTitle('Valid Title');
 
-        $blocksBeforeSave = $this->retrieveBlocks();
+        $blocksBeforeSave = $this->getBlocks();
 
         $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, 'list');
         /* When. */
         $this->doSaveRequest($serializedBlock);
         $response = $this->getResponse();
-        $blocksAfterSave = $this->retrieveBlocks();
+        $blocksAfterSave = $this->getBlocks();
 
         /* Then. */
         $this->assertEquals(201, $response->getStatusCode());
@@ -86,7 +86,7 @@ class BlocksControllerTest extends ControllerTest
     public function testShouldEditBlock()
     {
         /* Given. */
-        $blocksBeforeSave = $this->retrieveBlocks();
+        $blocksBeforeSave = $this->getBlocks();
         $block = new Block();
         $block->setId($blocksBeforeSave[0]->id);
 
@@ -98,7 +98,7 @@ class BlocksControllerTest extends ControllerTest
         /* When. */
         $this->doSaveRequest($serializedBlock);
         $response = $this->getResponse();
-        $blocksAfterSave = $this->retrieveBlocks();
+        $blocksAfterSave = $this->getBlocks();
 
         /* Then. */
         $this->assertEquals(204, $response->getStatusCode());
@@ -107,9 +107,9 @@ class BlocksControllerTest extends ControllerTest
     }
 
 
-    protected function retrieveBlocks()
+    protected function getBlocks()
     {
-        $this->client->request('GET', $this->generateRoute('admin_retrieve_blocks'));
+        $this->client->request('GET', $this->generateRoute('admin_get_blocks'));
         $blocks = json_decode($this->getResponse()->getContent());
 
         return $blocks;

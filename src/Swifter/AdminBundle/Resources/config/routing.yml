@@ -14,9 +14,9 @@ admin_ui_blocks:
     defaults: { _controller: admin.controller.blocks:renderBlocksAction }
     methods:  [GET]
 
-admin_retrieve_blocks:
+admin_get_blocks:
     pattern:  /admin/blocks
-    defaults: { _controller: admin.controller.blocks:retrieveBlocksAction }
+    defaults: { _controller: admin.controller.blocks:getBlocksAction }
     methods:  [GET]
 
 admin_save_block:
