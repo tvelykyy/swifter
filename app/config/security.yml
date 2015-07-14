@@ -19,7 +19,7 @@ security:
             provider: swifter_user_provider
             form_login:
                 check_path: login
-                login_path: admin_login_page
+                login_path: admin_ui_login
                 username_parameter: email
                 password_parameter: password
 
@@ -41,5 +41,5 @@ security:
             anonymous: ~
 
     access_control:
-            - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+            - { path: ^/admin/ui/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/admin, roles: ROLE_ADMIN }

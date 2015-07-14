@@ -102,7 +102,7 @@
                 if (newId) {
                     self.pageBlocks.removeAll();
                     $.ajax({
-                        url: '{{ path('admin_get_complete_template', {'id': 0}) }}'.replace('0', newId),
+                        url: '{{ path('admin_get_template', {'id': 0}) }}'.replace('0', newId),
                         async: false
                     })
                     .done(function(response){
@@ -235,7 +235,7 @@
                     url: '{{ path('admin_save_page') }}',
                     data: ko.toJSON(self.page()),
                     success: function() {
-                        window.location.replace('{{ path('admin_pages_page') }}');
+                        window.location.replace('{{ path('admin_ui_pages') }}');
                     }
                 });
             };
@@ -263,7 +263,7 @@
             $('.parent-page input').keyup(function() {
                 delay(function(name){
                     $.ajax({
-                        url: '{{ path('admin_get_pages_by_title_like', {'name': 0}) }}'.replace('0', name)
+                        url: '{{ path('admin_get_pages_by_name_like', {'name': 0}) }}'.replace('0', name)
                     })
                     .done(function(response){
                         pageModel.availableParents.removeAll();

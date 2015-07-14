@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class LandingController extends Controller
 {
-    public function renderLandingPageAction()
+    public function renderLandingAction()
     {
         return $this->render('SwifterAdminBundle::loggedin_skeleton.html.twig');
     }

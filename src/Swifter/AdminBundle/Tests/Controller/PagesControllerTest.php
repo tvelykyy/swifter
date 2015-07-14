@@ -34,7 +34,7 @@ class PagesControllerTest extends ControllerTest
 
     protected function retrievePages()
     {
-        $this->client->request('GET', $this->generateRoute('admin_retrieve_pages'));
+        $this->client->request('GET', $this->generateRoute('admin_get_pages'));
         $blocks = json_decode($this->getResponse()->getContent());
 
         return $blocks;

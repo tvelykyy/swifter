@@ -20,17 +20,17 @@ class PagesController extends CrudController
         $this->pageBlockService = $pageBlockService;
     }
 
-    public function renderManagePageAction()
+    public function renderPagesAction()
     {
         return $this->render('SwifterAdminBundle::pages_list.html.twig', array('title' => 'Pages Management'));
     }
 
-    public function renderAddPageFormAction()
+    public function renderPagesAddAction()
     {
         return $this->render('SwifterAdminBundle::page_form.html.twig', array('title' => 'Pages Form'));
     }
 
-    public function renderEditPageFormAction($id)
+    public function renderPagesEditAction($id)
     {
         $page = $this->getDoctrine()
             ->getRepository(static::PAGE_CLASS_BUNDLE_NOTATION)
@@ -40,7 +40,7 @@ class PagesController extends CrudController
         return $this->render('SwifterAdminBundle::page_form.html.twig', array('title' => 'Pages Form', 'page' => $pageJson));
     }
 
-    public function retrievePagesAction()
+    public function getPagesAction()
     {
         $pages = $this->getDoctrine()
             ->getRepository(static::PAGE_CLASS_BUNDLE_NOTATION)

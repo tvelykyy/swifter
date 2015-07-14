@@ -24,7 +24,7 @@
             </tr>
             </tbody>
         </table>
-        <a id="add-block-button" class="btn btn-success" href="{{ path('admin_add_page_form') }}"><i class="icon-plus-sign icon-white"></i>Add</a>
+        <a id="add-block-button" class="btn btn-success" href="{{ path('admin_ui_pages_add') }}"><i class="icon-plus-sign icon-white"></i>Add</a>
     </div>
 {% endblock %}
 
@@ -57,11 +57,11 @@
             }));
 
             self.editPage = function(page) {
-                window.location.replace('{{ path('admin_edit_page_form', {'id': 0}) }}'.replace('0', page.id()));
+                window.location.replace('{{ path('admin_ui_pages_edit', {'id': 0}) }}'.replace('0', page.id()));
             }
         };
 
-        $.get('{{ path('admin_retrieve_pages') }}')
+        $.get('{{ path('admin_get_pages') }}')
             .done(function( data ) {
                 ko.applyBindings(new PageModel(data));
             }

@@ -10,7 +10,7 @@ class BlocksController extends CrudController
     const BLOCK_CLASS_BUNDLE_PREFIX = 'SwifterCommonBundle:Block';
     const BLOCK_CLASS = 'Swifter\CommonBundle\Entity\Block';
 
-    public function renderManagePageAction()
+    public function renderBlocksAction()
     {
         return $this->render('SwifterAdminBundle::blocks.html.twig', array('title' => 'Blocks Management'));
     }

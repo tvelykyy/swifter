@@ -27,7 +27,7 @@ abstract class ControllerTest extends WebTestCase
 
     protected function authenticateAsAdmin()
     {
-        $crawler = $this->client->request('GET', $this->generateRoute('admin_login_page'));
+        $crawler = $this->client->request('GET', $this->generateRoute('admin_ui_login'));
         $loginButton = $crawler->selectButton('Login');
         $form = $loginButton->form(array(
             'email' => 'admin@m.com',

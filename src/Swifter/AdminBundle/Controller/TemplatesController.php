@@ -14,7 +14,7 @@ class TemplatesController extends BaseController
         parent::__construct($responseService);
         $this->templateService = $templateService;
     }
-    public function getCompleteTemplateAction($id)
+    public function getTemplateAction($id)
     {
         $template = $this->getDoctrine()
             ->getRepository('SwifterCommonBundle:Template')

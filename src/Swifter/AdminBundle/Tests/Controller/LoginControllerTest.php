@@ -8,7 +8,7 @@ class LoginControllerTest extends ControllerTest
     public function testShouldRenderLoginPageIfNotAuthenticated()
     {
         /* When. */
-        $crawler = $this->client->request('GET', $this->generateRoute('admin_login_page'));
+        $crawler = $this->client->request('GET', $this->generateRoute('admin_ui_login'));
 
         /* Then. */
         $this->assertEquals(200, $this->getResponse()->getStatusCode());
@@ -24,7 +24,7 @@ class LoginControllerTest extends ControllerTest
         $this->authenticateAsAdmin();
 
         /* When. */
-        $crawler = $this->client->request('GET', $this->generateRoute('admin_login_page'));
+        $crawler = $this->client->request('GET', $this->generateRoute('admin_ui_login'));
 
         /* Then. */
         $this->assertEquals(302, $this->getResponse()->getStatusCode());

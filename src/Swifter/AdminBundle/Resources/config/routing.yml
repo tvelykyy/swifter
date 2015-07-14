@@ -1,17 +1,17 @@
-admin_login_page:
-    pattern:  /admin/login
-    defaults: { _controller: admin.controller.login:renderLoginPageAction }
+admin_ui_login:
+    pattern:  /admin/ui/login
+    defaults: { _controller: admin.controller.login:renderLoginAction }
     methods:  [GET]
 
-admin_landing_page:
-    pattern:  /admin
-    defaults: { _controller: admin.controller.landing:renderLandingPageAction }
+admin_ui_landing:
+    pattern:  /admin/ui
+    defaults: { _controller: admin.controller.landing:renderLandingAction }
     methods:  [GET]
 
 #Blocks
-admin_blocks_page:
-    pattern:  /admin/manage-blocks
-    defaults: { _controller: admin.controller.blocks:renderManagePageAction }
+admin_ui_blocks:
+    pattern:  /admin/ui/blocks
+    defaults: { _controller: admin.controller.blocks:renderBlocksAction }
     methods:  [GET]
 
 admin_retrieve_blocks:
@@ -35,24 +35,24 @@ admin_get_blocks_by_titles:
     methods:  [GET]
 
 #Pages
-admin_pages_page:
+admin_ui_pages:
+    pattern:  /admin/ui/pages
+    defaults: { _controller: admin.controller.pages:renderPagesAction }
+    methods:  [GET]
+
+admin_ui_pages_add:
+    pattern:  /admin/ui/pages/add
+    defaults: { _controller: admin.controller.pages:renderPagesAddAction }
+    methods:  [GET]
+
+admin_ui_pages_edit:
+    pattern:  /admin/ui/pages/edit/{id}
+    defaults: { _controller: admin.controller.pages:renderPagesEditAction }
+    methods:  [GET]
+
+admin_get_pages:
     pattern:  /admin/pages
-    defaults: { _controller: admin.controller.pages:renderManagePageAction }
-    methods:  [GET]
-
-admin_add_page_form:
-    pattern:  /admin/page-form
-    defaults: { _controller: admin.controller.pages:renderAddPageFormAction }
-    methods:  [GET]
-
-admin_edit_page_form:
-    pattern:  /admin/page-form/{id}
-    defaults: { _controller: admin.controller.pages:renderEditPageFormAction }
-    methods:  [GET]
-
-admin_retrieve_pages:
-    pattern:  /admin/pages
-    defaults: { _controller: admin.controller.pages:retrievePagesAction }
+    defaults: { _controller: admin.controller.pages:getPagesAction }
     methods:  [GET]
 
 admin_save_page:
@@ -65,13 +65,13 @@ admin_get_page_blocks:
     defaults: { _controller: admin.controller.pages:getBlocksAction }
     methods:  [GET]
 
-admin_get_pages_by_title_like:
+admin_get_pages_by_name_like:
     pattern:  /admin/pages/name/{name}
     defaults: { _controller: admin.controller.pages:getPagesByNameLike }
     methods:  [GET]
 
 #Templates
-admin_get_complete_template:
+admin_get_template:
     pattern:  /admin/templates/{id}
-    defaults: { _controller: admin.controller.templates:getCompleteTemplateAction }
+    defaults: { _controller: admin.controller.templates:getTemplateAction }
     methods: [GET]
