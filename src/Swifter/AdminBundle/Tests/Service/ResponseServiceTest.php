@@ -45,6 +45,7 @@ class ResponseServiceTest extends \PHPUnit_Framework_TestCase
 
         /* Then. */
         $this->assertEquals('', $response->getContent());
+        $this->assertEquals($status, $response->getStatusCode());
     }
 
     public function testShouldGenerateResponseWithJsonContentType()

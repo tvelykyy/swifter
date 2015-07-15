@@ -3,6 +3,7 @@
 namespace Swifter\AdminBundle\Controller;
 
 use Swifter\AdminBundle\Service\ResponseService;
+use Swifter\AdminBundle\Service\CrudService;
 use Swifter\AdminBundle\Service\SerializationService;
 use Swifter\CommonBundle\Service\PageBlockService;
 
@@ -13,10 +14,10 @@ class PagesController extends CrudController
 
     protected $pageBlockService;
 
-    public function __construct(ResponseService $responseService, SerializationService $serializationService,
+    public function __construct(CrudService $crudService, ResponseService $responseService, SerializationService $serializationService,
                                 PageBlockService $pageBlockService)
     {
-        parent::__construct($responseService, $serializationService);
+        parent::__construct($crudService, $responseService, $serializationService);
         $this->pageBlockService = $pageBlockService;
     }
 

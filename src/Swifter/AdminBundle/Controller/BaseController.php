@@ -14,4 +14,12 @@ abstract class BaseController extends Controller
         $this->responseService = $responseService;
     }
 
+    protected function validate($entity)
+    {
+        $validator = $this->get('validator');
+        $errors = $validator->validate($entity);
+
+        return $errors;
+    }
+
 }

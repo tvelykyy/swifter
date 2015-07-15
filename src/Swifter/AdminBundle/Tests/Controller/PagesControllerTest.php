@@ -13,7 +13,7 @@ class PagesControllerTest extends ControllerTest
     public function testShouldReturnAllPagesInJson()
     {
         /* When. */
-        $pages = $this->retrievePages();
+        $pages = $this->getPages();
 
         /* Then. */
         $this->assertEquals(200, $this->getResponse()->getStatusCode());
@@ -32,7 +32,7 @@ class PagesControllerTest extends ControllerTest
         $this->assertEquals('Main Template', $pages[2]->template->title);
     }
 
-    protected function retrievePages()
+    protected function getPages()
     {
         $this->client->request('GET', $this->generateRoute('admin_get_pages'));
         $blocks = json_decode($this->getResponse()->getContent());
