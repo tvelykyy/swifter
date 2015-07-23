@@ -37,7 +37,7 @@ class BlocksController extends CrudController
         }
         else
         {
-            $response = $this->saveAndGenerateResponse($block);
+            $response = $this->crudService->saveAndGenerateResponse($block);
         }
 
         return $response;
@@ -49,7 +49,7 @@ class BlocksController extends CrudController
             ->getRepository(self::BLOCK_CLASS_BUNDLE_PREFIX)
             ->find($id);
 
-        return $this->deleteAndGenerate204Response($blockToDelete);
+        return $this->crudService->deleteAndGenerate204Response($blockToDelete);
     }
 
     public function getBlocksByTitlesAction($semicolonSeparatedTitles)

@@ -79,7 +79,7 @@ class BlocksControllerTest extends ControllerTest
 
         /* Then. */
         $this->assertEquals(201, $response->getStatusCode());
-        $this->assertEmpty($response->getContent());
+        $this->assertNotEmpty($response->getContent());
         $this->assertEquals(sizeof($blocksBeforeSave) + 1, sizeof($blocksAfterSave));
     }
 

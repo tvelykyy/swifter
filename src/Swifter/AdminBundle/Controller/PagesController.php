@@ -63,7 +63,7 @@ class PagesController extends CrudController
         }
         else
         {
-            $response = $this->saveAndGenerateResponse($page);
+            $response = $this->crudService->saveAndGenerateResponse($page);
         }
 
         return $response;

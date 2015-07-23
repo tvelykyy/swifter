@@ -29,7 +29,7 @@ class CrudService
 
     public function createAndGenerate201Response($entity)
     {
-        $this->doWithEntity('merge', $entity);
+        $this->doWithEntity('persist', $entity);
         $responseBody = $entity->getId();
 
         return $this->responseService->generateJsonResponse($responseBody, Response::HTTP_CREATED);

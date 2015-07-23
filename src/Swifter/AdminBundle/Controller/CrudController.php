@@ -18,14 +18,4 @@ abstract class CrudController extends BaseController
         $this->serializationService = $serializationService;
     }
 
-    protected function saveAndGenerateResponse($entity)
-    {
-        return $this->crudService->saveAndGenerateResponse($entity);
-    }
-
-    protected function deleteAndGenerate204Response($entity)
-    {
-        return $this->crudService->deleteAndGenerate204Response($entity);
-    }
-
 }
