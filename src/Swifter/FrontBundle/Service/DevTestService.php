@@ -13,7 +13,7 @@ class DevTestService
         $this->em = $entityManager;
     }
 
-    public function getPages($offset = 0, $limit = 5)
+    public function getPages($offset, $limit)
     {
         return $this->em->getRepository('SwifterCommonBundle:Page')->findBy(array(), array(), $limit, $offset);
     }
