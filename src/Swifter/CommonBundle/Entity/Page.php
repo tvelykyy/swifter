@@ -76,8 +76,6 @@ class Page
     public function setUri($uri)
     {
         $this->uri = $uri;
-
-        return $this;
     }
 
     public function getUri()

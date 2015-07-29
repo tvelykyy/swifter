@@ -2,6 +2,7 @@
 
 namespace Swifter\CommonBundle\DataFixtures\Test;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Swifter\CommonBundle\Entity\Block;
@@ -12,7 +13,7 @@ use Swifter\CommonBundle\Entity\Template;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadPagesData implements FixtureInterface, ContainerAwareInterface
+class LoadPagesData extends AbstractFixture implements FixtureInterface, ContainerAwareInterface
 {
     private $container;
 
@@ -24,98 +25,96 @@ class LoadPagesData implements FixtureInterface, ContainerAwareInterface
     public function load(ObjectManager $manager)
     {
 
-        $block1 = new Block();
-        $block1->setTitle('MAIN_CONTENT');
-
-        $block2 = new Block();
-        $block2->setTitle('TITLE');
-
-        $block3 = new Block();
-        $block3->setTitle('FOOTER');
-
-        $manager->persist($block1);
-        $manager->persist($block2);
-        $manager->persist($block3);
+        $block1 = $this->createBlockFixture($manager, 'MAIN_CONTENT');
+        $block2 = $this->createBlockFixture($manager, 'TITLE');
+        $block3 = $this->createBlockFixture($manager, 'FOOTER');
         $manager->flush();
 
         /* Templates. */
-        $template1 = new Template();
-        $template1->setPath('SwifterFrontBundle:DevTest:index.html.twig');
-        $template1->setTitle('Main Template');
-
-        $template2 = new Template();
-        $template2->setPath('SwifterFrontBundle:DevTest:pages.html.twig');
-        $template2->setTitle('Uris');
-
-        $manager->persist($template1);
-        $manager->persist($template2);
+        $template1 = $this->createTemplateFixture($manager, 'SwifterFrontBundle:DevTest:index.html.twig', 'Main Template');
+        $template2 = $this->createTemplateFixture($manager, 'SwifterFrontBundle:DevTest:pages.html.twig', 'Uris');
         $manager->flush();
 
         /* Snippets. */
+        $this->createSnippetFixture($manager, $template2);
+        $manager->flush();
+
+        /* Pages. */
+        $page1 = $this->createPageFixture($manager, 'Main', '/', $template1);
+        $this->setReference("main-page", $page1);
+
+        $page2 = $this->createPageFixture($manager, 'News', '/news', $template1, $page1);
+        $this->setReference("news-page", $page2);
+
+        $page3 = $this->createPageFixture($manager, 'First News', '/news/first', $template1, $page2);
+        $this->setReference("news-first-page", $page3);
+
+        $manager->flush();
+
+        /* Blocks. */
+        $this->createPageBlockFixture($manager, $page1, $block1, 'Yes-Yes. This is page content [[DEV_TEST_PAGES]] contained in CONTENT block.');
+        $this->createPageBlockFixture($manager, $page2, $block1, 'This is a news page.');
+        $this->createPageBlockFixture($manager, $page1, $block2, 'Заголовок кирилиця і буква І!');
+        $this->createPageBlockFixture($manager, $page3, $block3, 'This is super cool footer.');
+        $this->createPageBlockFixture($manager, $page2, $block3, 'Medium footer.');
+
+        $manager->flush();
+    }
+
+    private function createBlockFixture(ObjectManager $manager, $title)
+    {
+        $block = new Block();
+        $block->setTitle($title);
+
+        $manager->persist($block);
+
+        return $block;
+    }
+
+    private function createTemplateFixture(ObjectManager $manager, $path, $title)
+    {
+        $template = new Template();
+        $template->setPath($path);
+        $template->setTitle($title);
+
+        $manager->persist($template);
+
+        return $template;
+    }
+
+
+    private function createSnippetFixture(ObjectManager $manager, $template)
+    {
         $snippet1 = new Snippet();
         $snippet1->setTitle('DEV_TEST_PAGES');
         $snippet1->setService('front.service.devtest');
         $snippet1->setMethod('getPages');
-        $snippet1->setTemplate($template2);
+        $snippet1->setTemplate($template);
         $snippet1->setParams('{"offset":0, "limit":5}');
 
         $manager->persist($snippet1);
-        $manager->flush();
+    }
 
-        /* Pages. */
-        $page1 = new Page();
-        $page1->setName('Main');
-        $page1->setUri('/');
-        $page1->setTemplate($template1);
+    private function createPageFixture(ObjectManager $manager, $name, $uri, $template, $parent = null)
+    {
+        $page = new Page();
+        $page->setName($name);
+        $page->setUri($uri);
+        $page->setTemplate($template);
+        $page->setParent($parent);
 
-        $page2 = new Page();
-        $page2->setName('News');
-        $page2->setUri('/news');
-        $page2->setTemplate($template1);
-        $page2->setParent($page1);
+        $manager->persist($page);
 
-        $page3 = new Page();
-        $page3->setName('First News');
-        $page3->setUri('/news/first');
-        $page3->setTemplate($template1);
-        $page3->setParent($page2);
+        return $page;
+    }
 
-        $manager->persist($page1);
-        $manager->persist($page2);
-        $manager->persist($page3);
-        $manager->flush();
+    private function createPageBlockFixture(ObjectManager $manager, Page $page, Block $block, $content)
+    {
+        $pageBlock = new PageBlock();
+        $pageBlock->setPage($page);
+        $pageBlock->setBlock($block);
+        $pageBlock->setContent($content);
 
-        /* Blocks. */
-        $pageBlock1 = new PageBlock();
-        $pageBlock1->setPage($page1);
-        $pageBlock1->setBlock($block1);
-        $pageBlock1->setContent('Yes-Yes. This is page content [[DEV_TEST_PAGES]] contained in CONTENT block.');
-
-        $pageBlock2 = new PageBlock();
-        $pageBlock2->setPage($page2);
-        $pageBlock2->setBlock($block1);
-        $pageBlock2->setContent('This is a news page.');
-
-        $pageBlock3 = new PageBlock();
-        $pageBlock3->setPage($page1);
-        $pageBlock3->setBlock($block2);
-        $pageBlock3->setContent('Заголовок кирилиця і буква І!');
-
-        $pageBlock4 = new PageBlock();
-        $pageBlock4->setPage($page3);
-        $pageBlock4->setBlock($block3);
-        $pageBlock4->setContent('This is super cool footer.');
-
-        $pageBlock5 = new PageBlock();
-        $pageBlock5->setPage($page2);
-        $pageBlock5->setBlock($block3);
-        $pageBlock5->setContent('Medium footer.');
-
-        $manager->persist($pageBlock1);
-        $manager->persist($pageBlock2);
-        $manager->persist($pageBlock3);
-        $manager->persist($pageBlock4);
-        $manager->persist($pageBlock5);
-        $manager->flush();
+        $manager->persist($pageBlock);
     }
 }

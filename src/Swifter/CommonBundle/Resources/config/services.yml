@@ -1,6 +1,7 @@
 parameters:
     common.service.template.class: Swifter\CommonBundle\Service\TemplateService
     common.service.pageBlock.class: Swifter\CommonBundle\Service\PageBlockService
+    common.service.page.class: Swifter\CommonBundle\Service\PageService
 
 services:
     common.service.template:
@@ -9,3 +10,7 @@ services:
 
     common.service.pageBlock:
         class: %common.service.pageBlock.class%
+
+    common.service.page:
+            class: %common.service.page.class%
+            arguments: ["@doctrine.orm.entity_manager"]

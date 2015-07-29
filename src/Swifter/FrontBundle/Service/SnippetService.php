@@ -13,8 +13,8 @@ use Doctrine\ORM\EntityManager;
 
 class SnippetService
 {
-    protected $container;
-    protected $em;
+    private $container;
+    private $em;
 
     public function __construct(Container $container, EntityManager $em)
     {

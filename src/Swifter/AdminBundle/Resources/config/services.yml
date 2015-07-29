@@ -6,7 +6,7 @@ parameters:
     admin.controller.landing.class:       Swifter\AdminBundle\Controller\LandingController
     admin.controller.blocks.class:        Swifter\AdminBundle\Controller\BlocksController
     admin.controller.pages.class:         Swifter\AdminBundle\Controller\PagesController
-    admin.controller.templates.class:    Swifter\AdminBundle\Controller\TemplatesController
+    admin.controller.templates.class:     Swifter\AdminBundle\Controller\TemplatesController
 
 services:
     admin.service.response:
@@ -44,7 +44,7 @@ services:
 
     admin.controller.pages:
         class: %admin.controller.pages.class%
-        arguments: ["@admin.service.crud", "@admin.service.response", "@admin.service.serialization", "@common.service.pageBlock"]
+        arguments: ["@admin.service.crud", "@admin.service.response", "@admin.service.serialization", "@common.service.pageBlock", "@common.service.page"]
         calls:
             -  [setContainer, ["@service_container"]]
 
