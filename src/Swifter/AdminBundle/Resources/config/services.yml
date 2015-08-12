@@ -2,6 +2,7 @@ parameters:
     admin.service.response.class:         Swifter\AdminBundle\Service\ResponseService
     admin.service.serialization.class:    Swifter\AdminBundle\Service\SerializationService
     admin.service.crud.class:             Swifter\AdminBundle\Service\CrudService
+    admin.service.block.class:            Swifter\AdminBundle\Service\BlockService
     admin.controller.login.class:         Swifter\AdminBundle\Controller\LoginController
     admin.controller.landing.class:       Swifter\AdminBundle\Controller\LandingController
     admin.controller.blocks.class:        Swifter\AdminBundle\Controller\BlocksController
@@ -19,6 +20,10 @@ services:
     admin.service.crud:
         class: %admin.service.crud.class%
         arguments: ["@admin.service.response", "@doctrine.orm.entity_manager"]
+
+    admin.service.block:
+        class: %admin.service.block.class%
+        arguments: ["@doctrine.orm.entity_manager"]
 
     admin.controller.templates:
         class: %admin.controller.templates.class%
@@ -38,7 +43,7 @@ services:
 
     admin.controller.blocks:
         class: %admin.controller.blocks.class%
-        arguments: ["@admin.service.crud", "@admin.service.response", "@admin.service.serialization"]
+        arguments: ["@admin.service.crud", "@admin.service.response", "@admin.service.serialization", "@admin.service.block"]
         calls:
             -  [setContainer, ["@service_container"]]
 

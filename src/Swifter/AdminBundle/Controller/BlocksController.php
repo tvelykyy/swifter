@@ -2,13 +2,23 @@
 
 namespace Swifter\AdminBundle\Controller;
 
-use Doctrine\Common\Collections\Criteria;
-use Symfony\Component\HttpFoundation\Response;
+use Swifter\AdminBundle\Service\BlockService;
+use Swifter\AdminBundle\Service\CrudService;
+use Swifter\AdminBundle\Service\ResponseService;
+use Swifter\AdminBundle\Service\SerializationService;
 
 class BlocksController extends CrudController
 {
-    const BLOCK_CLASS_BUNDLE_PREFIX = 'SwifterCommonBundle:Block';
     const BLOCK_CLASS = 'Swifter\CommonBundle\Entity\Block';
+
+    private $blockService;
+
+    public function __construct(CrudService $crudService, ResponseService $responseService, SerializationService $serializationService,
+                                BlockService $blockService)
+    {
+        parent::__construct($crudService, $responseService, $serializationService);
+        $this->blockService = $blockService;
+    }
 
     public function renderBlocksAction()
     {
@@ -17,10 +27,7 @@ class BlocksController extends CrudController
 
     public function getBlocksAction()
     {
-        $blocks = $this->getDoctrine()
-            ->getRepository(self::BLOCK_CLASS_BUNDLE_PREFIX)
-            ->findAll();
-
+        $blocks = $this->blockService->getAll();
         $jsonBlocks = $this->serializationService->serializeToJsonByGroup($blocks, 'list');
 
         return $this->responseService->generateJsonResponse($jsonBlocks);
@@ -45,9 +52,7 @@ class BlocksController extends CrudController
 
     public function deleteBlockAction($id)
     {
-        $blockToDelete = $this->getDoctrine()
-            ->getRepository(self::BLOCK_CLASS_BUNDLE_PREFIX)
-            ->find($id);
+        $blockToDelete = $this->blockService->getOneById($id);
 
         return $this->crudService->deleteAndGenerate204Response($blockToDelete);
     }
@@ -55,14 +60,7 @@ class BlocksController extends CrudController
     public function getBlocksByTitlesAction($semicolonSeparatedTitles)
     {
         $titles = explode(';', $semicolonSeparatedTitles);
-
-        $qb = $this->getDoctrine()
-            ->getRepository(static::BLOCK_CLASS_BUNDLE_PREFIX)->createQueryBuilder('b');
-
-        $blocks = $qb->where($qb->expr()->in('b.title', $titles))
-            ->getQuery()
-            ->getResult();
-
+        $blocks = $this->blockService->getAllByTitles($titles);
         $jsonBlocks = $this->serializationService->serializeToJsonByGroup($blocks, 'list');
 
         return $this->responseService->generateJsonResponse($jsonBlocks);

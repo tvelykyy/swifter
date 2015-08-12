@@ -26,8 +26,13 @@ class LoadPagesData extends AbstractFixture implements FixtureInterface, Contain
     {
 
         $block1 = $this->createBlockFixture($manager, 'MAIN_CONTENT');
+        $this->setReference("main-content-block", $block1);
+
         $block2 = $this->createBlockFixture($manager, 'TITLE');
+        $this->setReference("title-block", $block2);
+
         $block3 = $this->createBlockFixture($manager, 'FOOTER');
+        $this->setReference("footer-block", $block3);
         $manager->flush();
 
         /* Templates. */
