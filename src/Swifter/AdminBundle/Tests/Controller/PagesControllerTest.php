@@ -2,7 +2,7 @@
 
 namespace Swifter\AdminBundle\Tests\Controller;
 
-class PagesControllerTest extends ControllerTest
+class PageControllerTest extends ControllerTest
 {
     protected function setUp()
     {

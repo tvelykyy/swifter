@@ -17,14 +17,14 @@ class PageService
         $this->repo = $em->getRepository(static::PAGE_CLASS_BUNDLE_NOTATION);
     }
 
-    public function getOneById($id)
+    public function get($id)
     {
-        $page = $this->repo->findOneById($id);
+        $page = $this->repo->find($id);
 
         return $page;
     }
 
-    public function getOneByUri($uri)
+    public function getByUri($uri)
     {
         $page = $this->repo->findOneByUri($uri);
 

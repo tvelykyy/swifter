@@ -27,7 +27,7 @@ class DispatcherController extends Controller
     public function indexAction($uri, Request $request)
     {
         $slashLeadedUri = $this->leadWithSlash($uri);
-        $page = $this->pageService->getOneByUri($slashLeadedUri);
+        $page = $this->pageService->getByUri($slashLeadedUri);
 
         if (!$page) {
             throw $this->createNotFoundException('Page not found.');

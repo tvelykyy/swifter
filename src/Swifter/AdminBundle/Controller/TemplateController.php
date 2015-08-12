@@ -5,7 +5,7 @@ namespace Swifter\AdminBundle\Controller;
 use Swifter\AdminBundle\Service\ResponseService;
 use Swifter\CommonBundle\Service\TemplateService;
 
-class TemplatesController extends BaseController
+class TemplateController extends BaseController
 {
     private $templateService;
 

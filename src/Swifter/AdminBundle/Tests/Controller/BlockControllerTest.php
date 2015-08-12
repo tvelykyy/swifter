@@ -4,7 +4,7 @@ namespace Swifter\AdminBundle\Tests\Controller;
 
 use Swifter\CommonBundle\Entity\Block;
 
-class BlocksControllerTest extends ControllerTest
+class BlockControllerTest extends ControllerTest
 {
     protected function setUp()
     {

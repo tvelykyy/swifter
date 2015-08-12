@@ -23,14 +23,14 @@ class BlockService {
         return $blocks;
     }
 
-    public function getOneById($id)
+    public function get($id)
     {
         $block = $this->repo->find($id);
 
         return $block;
     }
 
-    public function getAllByTitles($titles)
+    public function getByTitles($titles)
     {
         $qb = $this->repo->createQueryBuilder('b');
 

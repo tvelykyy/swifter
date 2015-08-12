@@ -26,13 +26,13 @@ class PageServiceTest extends WebTestCase
         $this->fixtures = $this->loadFixtures($classes)->getReferenceRepository();
     }
 
-    public function testGetOneById()
+    public function testGet()
     {
         /* Given. */
         $expected = $this->fixtures->getReference('main-page');
 
         /* When. */
-        $actual = $this->pageService->getOneById($expected->getId());
+        $actual = $this->pageService->get($expected->getId());
 
         /* Then. */
         $this->assertEquals($expected->getId(), $actual->getId());
@@ -40,13 +40,13 @@ class PageServiceTest extends WebTestCase
         $this->assertEquals($expected->getName(), $actual->getName());
     }
 
-    public function testGetOneByUri()
+    public function testGetByUri()
     {
         /* Given. */
         $expected = $this->fixtures->getReference('news-page');
 
         /* When. */
-        $actual = $this->pageService->getOneByUri($expected->getUri());
+        $actual = $this->pageService->getByUri($expected->getUri());
 
         /* Then. */
         $this->assertEquals($expected->getId(), $actual->getId());

@@ -7,7 +7,7 @@ use Swifter\AdminBundle\Service\CrudService;
 use Swifter\AdminBundle\Service\ResponseService;
 use Swifter\AdminBundle\Service\SerializationService;
 
-class BlocksController extends CrudController
+class BlockController extends CrudController
 {
     const BLOCK_CLASS = 'Swifter\CommonBundle\Entity\Block';
 
@@ -52,7 +52,7 @@ class BlocksController extends CrudController
 
     public function deleteBlockAction($id)
     {
-        $blockToDelete = $this->blockService->getOneById($id);
+        $blockToDelete = $this->blockService->get($id);
 
         return $this->crudService->deleteAndGenerate204Response($blockToDelete);
     }
@@ -60,7 +60,7 @@ class BlocksController extends CrudController
     public function getBlocksByTitlesAction($semicolonSeparatedTitles)
     {
         $titles = explode(';', $semicolonSeparatedTitles);
-        $blocks = $this->blockService->getAllByTitles($titles);
+        $blocks = $this->blockService->getByTitles($titles);
         $jsonBlocks = $this->serializationService->serializeToJsonByGroup($blocks, 'list');
 
         return $this->responseService->generateJsonResponse($jsonBlocks);

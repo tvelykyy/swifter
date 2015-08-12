@@ -8,7 +8,7 @@ use Swifter\AdminBundle\Service\SerializationService;
 use Swifter\CommonBundle\Service\PageBlockService;
 use Swifter\CommonBundle\Service\PageService;
 
-class PagesController extends CrudController
+class PageController extends CrudController
 {
     const PAGE_CLASS = 'Swifter\CommonBundle\Entity\Page';
     const PAGE_CLASS_BUNDLE_NOTATION = 'SwifterCommonBundle:Page';
@@ -36,7 +36,7 @@ class PagesController extends CrudController
 
     public function renderPagesEditAction($id)
     {
-        $page = $this->pageService->getOneById($id);
+        $page = $this->pageService->get($id);
         $pageJson = $this->serializationService->serializeToJsonByGroup($page, 'details');
 
         return $this->render('SwifterAdminBundle::page_form.html.twig', array('title' => 'Pages Form', 'page' => $pageJson));
@@ -68,7 +68,7 @@ class PagesController extends CrudController
 
     public function getBlocksAction($id)
     {
-        $page = $this->pageService->getOneById($id);
+        $page = $this->pageService->get($id);
 
         $this->pageBlockService->mergePageBlocksWithParents($page);
         $json = $this->serializationService->serializeToJsonByGroup($page, 'page-no-parent-template');

@@ -5,9 +5,9 @@ parameters:
     admin.service.block.class:            Swifter\AdminBundle\Service\BlockService
     admin.controller.login.class:         Swifter\AdminBundle\Controller\LoginController
     admin.controller.landing.class:       Swifter\AdminBundle\Controller\LandingController
-    admin.controller.blocks.class:        Swifter\AdminBundle\Controller\BlocksController
-    admin.controller.pages.class:         Swifter\AdminBundle\Controller\PagesController
-    admin.controller.templates.class:     Swifter\AdminBundle\Controller\TemplatesController
+    admin.controller.block.class:        Swifter\AdminBundle\Controller\BlockController
+    admin.controller.page.class:         Swifter\AdminBundle\Controller\PageController
+    admin.controller.template.class:     Swifter\AdminBundle\Controller\TemplateController
 
 services:
     admin.service.response:
@@ -25,8 +25,8 @@ services:
         class: %admin.service.block.class%
         arguments: ["@doctrine.orm.entity_manager"]
 
-    admin.controller.templates:
-        class: %admin.controller.templates.class%
+    admin.controller.template:
+        class: %admin.controller.template.class%
         arguments: ["@common.service.template", "@admin.service.response"]
         calls:
             -  [setContainer, ["@service_container"]]
@@ -41,14 +41,14 @@ services:
         calls:
             -  [setContainer, ["@service_container"]]
 
-    admin.controller.blocks:
-        class: %admin.controller.blocks.class%
+    admin.controller.block:
+        class: %admin.controller.block.class%
         arguments: ["@admin.service.crud", "@admin.service.response", "@admin.service.serialization", "@admin.service.block"]
         calls:
             -  [setContainer, ["@service_container"]]
 
-    admin.controller.pages:
-        class: %admin.controller.pages.class%
+    admin.controller.page:
+        class: %admin.controller.page.class%
         arguments: ["@admin.service.crud", "@admin.service.response", "@admin.service.serialization", "@common.service.pageBlock", "@common.service.page"]
         calls:
             -  [setContainer, ["@service_container"]]

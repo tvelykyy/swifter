@@ -24,13 +24,13 @@ class BlockServiceTest extends WebTestCase
         $this->fixtures = $this->loadFixtures($classes)->getReferenceRepository();
     }
 
-    public function testGetOneById()
+    public function testGet()
     {
         /* Given. */
         $expected = $this->fixtures->getReference('main-content-block');
 
         /* When. */
-        $actual = $this->blockService->getOneById($expected->getId());
+        $actual = $this->blockService->get($expected->getId());
 
         /* Then. */
         $this->assertEquals($expected->getId(), $actual->getId());
@@ -54,7 +54,7 @@ class BlockServiceTest extends WebTestCase
         $this->assertEquals($block3->getId(), $blocks[2]->getId());
     }
 
-    public function testGetAllByTitles()
+    public function testGetByTitles()
     {
         /* Given. */
         $block1 = $this->fixtures->getReference('main-content-block');
@@ -63,7 +63,7 @@ class BlockServiceTest extends WebTestCase
         $titles = [$block1->getTitle(), $block2->getTitle(), $nonExistentBlockTitle];
 
         /* When. */
-        $blocks = $this->blockService->getAllByTitles($titles);
+        $blocks = $this->blockService->getByTitles($titles);
 
         /* Then. */
         $this->assertEquals(2, sizeof($blocks));
