@@ -37,7 +37,10 @@ class LoadPagesData extends AbstractFixture implements FixtureInterface, Contain
 
         /* Templates. */
         $template1 = $this->createTemplateFixture($manager, 'SwifterFrontBundle:DevTest:index.html.twig', 'Main Template');
+        $this->setReference("main-template", $template1);
+
         $template2 = $this->createTemplateFixture($manager, 'SwifterFrontBundle:DevTest:pages.html.twig', 'Uris');
+
         $manager->flush();
 
         /* Snippets. */

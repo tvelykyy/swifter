@@ -6,11 +6,11 @@ parameters:
 services:
     common.service.template:
         class: %common.service.template.class%
-        arguments: ["@service_container"]
+        arguments: ["@service_container", "@doctrine.orm.entity_manager"]
 
     common.service.pageBlock:
         class: %common.service.pageBlock.class%
 
     common.service.page:
-            class: %common.service.page.class%
-            arguments: ["@doctrine.orm.entity_manager"]
+        class: %common.service.page.class%
+        arguments: ["@doctrine.orm.entity_manager"]

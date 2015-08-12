@@ -2,6 +2,10 @@
 
 namespace Swifter\CommonBundle\Tests\Service;
 
+use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Swifter\CommonBundle\Entity\Template;
+use Swifter\CommonBundle\Service\TemplateService;
+
 /**
  * All tests test :) templates with inheritance.
  *
@@ -22,9 +26,38 @@ namespace Swifter\CommonBundle\Tests\Service;
  * - means that current block doesn't override parent block.
  * x means that template isn't used in test.
  */
-class TemplateServiceTest extends \PHPUnit_Framework_TestCase
+class TemplateServiceTest extends WebTestCase
 {
     const CONTAINER_INTERFACE = 'Symfony\Component\DependencyInjection\ContainerInterface';
+
+    private $em;
+
+    public function __construct()
+    {
+        $this->em = $this->getContainer()->get('doctrine')->getEntityManager();
+    }
+
+    public function testGet()
+    {
+        /* Given. */
+        $container = $this->getMockBuilder(self::CONTAINER_INTERFACE)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $templateService = new TemplateService($container, $this->em);
+        $classes = [
+            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData'
+        ];
+        $fixtures = $this->loadFixtures($classes)->getReferenceRepository();
+        $expected = $fixtures->getReference('main-template');
+
+        /* When. */
+        $actual = $templateService->get($expected->getId());
+
+        /* Then. */
+        $this->assertEquals($expected->getId(), $actual->getId());
+        $this->assertEquals($expected->getTitle(), $actual->getTitle());
+        $this->assertEquals($expected->getPath(), $actual->getPath());
+    }
 
     public function testCase1()
     {
@@ -118,31 +151,31 @@ class TemplateServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(strpos($contents, 'child grand 9') === false);
     }
 
-    private function getCompleteTemplate($title1, $filename1, $title2 = null, $filename2 = null)
+    private function getCompleteTemplate($bundlePath1, $filename1, $bundlePath2 = null, $filename2 = null)
     {
         /* Given. */
-        $templateService = $this->initTemplateServiceWithMockedGetPath(
+        $templateService = $this->initTemplateServiceWithMockedGetPhysicalPath(
             array
             (
                 array('parent', $this->getRealPath('parent.html.twig')),
-                array($title1, $this->getRealPath($filename1)),
-                array($title2, $this->getRealPath($filename2)),
+                array($bundlePath1, $this->getRealPath($filename1)),
+                array($bundlePath2, $this->getRealPath($filename2)),
             )
         );
 
-        /* When. */
-        $title = ($title2 == null ? $title1 : $title2);
-        $contents = $templateService->getCompleteTemplate($title);
+        $bundlePath = ($bundlePath2 == null ? $bundlePath1 : $bundlePath2);
+        $this->mockGet($templateService, $bundlePath);
 
-        return $contents;
+        /* When. */
+        return $templateService->getTemplateFullContents($bundlePath);
     }
 
-    private function initTemplateServiceWithMockedGetPath(array $getPathReturnMapping)
+    private function initTemplateServiceWithMockedGetPhysicalPath(array $getPathReturnMapping)
     {
         $container = $this->getMockBuilder(self::CONTAINER_INTERFACE)
             ->disableOriginalConstructor()
             ->getMock();
-        $templateService = $this->getMock('Swifter\CommonBundle\Service\TemplateService', array('getPath'), array($container));
+        $templateService = $this->getMock('Swifter\CommonBundle\Service\TemplateService', array('getPhysicalPath', 'get'), array($container, $this->em));
         $this->mockGetPath($templateService, $getPathReturnMapping);
 
         return $templateService;
@@ -150,8 +183,16 @@ class TemplateServiceTest extends \PHPUnit_Framework_TestCase
 
     private function mockGetPath($service, array $templatesMapping)
     {
-        $service->method('getPath')
+        $service->method('getPhysicalPath')
             ->will($this->returnValueMap($templatesMapping));
+    }
+
+    private function mockGet($service, $bundlePath)
+    {
+        $template = new Template();
+        $template->setPath($bundlePath);
+        $service->method('get')
+            ->will($this->returnValue($template));
     }
 
     private function getRealPath($path)

@@ -16,13 +16,9 @@ class TemplatesController extends BaseController
     }
     public function getTemplateAction($id)
     {
-        $template = $this->getDoctrine()
-            ->getRepository('SwifterCommonBundle:Template')
-            ->find($id);
+        $templateFullContents = $this->templateService->getTemplateFullContents($id);
 
-        $completeTemplate = $this->templateService->getCompleteTemplate($template->getPath());
-
-        return $this->responseService->generateResponse($completeTemplate);
+        return $this->responseService->generateResponse($templateFullContents);
     }
 
 }

@@ -1,5 +1,7 @@
 <?php
 
+namespace Swifter\CommonBundle\Tests\Service;
+
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Swifter\CommonBundle\Service\PageService;
 

@@ -2,43 +2,58 @@
 
 namespace Swifter\CommonBundle\Service;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 
 class TemplateService
 {
-    private $container;
-
     const EXTENDS_REGEX = '/{%.?extends "(.+)".?%}/';
     const BLOCK_CONTENTS_REGEX = '/{% block ([a-zA-Z]+) %}((\n|.)+?){% endblock %}/m';
     const BLOCK_BY_TITLE_REGEX = '/({% block _title_ %})((\n|.)+?)({% endblock %})/m';
     const PARENT_PLACEHOLDER = '{{ parent() }}';
     const TITLE_PLACEHOLDER = '_title_';
 
-    public function __construct(Container $container)
+    const TEMPLATE_CLASS_BUNDLE_NOTATION = 'SwifterCommonBundle:Template';
+
+    private $container;
+    private $em;
+    private $repo;
+
+    public function __construct(Container $container, EntityManager $em)
     {
         $this->container = $container;
+        $this->em = $em;
+        $this->repo = $em->getRepository(static::TEMPLATE_CLASS_BUNDLE_NOTATION);
     }
 
-    public function getCompleteTemplate($title)
+    public function get($id)
     {
-        $contents = $this->getContents($title);
+        $template = $this->repo->find($id);
+
+        return $template;
+    }
+
+    public function getTemplateFullContents($id)
+    {
+        $template = $this->get($id);
+        $contents = $this->getContents($template->getPath());
         return $this->mergeWithParentIfHas($contents);
     }
 
-    private function getContents($template)
+    private function getContents($bundlePath)
     {
-        $path = $this->getPath($template);
-        $contents = file_get_contents($path);
+        $physicalPath = $this->getPhysicalPath($bundlePath);
+        $contents = file_get_contents($physicalPath);
 
         return $contents;
     }
 
-    public function getPath($templateName)
+    public function getPhysicalPath($bundlePath)
     {
         $parser = $this->container->get('templating.name_parser');
         $locator = $this->container->get('templating.locator');
 
-        return $locator->locate($parser->parse($templateName));
+        return $locator->locate($parser->parse($bundlePath));
     }
 
     private function mergeWithParentIfHas($contents)
