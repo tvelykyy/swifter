@@ -35,7 +35,7 @@ class BlockControllerTest extends ControllerTest
         $blocksBeforeDelete = $this->getBlocks();
 
         /* When. */
-        $this->client->request('DELETE', $this->generateRoute('admin_delete_block', array('id' => 1)));
+        $this->client->request('DELETE', $this->generateRoute('admin_delete_block', ['id' => 1]));
         $response = $this->getResponse();
         $blocksAfterDelete = $this->getBlocks();
 
@@ -106,8 +106,30 @@ class BlockControllerTest extends ControllerTest
         $this->assertEquals($newTitle, $blocksAfterSave[0]->title);
     }
 
+    public function testShouldGetBlocksByTitles()
+    {
+        /* Given. */
+        $block1 = $this->fixtures->getReference('title-block');
+        $block2 = $this->fixtures->getReference('footer-block');
+        $titles = implode(";", [$block1->getTitle(), $block2->getTitle()]);
 
-    protected function getBlocks()
+        /* When. */
+        $this->client->request('GET',
+            $this->generateRoute('admin_get_blocks_by_titles', ['semicolonSeparatedTitles' => $titles]));
+        $response = $this->getResponse();
+        $responseJson = json_decode($response->getContent());
+
+        /* Then. */
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(2, sizeof($responseJson));
+
+        $this->assertEquals($block1->getId(), $responseJson[0]->id);
+        $this->assertEquals($block1->getTitle(), $responseJson[0]->title);
+        $this->assertEquals($block2->getId(), $responseJson[1]->id);
+        $this->assertEquals($block2->getTitle(), $responseJson[1]->title);
+    }
+
+    private function getBlocks()
     {
         $this->client->request('GET', $this->generateRoute('admin_get_blocks'));
         $blocks = json_decode($this->getResponse()->getContent());
@@ -115,7 +137,7 @@ class BlockControllerTest extends ControllerTest
         return $blocks;
     }
 
-    protected function doSaveRequest($json)
+    private function doSaveRequest($json)
     {
         $this->client->request(
             'POST',

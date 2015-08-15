@@ -7,6 +7,7 @@ use Liip\FunctionalTestBundle\Test\WebTestCase;
 abstract class ControllerTest extends WebTestCase
 {
     protected $client;
+    protected $fixtures;
 
     protected function setUp()
     {
@@ -17,7 +18,7 @@ abstract class ControllerTest extends WebTestCase
             'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData',
             'Swifter\CommonBundle\DataFixtures\Test\LoadUsersData'
         );
-        $this->loadFixtures($classes);
+        $this->fixtures = $this->loadFixtures($classes)->getReferenceRepository();
     }
 
     protected function generateRoute($routeName, $parameters = array())

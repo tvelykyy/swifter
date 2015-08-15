@@ -29,8 +29,8 @@ class CrudService
 
     public function createAndGenerate201Response($entity)
     {
-        $this->doWithEntity('persist', $entity);
-        $responseBody = $entity->getId();
+        $created = $this->doWithEntity('merge', $entity);
+        $responseBody = $created->getId();
 
         return $this->responseService->generateJsonResponse($responseBody, Response::HTTP_CREATED);
     }
@@ -51,7 +51,9 @@ class CrudService
 
     private function doWithEntity($method, $entity)
     {
-        call_user_func(array($this->em, $method), $entity);
+        $result = call_user_func(array($this->em, $method), $entity);
         $this->em->flush();
+
+        return $result;
     }
 }

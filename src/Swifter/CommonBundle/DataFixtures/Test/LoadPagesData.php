@@ -25,14 +25,14 @@ class LoadPagesData extends AbstractFixture implements FixtureInterface, Contain
     public function load(ObjectManager $manager)
     {
 
-        $block1 = $this->createBlockFixture($manager, 'MAIN_CONTENT');
-        $this->setReference("main-content-block", $block1);
+        $mainContentBlock = $this->createBlockFixture($manager, 'MAIN_CONTENT');
+        $this->setReference("main-content-block", $mainContentBlock);
 
-        $block2 = $this->createBlockFixture($manager, 'TITLE');
-        $this->setReference("title-block", $block2);
+        $titleBlock = $this->createBlockFixture($manager, 'TITLE');
+        $this->setReference("title-block", $titleBlock);
 
-        $block3 = $this->createBlockFixture($manager, 'FOOTER');
-        $this->setReference("footer-block", $block3);
+        $footerBlock = $this->createBlockFixture($manager, 'FOOTER');
+        $this->setReference("footer-block", $footerBlock);
         $manager->flush();
 
         /* Templates. */
@@ -48,23 +48,23 @@ class LoadPagesData extends AbstractFixture implements FixtureInterface, Contain
         $manager->flush();
 
         /* Pages. */
-        $page1 = $this->createPageFixture($manager, 'Main', '/', $template1);
-        $this->setReference("main-page", $page1);
+        $mainPage = $this->createPageFixture($manager, 'Main', '/', $template1);
+        $this->setReference("main-page", $mainPage);
 
-        $page2 = $this->createPageFixture($manager, 'News', '/news', $template1, $page1);
-        $this->setReference("news-page", $page2);
+        $newsPage = $this->createPageFixture($manager, 'News', '/news', $template1, $mainPage);
+        $this->setReference("news-page", $newsPage);
 
-        $page3 = $this->createPageFixture($manager, 'First News', '/news/first', $template1, $page2);
-        $this->setReference("news-first-page", $page3);
+        $firstNewsPage = $this->createPageFixture($manager, 'First News', '/news/first', $template1, $newsPage);
+        $this->setReference("news-first-page", $firstNewsPage);
 
         $manager->flush();
 
         /* Blocks. */
-        $this->createPageBlockFixture($manager, $page1, $block1, 'Yes-Yes. This is page content [[DEV_TEST_PAGES]] contained in CONTENT block.');
-        $this->createPageBlockFixture($manager, $page2, $block1, 'This is a news page.');
-        $this->createPageBlockFixture($manager, $page1, $block2, 'Заголовок кирилиця і буква І!');
-        $this->createPageBlockFixture($manager, $page3, $block3, 'This is super cool footer.');
-        $this->createPageBlockFixture($manager, $page2, $block3, 'Medium footer.');
+        $this->createPageBlockFixture($manager, 'main-page-main-content-block', $mainPage, $mainContentBlock, 'Yes-Yes. This is page content [[DEV_TEST_PAGES]] contained in CONTENT block.');
+        $this->createPageBlockFixture($manager, 'news-page-main-content-block', $newsPage, $mainContentBlock, 'This is a news page.');
+        $this->createPageBlockFixture($manager, 'main-page-title-block', $mainPage, $titleBlock, 'Заголовок кирилиця і буква І!');
+        $this->createPageBlockFixture($manager, 'first-news-page-footer-block', $firstNewsPage, $footerBlock, 'This is super cool footer.');
+        $this->createPageBlockFixture($manager, 'news-page-footer-block', $newsPage, $footerBlock, 'Medium footer.');
 
         $manager->flush();
     }
@@ -116,7 +116,7 @@ class LoadPagesData extends AbstractFixture implements FixtureInterface, Contain
         return $page;
     }
 
-    private function createPageBlockFixture(ObjectManager $manager, Page $page, Block $block, $content)
+    private function createPageBlockFixture(ObjectManager $manager, $reference, Page $page, Block $block, $content)
     {
         $pageBlock = new PageBlock();
         $pageBlock->setPage($page);
@@ -124,5 +124,7 @@ class LoadPagesData extends AbstractFixture implements FixtureInterface, Contain
         $pageBlock->setContent($content);
 
         $manager->persist($pageBlock);
+
+        $this->setReference($reference, $pageBlock);
     }
 }

@@ -28,9 +28,9 @@ class CrudServiceTest extends \PHPUnit_Framework_TestCase
         $entity = new Entity();
 
         $this->emMock->expects($this->once())
-            ->method('persist')
+            ->method('merge')
             ->with($this->identicalTo($entity))
-            ->will($this->returnCallback(function($p) use($id) { $p->setId($id);}));
+            ->will($this->returnCallback(function($p) use($id) { $p->setId($id); return $p;}));
 
         $this->responseServiceMock->expects($this->once())
             ->method('generateJsonResponse')

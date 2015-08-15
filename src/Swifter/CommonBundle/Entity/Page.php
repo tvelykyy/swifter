@@ -5,6 +5,7 @@ namespace Swifter\CommonBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 use JMS\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -31,6 +32,7 @@ class Page
     /**
      * @ORM\Column(type="string", length=200)
      *
+     *
      * @Groups({"list", "details", "page-no-parent-template"})
      */
     protected $uri;
@@ -46,6 +48,7 @@ class Page
     /**
      * @ORM\OneToMany(targetEntity="PageBlock", mappedBy="page", cascade={"all"})
      * @SerializedName("pageBlocks")
+     *
      * @Groups({"details", "page-no-parent-template"})
      **/
     protected $pageBlocks;
