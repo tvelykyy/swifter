@@ -18,4 +18,21 @@ abstract class CrudController extends BaseController
         $this->serializationService = $serializationService;
     }
 
+    protected function save($className)
+    {
+        $entity = $this->serializationService->deserializeFromJson($this->get('request')->getContent(), $className);
+
+        $errors = $this->validate($entity);
+
+        if (count($errors) > 0) {
+            $response = $this->responseService->generateErrorsJsonResponse($errors);
+        }
+        else
+        {
+            $response = $this->crudService->saveAndGenerateResponse($entity);
+        }
+
+        return $response;
+    }
+
 }

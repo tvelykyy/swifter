@@ -35,19 +35,7 @@ class BlockController extends CrudController
 
     public function saveBlockAction()
     {
-        $block = $this->serializationService->deserializeFromJson($this->get('request')->getContent(), self::BLOCK_CLASS);
-
-        $errors = $this->validate($block);
-
-        if (count($errors) > 0) {
-            $response = $this->responseService->generateErrorsJsonResponse($errors);
-        }
-        else
-        {
-            $response = $this->crudService->saveAndGenerateResponse($block);
-        }
-
-        return $response;
+        return $this->save(self::BLOCK_CLASS);
     }
 
     public function deleteBlockAction($id)

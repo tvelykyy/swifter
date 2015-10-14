@@ -52,18 +52,7 @@ class PageController extends CrudController
 
     public function savePageAction()
     {
-        $page = $this->serializationService->deserializeFromJson($this->get('request')->getContent(), static::PAGE_CLASS);
-
-        $errors = $this->validate($page);
-        if (count($errors) > 0) {
-            $response = $this->responseService->generateErrorsJsonResponse($errors);
-        }
-        else
-        {
-            $response = $this->crudService->saveAndGenerateResponse($page);
-        }
-
-        return $response;
+        return $this->save(static::PAGE_CLASS);
     }
 
     public function getBlocksAction($id)
