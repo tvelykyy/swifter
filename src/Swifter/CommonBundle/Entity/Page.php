@@ -19,6 +19,9 @@ class Page
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Groups({"basic", "list", "details", "page-no-parent-template"})
+     *
+     * @Assert\Type(type="integer")
+     * @Assert\GreaterThan(value=0)
      */
     protected $id;
 
@@ -26,14 +29,21 @@ class Page
      * @ORM\Column(type="string", length=50)
      *
      * @Groups({"basic", "list", "details", "page-no-parent-template"})
+     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(min=3, max=50)
      */
     protected $name;
 
     /**
      * @ORM\Column(type="string", length=200)
      *
-     *
      * @Groups({"list", "details", "page-no-parent-template"})
+     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(min=1, max=200)
      */
     protected $uri;
 

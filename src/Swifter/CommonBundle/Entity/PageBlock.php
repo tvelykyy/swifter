@@ -4,6 +4,7 @@ namespace Swifter\CommonBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -17,6 +18,9 @@ class PageBlock
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Groups({"list", "details", "page-no-parent-template"})
+     *
+     * @Assert\Type(type="integer")
+     * @Assert\GreaterThan(value=0)
      **/
     protected $id;
 

@@ -3,6 +3,7 @@
 namespace Swifter\CommonBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -14,21 +15,36 @@ class Snippet
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Assert\Type(type="integer")
+     * @Assert\GreaterThan(value=0)
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string", length=50)
+     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(min=3, max=50)
      */
     protected $title;
 
     /**
      * @ORM\Column(type="string", length=100)
+     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(min=3, max=100)
      */
     protected $service;
 
     /**
      * @ORM\Column(type="string", length=100)
+     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(min=3, max=100)
      */
     protected $method;
 
@@ -40,6 +56,9 @@ class Snippet
 
     /**
      * @ORM\Column(type="string", length=500)
+     *
+     * @Assert\Type(type="string")
+     * @Assert\Length(min=0, max=500)
      */
     protected $params;
 

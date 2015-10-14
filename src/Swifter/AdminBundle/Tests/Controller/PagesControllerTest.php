@@ -121,7 +121,7 @@ class PageControllerTest extends ControllerTest
         $this->assertEmpty($response->getContent());
     }
 
-    public function testShouldPassPageValidation()
+    public function testShouldNotPassPageValidation()
     {
         /* Given. */
         $page = $this->fixtures->getReference('news-first-page');
@@ -146,6 +146,7 @@ class PageControllerTest extends ControllerTest
             $pageJson
         );
         $response = $this->getResponse();
+
         return $response;
     }
 

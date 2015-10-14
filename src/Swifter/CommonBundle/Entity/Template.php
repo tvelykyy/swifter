@@ -4,6 +4,7 @@ namespace Swifter\CommonBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -17,6 +18,9 @@ class Template
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Groups({"list", "details"})
+     *
+     * @Assert\Type(type="integer")
+     * @Assert\GreaterThan(value=0)
      */
     protected $id;
 
@@ -24,6 +28,10 @@ class Template
      * @ORM\Column(type="string", length=100)
      *
      * @Groups({"list", "details"})
+     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(min=3, max=100)
      */
     protected $title;
 
@@ -31,6 +39,10 @@ class Template
      * @ORM\Column(type="string", length=100)
      *
      * @Groups({"list", "details"})
+     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(min=3, max=100)
      */
     protected $path;
 
