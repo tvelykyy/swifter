@@ -13,6 +13,12 @@ web_profiler:
 
 monolog:
     handlers:
+        doctrine:
+              bubble: false
+              action_level: DEBUG
+              type:  stream
+              path:  %kernel.logs_dir%/%kernel.environment%_doctrine.log
+              channels: doctrine
         event_all:
               bubble: false
               action_level: DEBUG
