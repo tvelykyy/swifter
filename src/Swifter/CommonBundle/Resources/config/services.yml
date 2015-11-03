@@ -10,6 +10,7 @@ services:
 
     common.service.pageBlock:
         class: %common.service.pageBlock.class%
+        arguments: ["@doctrine.orm.entity_manager"]
 
     common.service.page:
         class: %common.service.page.class%

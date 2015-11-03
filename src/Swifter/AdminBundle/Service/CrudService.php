@@ -7,8 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CrudService
 {
-    private $em;
-    private $responseService;
+    protected $em;
+    protected $responseService;
 
     public function __construct(ResponseService $responseService, EntityManager $em)
     {
@@ -35,9 +35,9 @@ class CrudService
         return $this->responseService->generateJsonResponse($responseBody, Response::HTTP_CREATED);
     }
 
-    public function editAndGenerate204Response($entity)
+    public function editAndGenerate204Response($page)
     {
-        $this->doWithEntity('merge', $entity);
+        $this->doWithEntity('merge', $page);
 
         return $this->responseService->generateEmptyResponse(Response::HTTP_NO_CONTENT);
     }
@@ -49,7 +49,7 @@ class CrudService
         return $this->responseService->generateEmptyResponse(Response::HTTP_NO_CONTENT);
     }
 
-    private function doWithEntity($method, $entity)
+    protected function doWithEntity($method, $entity)
     {
         $result = call_user_func(array($this->em, $method), $entity);
         $this->em->flush();

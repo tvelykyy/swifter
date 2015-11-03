@@ -1,160 +1,48 @@
 <?php
 
-namespace Swifter\FrontBundle\Tests\Service;
+namespace Swifter\CommonBundle\Tests\Service;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Swifter\CommonBundle\Entity\Block;
-use Swifter\CommonBundle\Entity\Page;
-use Swifter\CommonBundle\Entity\PageBlock;
+use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Swifter\CommonBundle\Service\PageBlockService;
+use Swifter\CommonBundle\Service\PageService;
 
-/**
- * Test Matrix
- *      A   B   C
- * 1.   +   +   +
- * 2.   +   -   -
- * 3.   +   -   +
- * 4.   +   +   -
- * 5.   -   +   +
- * 6.   -   +   -
- * 7.   -   -   +
- */
-class PageBlockServiceTest extends \PHPUnit_Framework_TestCase
+class PageBlockServiceTest extends WebTestCase
 {
-    const PARENT = "parent";
-    const CHILD = "child";
-    const GRAND_CHILD = "child";
-
     private $pageBlockService;
+    private $fixtures;
+    private $em;
 
     public function __construct()
     {
-        $this->pageBlockService = new PageBlockService();
+        $this->em = $this->getContainer()->get('doctrine')->getEntityManager();
+        $this->pageBlockService = new PageBlockService($this->em);
     }
 
-    public function testCase1()
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $classes = [
+            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData'
+        ];
+        $this->fixtures = $this->loadFixtures($classes)->getReferenceRepository();
+    }
+
+    public function testDeleteForPageOtherBlocksThan()
     {
         /* Given. */
-        $grandChild = $this->initPagesWithBlocksContent(self::PARENT, self::CHILD, self::GRAND_CHILD);
+        $blockToDelete = $this->fixtures->getReference('main-page-main-content-block');
+        $blockNotToDelete = $this->fixtures->getReference('main-page-title-block');
 
         /* When. */
-        $this->pageBlockService->mergePageBlocksWithParents($grandChild);
+        $deletedCount = $this->pageBlockService->deleteForPageOtherBlocksThan($blockNotToDelete->getPage()->getId(), [$blockNotToDelete->getId()]);
+        $notDeletedBlock = $this->em->getRepository('SwifterCommonBundle:PageBlock')->find($blockNotToDelete->getId());
+        $deletedBlock = $this->em->getRepository('SwifterCommonBundle:PageBlock')->find($blockToDelete->getId());
 
         /* Then. */
-        $this->assertEquals(self::CHILD, $this->getContent($grandChild));
+        $this->assertEquals(1, $deletedCount);
+        $this->assertNotNull($notDeletedBlock);
+        $this->assertNotNull($deletedBlock);
     }
 
-    public function testCase2()
-    {
-        /* Given. */
-        $grandChild = $this->initPagesWithBlocksContent(self::PARENT, null, null);
-
-        /* When. */
-        $this->pageBlockService->mergePageBlocksWithParents($grandChild);
-
-        /* Then. */
-        $this->assertEquals(self::PARENT, $this->getContent($grandChild));
-    }
-
-    public function testCase3()
-    {
-        /* Given. */
-        $grandChild = $this->initPagesWithBlocksContent(self::PARENT, null, self::GRAND_CHILD);
-
-        /* When. */
-        $this->pageBlockService->mergePageBlocksWithParents($grandChild);
-
-        /* Then. */
-        $this->assertEquals(self::GRAND_CHILD, $this->getContent($grandChild));
-    }
-
-    public function testCase4()
-    {
-        /* Given. */
-        $grandChild = $this->initPagesWithBlocksContent(self::PARENT, self::CHILD, null);
-
-        /* When. */
-        $this->pageBlockService->mergePageBlocksWithParents($grandChild);
-
-        /* Then. */
-        $this->assertEquals(self::CHILD, $this->getContent($grandChild));
-    }
-
-    public function testCase5()
-    {
-        /* Given. */
-        $grandChild = $this->initPagesWithBlocksContent(null, self::CHILD, self::GRAND_CHILD);
-
-        /* When. */
-        $this->pageBlockService->mergePageBlocksWithParents($grandChild);
-
-        /* Then. */
-        $this->assertEquals(self::GRAND_CHILD, $this->getContent($grandChild));
-    }
-
-    public function testCase6()
-    {
-        /* Given. */
-        $grandChild = $this->initPagesWithBlocksContent(null, self::CHILD, null);
-
-        /* When. */
-        $this->pageBlockService->mergePageBlocksWithParents($grandChild);
-
-        /* Then. */
-        $this->assertEquals(self::CHILD, $this->getContent($grandChild));
-    }
-
-    public function testCase7()
-    {
-        /* Given. */
-        $grandChild = $this->initPagesWithBlocksContent(null, null, self::GRAND_CHILD);
-
-        /* When. */
-        $this->pageBlockService->mergePageBlocksWithParents($grandChild);
-
-        /* Then. */
-        $this->assertEquals(self::GRAND_CHILD, $this->getContent($grandChild));
-    }
-
-    private function initPagesWithBlocksContent($parentContent, $childContent, $grandChildContent)
-    {
-        $parent = $this->initPageWithPageBlockContentAndParent($parentContent);
-        $child = $this->initPageWithPageBlockContentAndParent($childContent, $parent);
-        $grandChild = $this->initPageWithPageBlockContentAndParent($grandChildContent, $child);
-
-        return $grandChild;
-    }
-    private function initPageWithPageBlockContentAndParent($content, $parent = null)
-    {
-        $page = new Page();
-        if ($content)
-        {
-            $page->setPageBlocks($this->initPageBlocksWithOneBlock($content));
-        } else
-        {
-            $page->setPageBlocks(new ArrayCollection());
-        }
-
-        $page->setParent($parent);
-
-        return $page;
-    }
-
-    private function initPageBlocksWithOneBlock($content)
-    {
-        $block = new Block();
-        $block->setId(1);
-        $block->setTitle('MAIN');
-
-        $pageBlock = new PageBlock();
-        $pageBlock->setBlock($block);
-        $pageBlock->setContent($content);
-
-        return new ArrayCollection([$pageBlock]);
-    }
-
-    private function getContent($page)
-    {
-        return $page->getPageBlocks()->first()->getContent();
-    }
 }

@@ -2,12 +2,13 @@ parameters:
     admin.service.response.class:         Swifter\AdminBundle\Service\ResponseService
     admin.service.serialization.class:    Swifter\AdminBundle\Service\SerializationService
     admin.service.crud.class:             Swifter\AdminBundle\Service\CrudService
+    admin.service.page.crud.class:        Swifter\AdminBundle\Service\PageCrudService
     admin.service.block.class:            Swifter\AdminBundle\Service\BlockService
     admin.controller.login.class:         Swifter\AdminBundle\Controller\LoginController
     admin.controller.landing.class:       Swifter\AdminBundle\Controller\LandingController
-    admin.controller.block.class:        Swifter\AdminBundle\Controller\BlockController
-    admin.controller.page.class:         Swifter\AdminBundle\Controller\PageController
-    admin.controller.template.class:     Swifter\AdminBundle\Controller\TemplateController
+    admin.controller.block.class:         Swifter\AdminBundle\Controller\BlockController
+    admin.controller.page.class:          Swifter\AdminBundle\Controller\PageController
+    admin.controller.template.class:      Swifter\AdminBundle\Controller\TemplateController
 
 services:
     admin.service.response:
@@ -20,6 +21,10 @@ services:
     admin.service.crud:
         class: %admin.service.crud.class%
         arguments: ["@admin.service.response", "@doctrine.orm.entity_manager"]
+
+    admin.service.page.crud:
+        class: %admin.service.page.crud.class%
+        arguments: ["@admin.service.response", "@common.service.pageBlock", "@doctrine.orm.entity_manager"]
 
     admin.service.block:
         class: %admin.service.block.class%
@@ -49,7 +54,7 @@ services:
 
     admin.controller.page:
         class: %admin.controller.page.class%
-        arguments: ["@admin.service.crud", "@admin.service.response", "@admin.service.serialization", "@common.service.pageBlock", "@common.service.page"]
+        arguments: ["@admin.service.page.crud", "@admin.service.response", "@admin.service.serialization", "@common.service.pageBlock", "@common.service.page"]
         calls:
             -  [setContainer, ["@service_container"]]
 

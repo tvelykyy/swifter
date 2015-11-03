@@ -3,9 +3,38 @@
 namespace Swifter\CommonBundle\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 
 class PageBlockService
 {
+    const BUNDLE_NOTATION = 'SwifterCommonBundle:PageBlock';
+
+    private $em;
+    private $repo;
+
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+        $this->repo = $em->getRepository(static::BUNDLE_NOTATION);
+    }
+
+    public function deleteForPageOtherBlocksThan($pageId, $blockIds)
+    {
+        $qb = $this->repo->createQueryBuilder('pb');
+        $deletedCount = $qb
+            ->delete()
+            ->where(
+                $qb->expr()->eq('pb.page', ':id'),
+                $qb->expr()->notIn('pb.id', ':ids')
+            )
+            ->setParameter('id', $pageId)
+            ->setParameter('ids', $blockIds)
+            ->getQuery()
+            ->getResult();
+
+        return $deletedCount;
+    }
+
     public function mergePageBlocksWithParents($page)
     {
         $mergedPageBlocks = $page->getPageBlocks();
