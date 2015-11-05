@@ -139,7 +139,8 @@
                                             var blocks = self.parentPageBlocks();
                                             for (var i = 0; i < blocks.length; i++) {
                                                 if (blocks[i].block.id === this.block.id) {
-                                                    return blocks[i].content;
+                                                    pageBlock.content(blocks[i].content);
+                                                    return pageBlock.content();
                                                 }
                                             }
                                         },
@@ -188,7 +189,6 @@
                 this.parent().id(data.parent.id);
             }
             this.template().id(data.template.id);
-//            this.pageBlocks(data.pageBlocks);
 
             for (var i = 0; i < data.pageBlocks.length; i++)  {
                 var currentPageBlock = data.pageBlocks[i];

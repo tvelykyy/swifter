@@ -24,5 +24,7 @@ LICENSE
 .idea
 
 # Other
-web
+web/css/*
+web/js/*
+web/images/*
 composer.phar
