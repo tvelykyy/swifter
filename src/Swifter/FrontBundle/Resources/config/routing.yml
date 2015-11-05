@@ -1,5 +1,5 @@
 swifter_front_dispatcher:
-    pattern:  /{uri}
+    path:  /{uri}
     defaults: { _controller: front.controller.dispatcher:indexAction, uri: "" }
     requirements:
         uri:  "[\sa-zA-Z0-9\-\/\.]*"

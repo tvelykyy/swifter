@@ -1,6 +1,6 @@
 login:
-    pattern:  /login
+    path:  /admin/login
     methods:  [POST]
 
 logout:
-    pattern: /logout
+    path: /logout

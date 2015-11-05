@@ -184,11 +184,12 @@
             this.id = data.id;
             this.name(data.name);
             this.uri(data.uri);
-            this.parent().id(data.parent.id);
+            if (data.parent) {
+                this.parent().id(data.parent.id);
+            }
             this.template().id(data.template.id);
 //            this.pageBlocks(data.pageBlocks);
 
-            console.log("update");
             for (var i = 0; i < data.pageBlocks.length; i++)  {
                 var currentPageBlock = data.pageBlocks[i];
                 ko.utils.arrayForEach(this.pageBlocks(), function(resultPageBlock) {
@@ -207,6 +208,10 @@
             delete page.parentUri;
             delete page.pageUri;
 
+            if (!page.parent.id) {
+                delete page.parent;
+            }
+
             page.pageBlocks = $.grep(page.pageBlocks, function(block){
                 return block.override;
             });
@@ -218,7 +223,7 @@
             var self = this;
 
             self.availableParents = ko.observableArray();
-            if (data) {
+            if (data.parent) {
                 self.availableParents().push({"id": data.parent.id, "name": data.parent.name});
             }
 
