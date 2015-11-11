@@ -3,6 +3,8 @@
 namespace Swifter\AdminBundle\Tests\Controller;
 
 
+use Swifter\CommonBundle\DataFixtures\Test\PagesFixtures;
+
 class TemplateControllerTest extends ControllerTest
 {
     protected function setUp()
@@ -14,7 +16,7 @@ class TemplateControllerTest extends ControllerTest
     public function testShouldReturnMainTemplate()
     {
         /* Given. */
-        $template = $this->fixtures->getReference('main-template');
+        $template = $this->fixtures->getReference(PagesFixtures::MAIN_TEMPLATE);
 
         /* When. */
         $this->client->request('GET', $this->generateRoute('admin_get_template', ['id' => $template->getId()]));

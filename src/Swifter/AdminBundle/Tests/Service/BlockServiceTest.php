@@ -2,6 +2,7 @@
 
 use Liip\FunctionalTestBundle\Test\WebTestCase;
 use Swifter\AdminBundle\Service\BlockService;
+use Swifter\CommonBundle\DataFixtures\Test\PagesFixtures;
 
 class BlockServiceTest extends WebTestCase
 {
@@ -19,7 +20,7 @@ class BlockServiceTest extends WebTestCase
         parent::setUp();
 
         $classes = [
-            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData'
+            'Swifter\CommonBundle\DataFixtures\Test\PagesFixtures'
         ];
         $this->fixtures = $this->loadFixtures($classes)->getReferenceRepository();
     }
@@ -27,7 +28,7 @@ class BlockServiceTest extends WebTestCase
     public function testGet()
     {
         /* Given. */
-        $expected = $this->fixtures->getReference('main-content-block');
+        $expected = $this->fixtures->getReference(PagesFixtures::MAIN_BLOCK);
 
         /* When. */
         $actual = $this->blockService->get($expected->getId());
@@ -40,9 +41,9 @@ class BlockServiceTest extends WebTestCase
     public function testGetAll()
     {
         /* Given. */
-        $block1 = $this->fixtures->getReference('main-content-block');
-        $block2 = $this->fixtures->getReference('title-block');
-        $block3 = $this->fixtures->getReference('footer-block');
+        $block1 = $this->fixtures->getReference(PagesFixtures::MAIN_BLOCK);
+        $block2 = $this->fixtures->getReference(PagesFixtures::TITLE_BLOCK);
+        $block3 = $this->fixtures->getReference(PagesFixtures::FOOTER_BLOCK);
 
         /* When. */
         $blocks = $this->blockService->getAll();
@@ -57,8 +58,8 @@ class BlockServiceTest extends WebTestCase
     public function testGetByTitles()
     {
         /* Given. */
-        $block1 = $this->fixtures->getReference('main-content-block');
-        $block2 = $this->fixtures->getReference('title-block');
+        $block1 = $this->fixtures->getReference(PagesFixtures::MAIN_BLOCK);
+        $block2 = $this->fixtures->getReference(PagesFixtures::TITLE_BLOCK);
         $nonExistentBlockTitle = "nonExistentBlockTitle";
         $titles = [$block1->getTitle(), $block2->getTitle(), $nonExistentBlockTitle];
 

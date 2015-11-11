@@ -2,6 +2,7 @@
 
 namespace Swifter\AdminBundle\Tests\Controller;
 
+use Swifter\CommonBundle\DataFixtures\Test\PagesFixtures;
 use Swifter\CommonBundle\Entity\Page;
 
 class PageControllerTest extends ControllerTest
@@ -15,9 +16,9 @@ class PageControllerTest extends ControllerTest
     public function testShouldReturnAllPagesInJson()
     {
         /* Given. */
-        $page1 = $this->fixtures->getReference('main-page');
-        $page2 = $this->fixtures->getReference('news-page');
-        $page3 = $this->fixtures->getReference('news-first-page');
+        $page1 = $this->fixtures->getReference(PagesFixtures::PARENT_PAGE);
+        $page2 = $this->fixtures->getReference(PagesFixtures::CHILD_PAGE);
+        $page3 = $this->fixtures->getReference(PagesFixtures::GRAND_CHILD_PAGE);
 
         /* When. */
         $pages = $this->getPages();
@@ -50,7 +51,7 @@ class PageControllerTest extends ControllerTest
     public function testShouldReturnPagesByNameLike()
     {
         /* Given. */
-        $newsPage = $this->fixtures->getReference('news-page');
+        $newsPage = $this->fixtures->getReference(PagesFixtures::CHILD_PAGE);
 
         /* When. */
         $this->client->request('GET', $this->generateRoute('admin_get_pages_by_name_like', ['name' => $newsPage->getName()]));
@@ -68,10 +69,10 @@ class PageControllerTest extends ControllerTest
     public function testShouldReturnPageWithMergedBlocks()
     {
         /* Given. */
-        $newsFistPage = $this->fixtures->getReference('news-first-page');
-        $mainContentBlock = $this->fixtures->getReference('news-page-main-content-block')->getContent();
-        $titleBlock = $this->fixtures->getReference('main-page-title-block')->getContent();
-        $footerBlock = $this->fixtures->getReference('first-news-page-footer-block')->getContent();
+        $newsFistPage = $this->fixtures->getReference(PagesFixtures::GRAND_CHILD_PAGE);
+        $mainContentBlock = $this->fixtures->getReference(PagesFixtures::CHILD_PAGE_MAIN_BLOCK)->getContent();
+        $titleBlock = $this->fixtures->getReference(PagesFixtures::PARENT_PAGE_TITLE_BLOCK)->getContent();
+        $footerBlock = $this->fixtures->getReference(PagesFixtures::GRAND_CHILD_PAGE_FOOTER_BLOCK)->getContent();
         $blocks = [$mainContentBlock, $titleBlock, $footerBlock];
 
         /* When. */
@@ -90,8 +91,8 @@ class PageControllerTest extends ControllerTest
     public function testShouldCreatePage()
     {
         /* Given. */
-        $newsFirstPage = $this->fixtures->getReference('news-first-page');
-        $template = $this->fixtures->getReference('main-template');
+        $newsFirstPage = $this->fixtures->getReference(PagesFixtures::GRAND_CHILD_PAGE);
+        $template = $this->fixtures->getReference(PagesFixtures::MAIN_TEMPLATE);
 
         $page = new Page();
         $page->setName('new-page');
@@ -110,7 +111,7 @@ class PageControllerTest extends ControllerTest
     public function testShouldEditPage()
     {
         /* Given. */
-        $page = $this->fixtures->getReference('news-first-page');
+        $page = $this->fixtures->getReference(PagesFixtures::GRAND_CHILD_PAGE);
         $page->setName('updated-name');
 
         /* When. */
@@ -124,7 +125,7 @@ class PageControllerTest extends ControllerTest
     public function testShouldNotPassPageValidation()
     {
         /* Given. */
-        $page = $this->fixtures->getReference('news-first-page');
+        $page = $this->fixtures->getReference(PagesFixtures::GRAND_CHILD_PAGE);
         $page->setUri(null);
 
         /* When. */

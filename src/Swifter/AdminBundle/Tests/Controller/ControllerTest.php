@@ -15,8 +15,8 @@ abstract class ControllerTest extends WebTestCase
         $this->client = static::createClient();
 
         $classes = array(
-            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData',
-            'Swifter\CommonBundle\DataFixtures\Test\LoadUsersData'
+            'Swifter\CommonBundle\DataFixtures\Test\PagesFixtures',
+            'Swifter\CommonBundle\DataFixtures\Test\UsersFixtures'
         );
         $this->fixtures = $this->loadFixtures($classes)->getReferenceRepository();
     }

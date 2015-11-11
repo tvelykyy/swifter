@@ -3,6 +3,7 @@
 namespace Swifter\CommonBundle\Tests\Service;
 
 use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Swifter\CommonBundle\DataFixtures\Test\PagesFixtures;
 use Swifter\CommonBundle\Entity\Template;
 use Swifter\CommonBundle\Service\TemplateService;
 
@@ -45,10 +46,10 @@ class TemplateServiceTest extends WebTestCase
             ->getMock();
         $templateService = new TemplateService($container, $this->em);
         $classes = [
-            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData'
+            'Swifter\CommonBundle\DataFixtures\Test\PagesFixtures'
         ];
         $fixtures = $this->loadFixtures($classes)->getReferenceRepository();
-        $expected = $fixtures->getReference('main-template');
+        $expected = $fixtures->getReference(PagesFixtures::MAIN_TEMPLATE);
 
         /* When. */
         $actual = $templateService->get($expected->getId());

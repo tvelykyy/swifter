@@ -13,31 +13,40 @@ use Swifter\CommonBundle\Entity\Template;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadPagesData extends AbstractFixture implements FixtureInterface, ContainerAwareInterface
+class PagesFixtures extends AbstractFixture implements FixtureInterface
 {
-    private $container;
+    const MAIN_BLOCK = 'main-content-block';
+    const TITLE_BLOCK = 'title-block';
+    const FOOTER_BLOCK = 'footer-block';
 
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
+    const MAIN_TEMPLATE = 'main-template';
+
+    const PARENT_PAGE = 'main-page';
+    const CHILD_PAGE = 'news-page';
+    const GRAND_CHILD_PAGE = 'news-first-page';
+
+    const PARENT_PAGE_MAIN_BLOCK = 'main-page-main-content-block';
+    const CHILD_PAGE_MAIN_BLOCK = 'news-page-main-content-block';
+    const PARENT_PAGE_TITLE_BLOCK = 'main-page-title-block';
+    const GRAND_CHILD_PAGE_FOOTER_BLOCK = 'first-news-page-footer-block';
+    const CHILD_PAGE_FOOTER_BLOCK = 'news-page-footer-block';
 
     public function load(ObjectManager $manager)
     {
 
         $mainContentBlock = $this->createBlockFixture($manager, 'MAIN_CONTENT');
-        $this->setReference("main-content-block", $mainContentBlock);
+        $this->setReference(static::MAIN_BLOCK, $mainContentBlock);
 
         $titleBlock = $this->createBlockFixture($manager, 'TITLE');
-        $this->setReference("title-block", $titleBlock);
+        $this->setReference(static::TITLE_BLOCK, $titleBlock);
 
         $footerBlock = $this->createBlockFixture($manager, 'FOOTER');
-        $this->setReference("footer-block", $footerBlock);
+        $this->setReference(static::FOOTER_BLOCK, $footerBlock);
         $manager->flush();
 
         /* Templates. */
         $template1 = $this->createTemplateFixture($manager, 'SwifterFrontBundle:DevTest:index.html.twig', 'Main Template');
-        $this->setReference("main-template", $template1);
+        $this->setReference(static::MAIN_TEMPLATE, $template1);
 
         $template2 = $this->createTemplateFixture($manager, 'SwifterFrontBundle:DevTest:pages.html.twig', 'Uris');
 
@@ -49,22 +58,22 @@ class LoadPagesData extends AbstractFixture implements FixtureInterface, Contain
 
         /* Pages. */
         $mainPage = $this->createPageFixture($manager, 'Main', '/', $template1);
-        $this->setReference("main-page", $mainPage);
+        $this->setReference(static::PARENT_PAGE, $mainPage);
 
         $newsPage = $this->createPageFixture($manager, 'News', '/news', $template1, $mainPage);
-        $this->setReference("news-page", $newsPage);
+        $this->setReference(static::CHILD_PAGE, $newsPage);
 
         $firstNewsPage = $this->createPageFixture($manager, 'First News', '/news/first', $template1, $newsPage);
-        $this->setReference("news-first-page", $firstNewsPage);
+        $this->setReference(static::GRAND_CHILD_PAGE, $firstNewsPage);
 
         $manager->flush();
 
         /* Blocks. */
-        $this->createPageBlockFixture($manager, 'main-page-main-content-block', $mainPage, $mainContentBlock, 'Yes-Yes. This is page content [[DEV_TEST_PAGES]] contained in CONTENT block.');
-        $this->createPageBlockFixture($manager, 'news-page-main-content-block', $newsPage, $mainContentBlock, 'This is a news page.');
-        $this->createPageBlockFixture($manager, 'main-page-title-block', $mainPage, $titleBlock, 'Заголовок кирилиця і буква І!');
-        $this->createPageBlockFixture($manager, 'first-news-page-footer-block', $firstNewsPage, $footerBlock, 'This is super cool footer.');
-        $this->createPageBlockFixture($manager, 'news-page-footer-block', $newsPage, $footerBlock, 'Medium footer.');
+        $this->createPageBlockFixture($manager, static::PARENT_PAGE_MAIN_BLOCK, $mainPage, $mainContentBlock, 'Yes-Yes. This is page content [[DEV_TEST_PAGES]] contained in CONTENT block.');
+        $this->createPageBlockFixture($manager, static::PARENT_PAGE_TITLE_BLOCK, $mainPage, $titleBlock, 'Заголовок кирилиця і буква І!');
+        $this->createPageBlockFixture($manager, static::CHILD_PAGE_MAIN_BLOCK, $newsPage, $mainContentBlock, 'This is a news page.');
+        $this->createPageBlockFixture($manager, static::CHILD_PAGE_FOOTER_BLOCK, $newsPage, $footerBlock, 'Medium footer.');
+        $this->createPageBlockFixture($manager, static::GRAND_CHILD_PAGE_FOOTER_BLOCK, $firstNewsPage, $footerBlock, 'This is super cool footer.');
 
         $manager->flush();
     }
@@ -93,14 +102,14 @@ class LoadPagesData extends AbstractFixture implements FixtureInterface, Contain
 
     private function createSnippetFixture(ObjectManager $manager, $template)
     {
-        $snippet1 = new Snippet();
-        $snippet1->setTitle('DEV_TEST_PAGES');
-        $snippet1->setService('front.service.devtest');
-        $snippet1->setMethod('getPages');
-        $snippet1->setTemplate($template);
-        $snippet1->setParams('{"offset":0, "limit":5}');
+        $snippet = new Snippet();
+        $snippet->setTitle('DEV_TEST_PAGES');
+        $snippet->setService('front.service.devtest');
+        $snippet->setMethod('getPages');
+        $snippet->setTemplate($template);
+        $snippet->setParams('{"offset":0, "limit":5}');
 
-        $manager->persist($snippet1);
+        $manager->persist($snippet);
     }
 
     private function createPageFixture(ObjectManager $manager, $name, $uri, $template, $parent = null)

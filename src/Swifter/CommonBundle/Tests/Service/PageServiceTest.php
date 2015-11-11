@@ -3,6 +3,7 @@
 namespace Swifter\CommonBundle\Tests\Service;
 
 use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Swifter\CommonBundle\DataFixtures\Test\PagesFixtures;
 use Swifter\CommonBundle\Service\PageService;
 
 class PageServiceTest extends WebTestCase
@@ -21,7 +22,7 @@ class PageServiceTest extends WebTestCase
         parent::setUp();
 
         $classes = [
-            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData'
+            'Swifter\CommonBundle\DataFixtures\Test\PagesFixtures'
         ];
         $this->fixtures = $this->loadFixtures($classes)->getReferenceRepository();
     }
@@ -29,7 +30,7 @@ class PageServiceTest extends WebTestCase
     public function testGet()
     {
         /* Given. */
-        $expected = $this->fixtures->getReference('main-page');
+        $expected = $this->fixtures->getReference(PagesFixtures::PARENT_PAGE);
 
         /* When. */
         $actual = $this->pageService->get($expected->getId());
@@ -43,7 +44,7 @@ class PageServiceTest extends WebTestCase
     public function testGetByUri()
     {
         /* Given. */
-        $expected = $this->fixtures->getReference('news-page');
+        $expected = $this->fixtures->getReference(PagesFixtures::CHILD_PAGE);
 
         /* When. */
         $actual = $this->pageService->getByUri($expected->getUri());
@@ -57,9 +58,9 @@ class PageServiceTest extends WebTestCase
     public function testGetAll()
     {
         /* Given. */
-        $page1 = $this->fixtures->getReference('main-page');
-        $page2 = $this->fixtures->getReference('news-page');
-        $page3 = $this->fixtures->getReference('news-first-page');
+        $page1 = $this->fixtures->getReference(PagesFixtures::PARENT_PAGE);
+        $page2 = $this->fixtures->getReference(PagesFixtures::CHILD_PAGE);
+        $page3 = $this->fixtures->getReference(PagesFixtures::GRAND_CHILD_PAGE);
 
         /* When. */
         $pages = $this->pageService->getAll();
@@ -74,8 +75,8 @@ class PageServiceTest extends WebTestCase
     public function testGetByNameLike()
     {
         /* Given. */
-        $newsPage = $this->fixtures->getReference('news-page');
-        $newsFirstPage = $this->fixtures->getReference('news-first-page');
+        $newsPage = $this->fixtures->getReference(PagesFixtures::CHILD_PAGE);
+        $newsFirstPage = $this->fixtures->getReference(PagesFixtures::GRAND_CHILD_PAGE);
 
         /* When. */
         $pages = $this->pageService->getByNameLike($newsPage->getName());

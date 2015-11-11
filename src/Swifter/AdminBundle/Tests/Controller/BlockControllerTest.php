@@ -2,6 +2,7 @@
 
 namespace Swifter\AdminBundle\Tests\Controller;
 
+use Swifter\CommonBundle\DataFixtures\Test\PagesFixtures;
 use Swifter\CommonBundle\Entity\Block;
 
 class BlockControllerTest extends ControllerTest
@@ -109,8 +110,8 @@ class BlockControllerTest extends ControllerTest
     public function testShouldGetBlocksByTitles()
     {
         /* Given. */
-        $block1 = $this->fixtures->getReference('title-block');
-        $block2 = $this->fixtures->getReference('footer-block');
+        $block1 = $this->fixtures->getReference(PagesFixtures::TITLE_BLOCK);
+        $block2 = $this->fixtures->getReference(PagesFixtures::FOOTER_BLOCK);
         $titles = implode(";", [$block1->getTitle(), $block2->getTitle()]);
 
         /* When. */

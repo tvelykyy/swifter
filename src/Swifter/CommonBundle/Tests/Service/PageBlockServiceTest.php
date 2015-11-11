@@ -3,6 +3,7 @@
 namespace Swifter\CommonBundle\Tests\Service;
 
 use Liip\FunctionalTestBundle\Test\WebTestCase;
+use Swifter\CommonBundle\DataFixtures\Test\PagesFixtures;
 use Swifter\CommonBundle\Service\PageBlockService;
 use Swifter\CommonBundle\Service\PageService;
 
@@ -23,7 +24,7 @@ class PageBlockServiceTest extends WebTestCase
         parent::setUp();
 
         $classes = [
-            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData'
+            'Swifter\CommonBundle\DataFixtures\Test\PagesFixtures'
         ];
         $this->fixtures = $this->loadFixtures($classes)->getReferenceRepository();
     }
@@ -31,8 +32,8 @@ class PageBlockServiceTest extends WebTestCase
     public function testDeleteForPageOtherBlocksThan()
     {
         /* Given. */
-        $blockToDelete = $this->fixtures->getReference('main-page-main-content-block');
-        $blockNotToDelete = $this->fixtures->getReference('main-page-title-block');
+        $blockToDelete = $this->fixtures->getReference(PagesFixtures::PARENT_PAGE_MAIN_BLOCK);
+        $blockNotToDelete = $this->fixtures->getReference(PagesFixtures::PARENT_PAGE_TITLE_BLOCK);
 
         /* When. */
         $deletedCount = $this->pageBlockService->deleteForPageOtherBlocksThan($blockNotToDelete->getPage()->getId(), [$blockNotToDelete->getId()]);

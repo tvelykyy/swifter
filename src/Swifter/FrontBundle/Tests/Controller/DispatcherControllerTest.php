@@ -13,7 +13,7 @@ class DispatcherControllerTest extends WebTestCase
         $this->client = static::createClient();
 
         $classes = array(
-            'Swifter\CommonBundle\DataFixtures\Test\LoadPagesData'
+            'Swifter\CommonBundle\DataFixtures\Test\PagesFixtures'
         );
         $this->loadFixtures($classes);
     }
