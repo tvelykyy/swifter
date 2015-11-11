@@ -6,6 +6,7 @@ use Swifter\AdminBundle\Service\BlockService;
 use Swifter\AdminBundle\Service\CrudService;
 use Swifter\AdminBundle\Service\ResponseService;
 use Swifter\AdminBundle\Service\SerializationService;
+use Swifter\CommonBundle\Entity\Serialization\SerializationGroups;
 
 class BlockController extends CrudController
 {
@@ -28,7 +29,7 @@ class BlockController extends CrudController
     public function getBlocksAction()
     {
         $blocks = $this->blockService->getAll();
-        $jsonBlocks = $this->serializationService->serializeToJsonByGroup($blocks, 'list');
+        $jsonBlocks = $this->serializationService->serializeToJsonByGroup($blocks, SerializationGroups::LIST_GROUP);
 
         return $this->responseService->generateJsonResponse($jsonBlocks);
     }
@@ -49,7 +50,7 @@ class BlockController extends CrudController
     {
         $titles = explode(';', $semicolonSeparatedTitles);
         $blocks = $this->blockService->getByTitles($titles);
-        $jsonBlocks = $this->serializationService->serializeToJsonByGroup($blocks, 'list');
+        $jsonBlocks = $this->serializationService->serializeToJsonByGroup($blocks, SerializationGroups::LIST_GROUP);
 
         return $this->responseService->generateJsonResponse($jsonBlocks);
     }

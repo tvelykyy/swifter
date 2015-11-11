@@ -5,6 +5,7 @@ namespace Swifter\AdminBundle\Controller;
 use Swifter\AdminBundle\Service\ResponseService;
 use Swifter\AdminBundle\Service\CrudService;
 use Swifter\AdminBundle\Service\SerializationService;
+use Swifter\CommonBundle\Entity\Serialization\SerializationGroups;
 use Swifter\CommonBundle\Service\PageBlockService;
 use Swifter\CommonBundle\Service\PageService;
 
@@ -37,7 +38,7 @@ class PageController extends CrudController
     public function renderPagesEditAction($id)
     {
         $page = $this->pageService->get($id);
-        $pageJson = $this->serializationService->serializeToJsonByGroup($page, 'details');
+        $pageJson = $this->serializationService->serializeToJsonByGroup($page, SerializationGroups::DETAILS_GROUP);
 
         return $this->render('SwifterAdminBundle::page_form.html.twig', array('title' => 'Pages Form', 'page' => $pageJson));
     }
@@ -45,7 +46,7 @@ class PageController extends CrudController
     public function getPagesAction()
     {
         $pages = $this->pageService->getAll();
-        $jsonPages = $this->serializationService->serializeToJsonByGroup($pages, 'list');
+        $jsonPages = $this->serializationService->serializeToJsonByGroup($pages, SerializationGroups::LIST_GROUP);
 
         return $this->responseService->generateJsonResponse($jsonPages);
     }
@@ -60,7 +61,7 @@ class PageController extends CrudController
         $page = $this->pageService->get($id);
 
         $this->pageBlockService->mergePageBlocksWithParents($page);
-        $json = $this->serializationService->serializeToJsonByGroup($page, 'page-no-parent-template');
+        $json = $this->serializationService->serializeToJsonByGroup($page, SerializationGroups::PAGE_BASIC_GROUP);
 
         return $this->responseService->generateJsonResponse($json);
     }
@@ -68,7 +69,7 @@ class PageController extends CrudController
     public function getPagesByNameLike($name)
     {
         $pages = $this->pageService->getByNameLike($name);
-        $json = $this->serializationService->serializeToJsonByGroup($pages, 'basic');
+        $json = $this->serializationService->serializeToJsonByGroup($pages, SerializationGroups::BASIC_GROUP);
 
         return $this->responseService->generateJsonResponse($json);
     }

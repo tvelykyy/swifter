@@ -5,6 +5,7 @@ namespace Swifter\CommonBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Swifter\CommonBundle\Entity\Serialization\SerializationGroups as SER;
 
 /**
  * @ORM\Entity
@@ -17,7 +18,7 @@ class Block
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({"list", "details", "page-no-parent-template"})
+     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP, SER::PAGE_BASIC_GROUP})
      *
      * @Assert\Type(type="integer")
      * @Assert\GreaterThan(value=0)
@@ -27,7 +28,7 @@ class Block
     /**
      * @ORM\Column(name="title", type="string", length=50)
      *
-     * @Groups({"list", "details", "page-no-parent-template"})
+     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP, SER::PAGE_BASIC_GROUP})
      *
      * @Assert\Type(type="string")
      * @Assert\NotBlank

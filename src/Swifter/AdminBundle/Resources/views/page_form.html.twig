@@ -223,7 +223,7 @@
             var self = this;
 
             self.availableParents = ko.observableArray();
-            if (data.parent) {
+            if (data && data.parent) {
                 self.availableParents().push({"id": data.parent.id, "name": data.parent.name});
             }
 
