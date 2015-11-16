@@ -53,7 +53,6 @@
 {% block js %}
     {{ parent() }}
     <script>
-//        $('#content').fadeOut().parent().append('<div id="loading" class="center">Loading...<div class="center"></div></div>');
         var Block = function(data) {
             this.id = ko.observable();
             this.title = ko.observable();
@@ -91,40 +90,39 @@
             };
 
             self.saveBlock = function() {
-                $.ajax({
+                blockingUIAjax({
                     type: 'POST',
                     url: '{{ path('admin_save_block') }}',
-                    data: ko.toJSON(self.editingBlock()),
-                    success: function(data) {
-                        $('#myModal').modal('hide');
-                        var selected = self.selectedBlock(),
-                        edited = ko.toJS(self.editingBlock()); //clean copy of edited
+                    data: ko.toJSON(self.editingBlock())
+                }, function(data) {
+                    $('#myModal').modal('hide');
+                    var selected = self.selectedBlock();
+                    var edited = ko.toJS(self.editingBlock()); //clean copy of edited
 
-                        //apply updates from the edited item to the selected item
-                        selected.update(edited);
-                        if (!selected.id()) {
-                            selected.id(data);
-                            self.blocks.push(selected);
-                        }
-                    },
-                    error: function(data) {
-                        var errors = JSON.parse(data.responseText);
-                        $.each(errors, function(index, error) {
-                            $('[field=' + error.field + ']').addClass('error')
-                                .find('.help-inline').text(error.message);
-                        })
+                    //apply updates from the edited item to the selected item
+                    selected.update(edited);
+                    if (!selected.id()) {
+                        selected.id(data);
+                        self.blocks.push(selected);
                     }
+                }, function(data) {
+                    var errors = JSON.parse(data.responseText);
+                    $.each(errors, function(index, error) {
+                        $('[field=' + error.field + ']')
+                                .addClass('error')
+                                .find('.help-inline')
+                                .text(error.message);
+                    })
                 });
             };
 
             self.deleteBlock = function(block) {
                 if (confirm('Sure?')) {
-                    $.ajax({
+                    blockingUIAjax({
                         type: 'DELETE',
-                        url: '{{ path('admin_delete_block', {'id': 0}) }}'.replace('0', block.id()),
-                        success: function() {
-                            self.blocks.remove(block);
-                        }
+                        url: '{{ path('admin_delete_block', {'id': 0}) }}'.replace('0', block.id())
+                    }, function() {
+                        self.blocks.remove(block);
                     });
                 }
             };
@@ -140,7 +138,9 @@
         $.get('{{ path('admin_get_blocks') }}')
             .done(function( data ) {
                 ko.applyBindings(new BlockModel(data));
-            }
-        );
+            })
+            .always(function() {
+                unblockUI();
+            });
     </script>
 {% endblock %}

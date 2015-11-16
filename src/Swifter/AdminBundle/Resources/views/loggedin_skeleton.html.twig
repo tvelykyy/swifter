@@ -55,7 +55,9 @@
             </noscript>
 
             <div id="content" class="span10">
-
+                <div class="loading-overlay">
+                    {% image "admin/img/loader.gif" %}<img src="{{ asset_url }}" class="loading-icon" alt="Loading..." />{% endimage %}
+                </div>
                 <!-- content starts -->
                 <div class="row-fluid sortable">
                     <div class="box span12">

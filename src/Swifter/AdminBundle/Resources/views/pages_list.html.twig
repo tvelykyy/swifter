@@ -64,7 +64,9 @@
         $.get('{{ path('admin_get_pages') }}')
             .done(function( data ) {
                 ko.applyBindings(new PageModel(data));
-            }
-        );
+            })
+            .always(function() {
+                unblockUI();
+            });
     </script>
 {% endblock %}

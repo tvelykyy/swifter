@@ -99,13 +99,12 @@
             self.parentPageBlocks = ko.observableArray();
 
             self.template().id.subscribe(function(newId) {
-                if (newId) {
-                    self.pageBlocks.removeAll();
-                    $.ajax({
+                var getTemplate = function() {
+                    return $.ajax({
                         url: '{{ path('admin_get_template', {'id': 0}) }}'.replace('0', newId),
                         async: false
                     })
-                    .done(function(response){
+                    .pipe(function(response) {
                         $('#template-source pre code').text(response);
                         $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
 
@@ -114,58 +113,64 @@
                         while (match = blockTitleRegExp.exec(response)) {
                             titles += match[1] + ';';
                         }
+                        return titles;
+                    });
+                };
 
-                        $.ajax({
-                            url: '{{ path('admin_get_blocks_by_titles', {'semicolonSeparatedTitles': 0}) }}'.replace('0', titles),
-                            async: false
-                        })
-                        .done(function(response) {
-                                    console.log("template");
-                            for(var i in response) {
-                                var block = response[i];
-                                self.pageBlocks.push((function(){
-                                     var pageBlock = {
-                                        id: null,
-                                        block: {id: block.id, title: block.title},
-                                        content: ko.observable(),
-                                        override: ko.observable(false)
-                                    }
-                                    pageBlock.tempContent = ko.computed({
-                                        read: function() {
-                                            if (pageBlock.content()) {
+                var getBlocks = function(titles) {
+                    return $.ajax({
+                        url: '{{ path('admin_get_blocks_by_titles', {'semicolonSeparatedTitles': 0}) }}'.replace('0', titles),
+                        async: false
+                    })
+                    .done(function(response) {
+                        for(var i in response) {
+                            var block = response[i];
+                            self.pageBlocks.push((function(){
+                                var pageBlock = {
+                                    id: null,
+                                    block: {id: block.id, title: block.title},
+                                    content: ko.observable(),
+                                    override: ko.observable(false)
+                                }
+                                pageBlock.tempContent = ko.computed({
+                                    read: function() {
+                                        if (pageBlock.content()) {
+                                            return pageBlock.content();
+                                        }
+
+                                        var blocks = self.parentPageBlocks();
+                                        for (var i = 0; i < blocks.length; i++) {
+                                            if (blocks[i].block.id === this.block.id) {
+                                                pageBlock.content(blocks[i].content);
                                                 return pageBlock.content();
                                             }
+                                        }
+                                    },
+                                    write: function(newValue) {
+                                        pageBlock.content(newValue);
+                                    },
+                                    owner: pageBlock
+                                });
 
-                                            var blocks = self.parentPageBlocks();
-                                            for (var i = 0; i < blocks.length; i++) {
-                                                if (blocks[i].block.id === this.block.id) {
-                                                    pageBlock.content(blocks[i].content);
-                                                    return pageBlock.content();
-                                                }
-                                            }
-                                        },
-                                        write: function(newValue) {
-                                            pageBlock.content(newValue);
-                                        },
-                                        owner: pageBlock
-                                    });
+                                return pageBlock;
+                            })());
+                        }
+                    });
+                };
 
-                                    return pageBlock;
-                                })());
-                            }
-                        })
-                    })
+                if (newId) {
+                    blockUI();
+                    self.pageBlocks.removeAll();
+                    getTemplate().pipe(getBlocks).always(unblockUI());
                 }
             });
 
             self.parent().id.subscribe(function(newId) {
                 if (newId) {
-                    $.ajax({
+                    blockingUIAjax({
                         url: '{{ path('admin_get_page_blocks', {'id': 0}) }}'.replace('0', newId),
                         async: false
-                    })
-                    .done(function(response) {
-                                console.log("parent");
+                    }, function(response) {
                         self.parentPageBlocks(response.pageBlocks);
 
                         if (response.uri != '/') {
@@ -176,7 +181,7 @@
                 }
             });
 
-            if(data) {
+            if (data) {
                 self.update(data);
             }
         }
@@ -238,10 +243,10 @@
                 $.ajax({
                     type: 'POST',
                     url: '{{ path('admin_save_page') }}',
-                    data: ko.toJSON(self.page()),
-                    success: function() {
-                        window.location.replace('{{ path('admin_ui_pages') }}');
-                    }
+                    data: ko.toJSON(self.page())
+                })
+                .done(function() {
+                    window.location.replace('{{ path('admin_ui_pages') }}');
                 });
             };
         };
@@ -256,21 +261,11 @@
         ko.applyBindings(pageModel);
 
         $(document).ready(function() {
-            var delay = (function(){
-                var timer = 0;
-                return function(callback, ms, params){
-                    clearTimeout (timer);
-                    timer = setTimeout(function() {callback(params)}, ms);
-                }
-            })();
-
-
             $('.parent-page input').keyup(function() {
                 delay(function(name){
-                    $.ajax({
+                    blockingUIAjax({
                         url: '{{ path('admin_get_pages_by_name_like', {'name': 0}) }}'.replace('0', name)
-                    })
-                    .done(function(response){
+                    }, function(response) {
                         pageModel.availableParents.removeAll();
                         for (var i in response) {
                             pageModel.availableParents.push(response[i]);
@@ -279,6 +274,7 @@
                     });
                 }, 1000, $(this).val());
             });
+            unblockUI();
         });
     </script>
 {% endblock %}
