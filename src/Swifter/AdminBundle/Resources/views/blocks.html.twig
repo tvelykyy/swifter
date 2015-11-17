@@ -90,9 +90,10 @@
             };
 
             self.saveBlock = function() {
+                var config = self.editingBlock().id() ? ['PUT', '{{ path('admin_edit_block') }}'] : ['POST', '{{ path('admin_create_block') }}'];
                 blockingUIAjax({
-                    type: 'POST',
-                    url: '{{ path('admin_save_block') }}',
+                    type: config[0],
+                    url: config[1],
                     data: ko.toJSON(self.editingBlock())
                 }, function(data) {
                     $('#myModal').modal('hide');
@@ -102,7 +103,7 @@
                     //apply updates from the edited item to the selected item
                     selected.update(edited);
                     if (!selected.id()) {
-                        selected.id(data);
+                        selected.id(data.id);
                         self.blocks.push(selected);
                     }
                 }, function(data) {

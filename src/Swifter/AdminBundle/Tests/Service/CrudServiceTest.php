@@ -9,16 +9,17 @@ class CrudServiceTest extends \PHPUnit_Framework_TestCase
 {
     private $crudService;
     private $responseServiceMock;
+    private $serializationServiceMock;
     private $emMock;
 
     public function setUp()
     {
         $this->responseServiceMock = $this->getMock('Swifter\AdminBundle\Service\ResponseService');
-        $this->emMock = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->serializationServiceMock = $this->getMockBuilder('Swifter\AdminBundle\Service\SerializationService')
+            ->disableOriginalConstructor()->getMock();
+        $this->emMock = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
 
-        $this->crudService = new CrudService($this->responseServiceMock, $this->emMock);
+        $this->crudService = new CrudService($this->responseServiceMock, $this->serializationServiceMock, $this->emMock);
     }
 
     public function testShouldCreateAndGenerateResponse()
@@ -32,6 +33,9 @@ class CrudServiceTest extends \PHPUnit_Framework_TestCase
             ->with($this->identicalTo($entity))
             ->will($this->returnCallback(function($p) use($id) { $p->setId($id); return $p;}));
 
+        $this->serializationServiceMock->method('serializeToJsonByGroup')
+            ->willReturn($id);
+
         $this->responseServiceMock->expects($this->once())
             ->method('generateJsonResponse')
             ->with(
@@ -40,7 +44,7 @@ class CrudServiceTest extends \PHPUnit_Framework_TestCase
             );
 
         /* When. */
-        $response = $this->crudService->createAndGenerate201Response($entity);
+        $response = $this->crudService->createAndGenerateResponse($entity);
 
         /* Then. */
     }
@@ -54,12 +58,19 @@ class CrudServiceTest extends \PHPUnit_Framework_TestCase
             ->method('merge')
             ->with($this->identicalTo($entity));
 
+        $json = 'json';
+        $this->serializationServiceMock->method('serializeToJsonByGroup')
+            ->willReturn($json);
+
         $this->responseServiceMock->expects($this->once())
-            ->method('generateEmptyResponse')
-            ->with($this->equalTo(Response::HTTP_NO_CONTENT));
+            ->method('generateJsonResponse')
+            ->with(
+                $this->equalTo($json),
+                $this->equalTo(Response::HTTP_OK)
+            );
 
         /* When. */
-        $response = $this->crudService->editAndGenerate204Response($entity);
+        $response = $this->crudService->editAndGenerateResponse($entity);
 
         /* Then. */
     }
@@ -78,27 +89,7 @@ class CrudServiceTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(Response::HTTP_NO_CONTENT));
 
         /* When. */
-        $response = $this->crudService->deleteAndGenerate204Response($entity);
-
-        /* Then. */
-    }
-
-    public function testShouldSaveNewAndGenerateResponse()
-    {
-        /* Given. */
-        $entity = new Entity();
-
-        $partiallyMockedCrudService = $this->getMockBuilder('Swifter\AdminBundle\Service\CrudService')
-            ->disableOriginalConstructor()
-            ->setMethods(array('createAndGenerate201Response', 'editAndGenerate204Response'))
-            ->getMock();
-
-        $partiallyMockedCrudService->expects($this->once())
-            ->method('createAndGenerate201Response');
-
-        /* When. */
-        $response = $partiallyMockedCrudService->saveAndGenerateResponse($entity);
-
+        $response = $this->crudService->deleteAndGenerateResponse($entity);
 
         /* Then. */
     }
@@ -111,10 +102,10 @@ class CrudServiceTest extends \PHPUnit_Framework_TestCase
         $partiallyMockedCrudService = $this->initPartiallyMockedCrudService();
 
         $partiallyMockedCrudService->expects($this->once())
-            ->method('editAndGenerate204Response');
+            ->method('editAndGenerateResponse');
 
         /* When. */
-        $response = $partiallyMockedCrudService->saveAndGenerateResponse($entity);
+        $response = $partiallyMockedCrudService->editAndGenerateResponse($entity);
 
 
         /* Then. */
@@ -124,7 +115,7 @@ class CrudServiceTest extends \PHPUnit_Framework_TestCase
     {
         $partiallyMockedCrudService = $this->getMockBuilder('Swifter\AdminBundle\Service\CrudService')
             ->disableOriginalConstructor()
-            ->setMethods(array('createAndGenerate201Response', 'editAndGenerate204Response'))
+            ->setMethods(array('createAndGenerateResponse', 'editAndGenerateResponse'))
             ->getMock();
         return $partiallyMockedCrudService;
     }

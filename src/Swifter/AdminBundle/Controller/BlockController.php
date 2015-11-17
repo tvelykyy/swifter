@@ -34,16 +34,21 @@ class BlockController extends CrudController
         return $this->responseService->generateJsonResponse($jsonBlocks);
     }
 
-    public function saveBlockAction()
+    public function createBlockAction()
     {
-        return $this->save(self::BLOCK_CLASS);
+        return $this->create(self::BLOCK_CLASS);
+    }
+
+    public function editBlockAction()
+    {
+        return $this->edit(self::BLOCK_CLASS);
     }
 
     public function deleteBlockAction($id)
     {
         $blockToDelete = $this->blockService->get($id);
 
-        return $this->crudService->deleteAndGenerate204Response($blockToDelete);
+        return $this->crudService->deleteAndGenerateResponse($blockToDelete);
     }
 
     public function getBlocksByTitlesAction($semicolonSeparatedTitles)

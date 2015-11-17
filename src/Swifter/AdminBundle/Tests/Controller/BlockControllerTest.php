@@ -4,6 +4,7 @@ namespace Swifter\AdminBundle\Tests\Controller;
 
 use Swifter\CommonBundle\DataFixtures\Test\PagesFixtures;
 use Swifter\CommonBundle\Entity\Block;
+use Swifter\CommonBundle\Entity\Serialization\SerializationGroups;
 
 class BlockControllerTest extends ControllerTest
 {
@@ -16,6 +17,9 @@ class BlockControllerTest extends ControllerTest
     public function testShouldReturnAllBlocksInJson()
     {
         /* When. */
+        $block1 = $this->fixtures->getReference(PagesFixtures::MAIN_BLOCK);
+        $block2 = $this->fixtures->getReference(PagesFixtures::TITLE_BLOCK);
+        $block3 = $this->fixtures->getReference(PagesFixtures::FOOTER_BLOCK);
         $blocks = $this->getBlocks();
 
         /* Then. */
@@ -23,11 +27,11 @@ class BlockControllerTest extends ControllerTest
         $this->assertEquals('application/json', $this->getResponse()->headers->get('Content-Type'));
         $this->assertEquals(3, sizeof($blocks));
         $this->assertEquals(1, $blocks[0]->id);
-        $this->assertEquals('MAIN_CONTENT', $blocks[0]->title);
+        $this->assertEquals($block1->getTitle(), $blocks[0]->title);
         $this->assertEquals(2, $blocks[1]->id);
-        $this->assertEquals('TITLE', $blocks[1]->title);
+        $this->assertEquals($block2->getTitle(), $blocks[1]->title);
         $this->assertEquals(3, $blocks[2]->id);
-        $this->assertEquals('FOOTER', $blocks[2]->title);
+        $this->assertEquals($block3->getTitle(), $blocks[2]->title);
     }
 
     public function testShouldDeleteBlock()
@@ -53,9 +57,9 @@ class BlockControllerTest extends ControllerTest
 
         $blocksBeforeSave = $this->getBlocks();
 
-        $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, 'list');
+        $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, SerializationGroups::LIST_GROUP);
         /* When. */
-        $this->doSaveRequest($serializedBlock);
+        $this->doRequest('POST', $this->generateRoute('admin_create_block'), $serializedBlock);
         $response = $this->getResponse();
         $blocksAfterSave = $this->getBlocks();
 
@@ -72,9 +76,9 @@ class BlockControllerTest extends ControllerTest
 
         $blocksBeforeSave = $this->getBlocks();
 
-        $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, 'list');
+        $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, SerializationGroups::LIST_GROUP);
         /* When. */
-        $this->doSaveRequest($serializedBlock);
+        $this->doRequest('POST', $this->generateRoute('admin_create_block'), $serializedBlock);
         $response = $this->getResponse();
         $blocksAfterSave = $this->getBlocks();
 
@@ -94,15 +98,15 @@ class BlockControllerTest extends ControllerTest
         $newTitle = 'NEW_TITLE';
         $block->setTitle($newTitle);
 
-        $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, 'list');
+        $serializedBlock = $this->getSerializator()->serializeToJsonByGroup($block, SerializationGroups::LIST_GROUP);
 
         /* When. */
-        $this->doSaveRequest($serializedBlock);
+        $this->doRequest('PUT', $this->generateRoute('admin_edit_block'), $serializedBlock);
         $response = $this->getResponse();
         $blocksAfterSave = $this->getBlocks();
 
         /* Then. */
-        $this->assertEquals(204, $response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(sizeof($blocksBeforeSave), sizeof($blocksAfterSave));
         $this->assertEquals($newTitle, $blocksAfterSave[0]->title);
     }
@@ -138,11 +142,11 @@ class BlockControllerTest extends ControllerTest
         return $blocks;
     }
 
-    private function doSaveRequest($json)
+    private function doRequest($method, $route, $json)
     {
         $this->client->request(
-            'POST',
-            $this->generateRoute('admin_save_block'),
+            $method,
+            $route,
             array(),
             array(),
             array(),

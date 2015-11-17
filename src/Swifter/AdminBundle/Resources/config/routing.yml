@@ -19,10 +19,15 @@ admin_get_blocks:
     defaults: { _controller: admin.controller.block:getBlocksAction }
     methods:  [GET]
 
-admin_save_block:
+admin_create_block:
     path:  /admin/blocks
-    defaults: { _controller: admin.controller.block:saveBlockAction }
+    defaults: { _controller: admin.controller.block:createBlockAction }
     methods:  [POST]
+
+admin_edit_block:
+    path:  /admin/blocks
+    defaults: { _controller: admin.controller.block:editBlockAction }
+    methods:  [PUT]
 
 admin_delete_block:
     path:  /admin/blocks/{id}
@@ -55,10 +60,15 @@ admin_get_pages:
     defaults: { _controller: admin.controller.page:getPagesAction }
     methods:  [GET]
 
-admin_save_page:
+admin_create_page:
     path:  /admin/pages
-    defaults: { _controller: admin.controller.page:savePageAction }
+    defaults: { _controller: admin.controller.page:createPageAction }
     methods:  [POST]
+
+admin_edit_page:
+    path:  /admin/pages
+    defaults: { _controller: admin.controller.page:editPageAction }
+    methods:  [PUT]
 
 admin_get_page_blocks:
     path:  /admin/pages/{id}/blocks

@@ -3,46 +3,39 @@
 namespace Swifter\AdminBundle\Service;
 
 use Doctrine\ORM\EntityManager;
+use Swifter\CommonBundle\Entity\Serialization\SerializationGroups;
 use Symfony\Component\HttpFoundation\Response;
 
 class CrudService
 {
     protected $em;
     protected $responseService;
+    protected $serializationService;
 
-    public function __construct(ResponseService $responseService, EntityManager $em)
+    public function __construct(ResponseService $responseService, SerializationService $serializationService, EntityManager $em)
     {
         $this->responseService = $responseService;
+        $this->serializationService = $serializationService;
         $this->em = $em;
     }
 
-    public function saveAndGenerateResponse($entity)
-    {
-        if ($entity->getId() == null) {
-            $response = $this->createAndGenerate201Response($entity);
-        } else {
-            $response = $this->editAndGenerate204Response($entity);
-        }
-
-        return $response;
-    }
-
-    public function createAndGenerate201Response($entity)
+    public function createAndGenerateResponse($entity)
     {
         $created = $this->doWithEntity('merge', $entity);
-        $responseBody = $created->getId();
+        $responseBody = $this->serializationService->serializeToJsonByGroup($created, SerializationGroups::DETAILS_GROUP);
 
         return $this->responseService->generateJsonResponse($responseBody, Response::HTTP_CREATED);
     }
 
-    public function editAndGenerate204Response($page)
+    public function editAndGenerateResponse($entity)
     {
-        $this->doWithEntity('merge', $page);
+        $updated = $this->doWithEntity('merge', $entity);
+        $responseBody = $this->serializationService->serializeToJsonByGroup($updated, SerializationGroups::DETAILS_GROUP);
 
-        return $this->responseService->generateEmptyResponse(Response::HTTP_NO_CONTENT);
+        return $this->responseService->generateJsonResponse($responseBody, Response::HTTP_OK);
     }
 
-    public function deleteAndGenerate204Response($entity)
+    public function deleteAndGenerateResponse($entity)
     {
         $this->doWithEntity('remove', $entity);
 

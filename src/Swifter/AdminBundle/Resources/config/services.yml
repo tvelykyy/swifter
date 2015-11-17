@@ -20,11 +20,11 @@ services:
 
     admin.service.crud:
         class: %admin.service.crud.class%
-        arguments: ["@admin.service.response", "@doctrine.orm.entity_manager"]
+        arguments: ["@admin.service.response", "@admin.service.serialization", "@doctrine.orm.entity_manager"]
 
     admin.service.page.crud:
         class: %admin.service.page.crud.class%
-        arguments: ["@admin.service.response", "@common.service.pageBlock", "@doctrine.orm.entity_manager"]
+        arguments: ["@admin.service.response", "@common.service.pageBlock", "@admin.service.serialization", "@doctrine.orm.entity_manager"]
 
     admin.service.block:
         class: %admin.service.block.class%

@@ -18,7 +18,17 @@ abstract class CrudController extends BaseController
         $this->serializationService = $serializationService;
     }
 
-    protected function save($className)
+    protected function create($className)
+    {
+        return $this->doWithClassName('createAndGenerateResponse', $className);
+    }
+
+    protected function edit($className)
+    {
+        return $this->doWithClassName('editAndGenerateResponse', $className);
+    }
+
+    private function doWithClassName($operation, $className)
     {
         $entity = $this->serializationService->deserializeFromJson($this->get('request')->getContent(), $className);
 
@@ -29,7 +39,7 @@ abstract class CrudController extends BaseController
         }
         else
         {
-            $response = $this->crudService->saveAndGenerateResponse($entity);
+            $response = $this->crudService->$operation($entity);
         }
 
         return $response;

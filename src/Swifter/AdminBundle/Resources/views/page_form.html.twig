@@ -240,9 +240,10 @@
             self.page(new Page(data));
 
             self.savePage = function() {
+                var config = self.page().id ? ['PUT', '{{ path('admin_edit_page') }}'] : ['POST', '{{ path('admin_create_page') }}'];
                 $.ajax({
-                    type: 'POST',
-                    url: '{{ path('admin_save_page') }}',
+                    type: config[0],
+                    url: config[1],
                     data: ko.toJSON(self.page())
                 })
                 .done(function() {

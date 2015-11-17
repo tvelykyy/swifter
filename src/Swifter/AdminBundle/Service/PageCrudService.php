@@ -9,13 +9,14 @@ class PageCrudService extends CrudService
 {
     private $pageBlockService;
 
-    public function __construct(ResponseService $responseService, PageBlockService $pageBlockService, EntityManager $em)
+    public function __construct(ResponseService $responseService, PageBlockService $pageBlockService,
+                                SerializationService $serializationService, EntityManager $em)
     {
-        parent::__construct($responseService, $em);
+        parent::__construct($responseService, $serializationService, $em);
         $this->pageBlockService = $pageBlockService;
     }
 
-    public function editAndGenerate204Response($page)
+    public function editAndGenerateResponse($page)
     {
         $blocksIds = [];
         foreach ($page->getPageBlocks() as $block)
@@ -27,7 +28,7 @@ class PageCrudService extends CrudService
         }
         $this->pageBlockService->deleteForPageOtherBlocksThan($page->getId(), $blocksIds);
 
-        return parent::editAndGenerate204Response($page);
+        return parent::editAndGenerateResponse($page);
     }
 
 }

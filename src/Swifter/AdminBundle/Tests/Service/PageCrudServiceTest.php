@@ -10,6 +10,7 @@ class PageCrudServiceTest extends \PHPUnit_Framework_TestCase
     private $pageCrudService;
     private $pageBlockServiceMock;
     private $responseServiceMock;
+    private $serializationServiceMock;
     private $emMock;
 
     public function setUp()
@@ -18,11 +19,14 @@ class PageCrudServiceTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();;
         $this->responseServiceMock = $this->getMock('Swifter\AdminBundle\Service\ResponseService');
+        $this->serializationServiceMock = $this->getMockBuilder('Swifter\AdminBundle\Service\SerializationService')
+            ->disableOriginalConstructor()->getMock();
         $this->emMock = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->pageCrudService = new PageCrudService($this->responseServiceMock, $this->pageBlockServiceMock, $this->emMock);
+        $this->pageCrudService = new PageCrudService($this->responseServiceMock, $this->pageBlockServiceMock,
+            $this->serializationServiceMock, $this->emMock);
     }
 
     public function testShouldEditAndGenerateResponse()
@@ -38,7 +42,7 @@ class PageCrudServiceTest extends \PHPUnit_Framework_TestCase
             ->with($page->getId(), [$pageBlock1->getId(), $pageBlock2->getId()]);
 
         /* When. */
-        $response = $this->pageCrudService->editAndGenerate204Response($page);
+        $response = $this->pageCrudService->editAndGenerateResponse($page);
 
         /* Then. */
     }

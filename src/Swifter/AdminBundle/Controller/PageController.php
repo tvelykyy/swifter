@@ -51,9 +51,14 @@ class PageController extends CrudController
         return $this->responseService->generateJsonResponse($jsonPages);
     }
 
-    public function savePageAction()
+    public function createPageAction()
     {
-        return $this->save(static::PAGE_CLASS);
+        return $this->create(static::PAGE_CLASS);
+    }
+
+    public function editPageAction()
+    {
+        return $this->edit(static::PAGE_CLASS);
     }
 
     public function getBlocksAction($id)

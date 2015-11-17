@@ -16,16 +16,6 @@ function blockingUIAjax(ajax, success, fail) {
         })
 }
 
-//function delay() {
-//    var timer = 0;
-//    return function(callback, ms, params) {
-//        clearTimeout (timer);
-//        timer = setTimeout(function() {
-//            callback(params)
-//        }, ms);
-//    }
-//}
-
 var delay = (function(){
     var timer = 0;
     return function(callback, ms, params){

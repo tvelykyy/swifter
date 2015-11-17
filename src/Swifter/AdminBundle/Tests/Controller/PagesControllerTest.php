@@ -4,6 +4,7 @@ namespace Swifter\AdminBundle\Tests\Controller;
 
 use Swifter\CommonBundle\DataFixtures\Test\PagesFixtures;
 use Swifter\CommonBundle\Entity\Page;
+use Swifter\CommonBundle\Entity\Serialization\SerializationGroups;
 
 class PageControllerTest extends ControllerTest
 {
@@ -101,7 +102,7 @@ class PageControllerTest extends ControllerTest
         $page->setTemplate($template);
 
         /* When. */
-        $response = $this->savePageAndGetResponse($page);
+        $response = $this->savePageAndGetResponse('POST', $this->generateRoute('admin_create_page'), $page);
 
         /* Then. */
         $this->assertEquals(201, $response->getStatusCode());
@@ -115,11 +116,11 @@ class PageControllerTest extends ControllerTest
         $page->setName('updated-name');
 
         /* When. */
-        $response = $this->savePageAndGetResponse($page);
+        $response = $this->savePageAndGetResponse('PUT', $this->generateRoute('admin_edit_page'), $page);
 
         /* Then. */
-        $this->assertEquals(204, $response->getStatusCode());
-        $this->assertEmpty($response->getContent());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertNotEmpty($response->getContent());
     }
 
     public function testShouldNotPassPageValidation()
@@ -129,18 +130,18 @@ class PageControllerTest extends ControllerTest
         $page->setUri(null);
 
         /* When. */
-        $response = $this->savePageAndGetResponse($page);
+        $response = $this->savePageAndGetResponse('POST', $this->generateRoute('admin_create_page'), $page);
 
         /* Then. */
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertContains('uri', $response->getContent());
     }
 
-    private function savePageAndGetResponse($page)
+    private function savePageAndGetResponse($method, $route, $page)
     {
-        $pageJson = $this->getSerializator()->serializeToJsonByGroup($page, 'details');
-        $this->client->request('POST',
-            $this->generateRoute('admin_save_page'),
+        $pageJson = $this->getSerializator()->serializeToJsonByGroup($page, SerializationGroups::DETAILS_GROUP);
+        $this->client->request($method,
+            $route,
             array(),
             array(),
             array(),
