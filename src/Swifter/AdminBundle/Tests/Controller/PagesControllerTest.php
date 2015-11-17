@@ -137,6 +137,20 @@ class PageControllerTest extends ControllerTest
         $this->assertContains('uri', $response->getContent());
     }
 
+    public function testShouldDeletePage()
+    {
+        /* Given. */
+        $page = $this->fixtures->getReference(PagesFixtures::PARENT_PAGE);
+
+        /* When. */
+        $this->client->request('DELETE', $this->generateRoute('admin_delete_page', ['id' => $page->getId()]));
+        $response = $this->getResponse();
+
+            /* Then. */
+        $this->assertEquals(204, $response->getStatusCode());
+        $this->assertEmpty($response->getContent());
+    }
+
     private function savePageAndGetResponse($method, $route, $page)
     {
         $pageJson = $this->getSerializator()->serializeToJsonByGroup($page, SerializationGroups::DETAILS_GROUP);

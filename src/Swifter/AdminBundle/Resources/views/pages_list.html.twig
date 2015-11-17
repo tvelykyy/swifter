@@ -19,7 +19,7 @@
                 <td data-bind="text: templateTitle" class="center"></td>
                 <td>
                     <a data-bind="click: $parent.editPage" class="btn btn-info edit" href="javascript:;"><i class="icon-edit icon-white"></i>Edit</a>
-                    <a class="btn btn-danger delete" href="javascript:;"><i class="icon-trash icon-white"></i>Delete</a>
+                    <a data-bind="click: $parent.deletePage" class="btn btn-danger delete" href="javascript:;"><i class="icon-trash icon-white"></i>Delete</a>
                 </td>
             </tr>
             </tbody>
@@ -58,6 +58,17 @@
 
             self.editPage = function(page) {
                 window.location.replace('{{ path('admin_ui_pages_edit', {'id': 0}) }}'.replace('0', page.id()));
+            }
+
+            self.deletePage = function(page) {
+                if (confirm('Sure?')) {
+                    blockingUIAjax({
+                        type: 'DELETE',
+                        url: '{{ path('admin_delete_page', {'id': 0}) }}'.replace('0', page.id())
+                    }, function() {
+                        self.pages.remove(page);
+                    });
+                }
             }
         };
 

@@ -70,6 +70,11 @@ admin_edit_page:
     defaults: { _controller: admin.controller.page:editPageAction }
     methods:  [PUT]
 
+admin_delete_page:
+    path:  /admin/pages/{id}
+    defaults: { _controller: admin.controller.page:deletePageAction }
+    methods:  [DELETE]
+
 admin_get_page_blocks:
     path:  /admin/pages/{id}/blocks
     defaults: { _controller: admin.controller.page:getBlocksAction }

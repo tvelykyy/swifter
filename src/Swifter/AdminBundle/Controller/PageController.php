@@ -61,6 +61,13 @@ class PageController extends CrudController
         return $this->edit(static::PAGE_CLASS);
     }
 
+    public function deletePageAction($id)
+    {
+        $pageToDelete = $this->pageService->get($id);
+
+        return $this->crudService->deleteAndGenerateResponse($pageToDelete);
+    }
+
     public function getBlocksAction($id)
     {
         $page = $this->pageService->get($id);
