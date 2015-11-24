@@ -19,6 +19,7 @@ class SnippetServiceTest extends \PHPUnit_Framework_TestCase
     /* Tested behaviour constants. */
     const DEV_TEST_SERVICE_RESULT = 'DevTestServiceResult';
     const SNIPPET_TITLE = 'SNIPPET';
+    const SNIPPET_TITLE_WITH_DEFAULT_PARAM = 'SNIPPET?end=10';
     const SKELETON_PAGE_BLOCK_CONTENT = 'Page block content {} with snippet.';
     const RESOLVED_SNIPPET_VALUE = 'Resolved Snippet';
 
@@ -79,11 +80,41 @@ class SnippetServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($resolvedPageBlockContent, $actualPageBlocksArray[0]->getContent());
     }
 
-
-    private function initTestContext($params)
+    public function testShouldResolveSnippetWithClientAndDefaultParams()
     {
-        $initialPageBlockContent = str_replace('{}', '[[' . self::SNIPPET_TITLE . ']]', self::SKELETON_PAGE_BLOCK_CONTENT);
-        $resolvedPageBlockContent = str_replace('{}', self::RESOLVED_SNIPPET_VALUE, self::SKELETON_PAGE_BLOCK_CONTENT);
+        /* Given. */
+        $clientParams = ['start' => 1];
+        $params = array_merge($clientParams, ['end' => 10]);
+
+        list($resolvedPageBlockContent, $page, $snippetService) = $this->initTestContext($params, static::SNIPPET_TITLE_WITH_DEFAULT_PARAM);
+
+        /* When. */
+        $snippetService->resolveSnippetsForPage($page, $clientParams);
+
+        /* Then. */
+        $actualPageBlocksArray = $page->getPageBlocks()->toArray();
+        $this->assertEquals($resolvedPageBlockContent, $actualPageBlocksArray[0]->getContent());
+    }
+
+    public function testShouldResolveSnippetWithDefaultParam()
+    {
+        /* Given. */
+        $params = array('start' => 2, 'end' => 10);
+
+        list($resolvedPageBlockContent, $page, $snippetService) = $this->initTestContext($params, static::SNIPPET_TITLE_WITH_DEFAULT_PARAM);
+
+        /* When. */
+        $snippetService->resolveSnippetsForPage($page, []);
+
+        /* Then. */
+        $actualPageBlocksArray = $page->getPageBlocks()->toArray();
+        $this->assertEquals($resolvedPageBlockContent, $actualPageBlocksArray[0]->getContent());
+    }
+
+    private function initTestContext($params, $snippetString = self::SNIPPET_TITLE, $pageContent = self::SKELETON_PAGE_BLOCK_CONTENT)
+    {
+        $initialPageBlockContent = str_replace('{}', '[[' . $snippetString . ']]', $pageContent);
+        $resolvedPageBlockContent = str_replace('{}', self::RESOLVED_SNIPPET_VALUE, $pageContent);
 
         $page = $this->initPageWithOnePageBlock($initialPageBlockContent);
 

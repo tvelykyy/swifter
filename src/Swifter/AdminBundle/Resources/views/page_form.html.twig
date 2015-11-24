@@ -254,7 +254,7 @@
 
         var pageStr = "{{ page }}";
         if (pageStr) {
-            var pageToEdit = JSON.parse(pageStr.replace(/&quot;/g, '"'));
+            var pageToEdit = JSON.parse(pageStr.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/\n/g, '\\\\n'));
             var pageModel = new PageModel(pageToEdit);
         } else {
             var pageModel = new PageModel();

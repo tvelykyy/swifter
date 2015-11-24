@@ -32,30 +32,37 @@ class SnippetService
 
     private function resolveSnippetsForPageBlock(PageBlock $pageBlock, $queryParams)
     {
-        $snippetsTitles = $this->getSnippetsTitlesFromPageBlockContent($pageBlock);
+        $parsedSnippets = $this->parseSnippetsFromPageBlockContent($pageBlock);
 
-        foreach($snippetsTitles as $snippetTitle)
+        foreach($parsedSnippets as $snippetString => $parsedSnippet)
         {
-            $snippet = $this->getSnippetFromRepository($snippetTitle);
-            $html = $this->resolveSnippet($snippet, $queryParams);
-            $this->updatePageBlockContentWithResolvedSnippet($pageBlock, $snippetTitle, $html);
+            $snippet = $this->getSnippetFromRepository($parsedSnippet[0]);
+            $html = $this->resolveSnippet($snippet, $queryParams, $parsedSnippet[1]);
+            $this->updatePageBlockContentWithResolvedSnippet($pageBlock, $snippetString, $html);
         }
     }
 
-    private function getSnippetsTitlesFromPageBlockContent(PageBlock $pageBlock)
+    private function parseSnippetsFromPageBlockContent(PageBlock $pageBlock)
     {
-        $matchedSnippets = null;
-        preg_match_all('/\\[\\[([A-Za-z0-9_]*?)\\]\\]/', $pageBlock->getContent(), $matchedSnippets);
+        $snippetsStrings = null;
+        preg_match_all('/\\[\\[([A-Za-z0-9_\\?=\\&]*?)\\]\\]/', $pageBlock->getContent(), $snippetsStrings);
 
-        $snippetsTitles = array();
+        $snippets = array();
 
         /* $snippets[0] returns match like this [[(.*?)]], we need (.*?), so we take [1] */
-        foreach ($matchedSnippets[1] as $matchedSnippet)
+        foreach ($snippetsStrings[1] as $snippetString)
         {
-            $snippetsTitles[] = $matchedSnippet;
+            //Snippet string is similar to url, so built-in function is used to parse snippet easily
+            $snippet = parse_url($snippetString);
+            $params = [];
+            if (array_key_exists('query', $snippet))
+            {
+                parse_str($snippet['query'], $params);
+            }
+            $snippets[$snippetString] = [$snippet['path'], $params];
         }
 
-        return $snippetsTitles;
+        return $snippets;
     }
 
     private function getSnippetFromRepository($snippetTitle)
@@ -65,17 +72,17 @@ class SnippetService
         return $snippet;
     }
 
-    private function resolveSnippet(Snippet $snippet, $queryParams)
+    private function resolveSnippet(Snippet $snippet, $defaultParams, $queryParams)
     {
-        $executionResult = $this->executeSnippet($snippet, $queryParams);
+        $executionResult = $this->executeSnippet($snippet, $defaultParams, $queryParams);
         $html = $this->render($snippet->getTemplate()->getPath(), $executionResult);
 
         return $html;
     }
 
-    private function executeSnippet(Snippet $snippet, $queryParams)
+    private function executeSnippet(Snippet $snippet, $queryParams, $defaultParams)
     {
-        $mergedParams = $this->mergeConfiguredAndQueryParams($snippet, $queryParams);
+        $mergedParams = $this->mergeConfiguredAndQueryParams($snippet, $queryParams, $defaultParams);
         $service = $this->container->get($snippet->getService());
 
         $result = call_user_func_array(array($service, $snippet->getMethod()), $mergedParams);
@@ -83,10 +90,10 @@ class SnippetService
         return $result;
     }
 
-    private function mergeConfiguredAndQueryParams(Snippet $snippet, $queryParams)
+    private function mergeConfiguredAndQueryParams(Snippet $snippet, $queryParams, $defaultParams)
     {
         $configuredParams = json_decode($snippet->getParams(), true);
-        $mergedParams = array_merge($configuredParams, $queryParams);
+        $mergedParams = array_merge($configuredParams, $defaultParams, $queryParams);
 
         return $mergedParams;
     }
@@ -96,10 +103,10 @@ class SnippetService
         return $this->container->get('templating')->render($templatePath, array('params' => $params));
     }
 
-    private function updatePageBlockContentWithResolvedSnippet(PageBlock $pageBlock, $snippetTitle, $html)
+    private function updatePageBlockContentWithResolvedSnippet(PageBlock $pageBlock, $snippetString, $html)
     {
         $pageBlock->setContent(preg_replace(
-                '/\\[\\[' . $snippetTitle . '\\]\\]/',
+                '/\\[\\[' . preg_quote($snippetString) . '\\]\\]/',
                 $html,
                 $pageBlock->getContent())
         );
