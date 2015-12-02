@@ -45,10 +45,10 @@ class PagesFixtures extends AbstractFixture implements FixtureInterface
         $manager->flush();
 
         /* Templates. */
-        $template1 = $this->createTemplateFixture($manager, 'SwifterFrontBundle:DevTest:index.html.twig', 'Main Template');
+        $template1 = $this->createTemplateFixture($manager, 'SwifterFrontBundle:DevTest:index.html.twig', 'Main Template', true);
         $this->setReference(static::MAIN_TEMPLATE, $template1);
 
-        $template2 = $this->createTemplateFixture($manager, 'SwifterFrontBundle:DevTest:pages.html.twig', 'Uris');
+        $template2 = $this->createTemplateFixture($manager, 'SwifterFrontBundle:DevTest:pages.html.twig', 'Uris', false);
 
         $manager->flush();
 
@@ -88,11 +88,12 @@ class PagesFixtures extends AbstractFixture implements FixtureInterface
         return $block;
     }
 
-    private function createTemplateFixture(ObjectManager $manager, $path, $title)
+    private function createTemplateFixture(ObjectManager $manager, $path, $title, $isForPage)
     {
         $template = new Template();
         $template->setPath($path);
         $template->setTitle($title);
+        $template->setForPage($isForPage);
 
         $manager->persist($template);
 

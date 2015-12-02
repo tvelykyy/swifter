@@ -37,7 +37,7 @@
                         <div class="controls" data-bind="with: template">
                             <select data-rel="chosen" data-bind="
                                 options: $parents[1].availableTemplates,
-                                optionsText: 'name',
+                                optionsText: 'title',
                                 optionsValue: 'id',
                                 value: id,
                                 optionsCaption: 'Choose...'">
@@ -232,9 +232,9 @@
                 self.availableParents().push({"id": data.parent.id, "name": data.parent.name});
             }
 
-            self.availableTemplates = ko.observableArray([
-                {id: 1, name: 'Main'}, {id: 2, name: 'Uris'}
-            ]);
+            var templateStr = "{{ templates }}";
+            var templates = JSON.parse(templateStr.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/\n/g, '\\\\n'));
+            self.availableTemplates = ko.observableArray(templates);
 
             self.page = ko.observable();
             self.page(new Page(data));

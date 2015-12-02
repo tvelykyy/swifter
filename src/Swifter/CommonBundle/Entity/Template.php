@@ -48,6 +48,14 @@ class Template
      */
     protected $path;
 
+    /**
+     * @ORM\Column(name="is_for_page", type="boolean")
+     *
+     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP})
+     * @Assert\Type(type="integer")
+     */
+    protected $isForPage;
+
     public function getId()
     {
         return $this->id;
@@ -71,5 +79,15 @@ class Template
     public function getTitle()
     {
         return $this->title;
+    }
+
+    public function setForPage($isForPage)
+    {
+        $this->isForPage = $isForPage;
+    }
+
+    public function isForPage()
+    {
+        return $this->isForPage;
     }
 }

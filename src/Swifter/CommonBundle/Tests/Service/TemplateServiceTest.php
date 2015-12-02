@@ -41,14 +41,8 @@ class TemplateServiceTest extends WebTestCase
     public function testGet()
     {
         /* Given. */
-        $container = $this->getMockBuilder(self::CONTAINER_INTERFACE)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $templateService = new TemplateService($container, $this->em);
-        $classes = [
-            'Swifter\CommonBundle\DataFixtures\Test\PagesFixtures'
-        ];
-        $fixtures = $this->loadFixtures($classes)->getReferenceRepository();
+        $templateService = $this->initMockedTemplateService();
+        $fixtures = $this->initFixtures();
         $expected = $fixtures->getReference(PagesFixtures::MAIN_TEMPLATE);
 
         /* When. */
@@ -58,6 +52,22 @@ class TemplateServiceTest extends WebTestCase
         $this->assertEquals($expected->getId(), $actual->getId());
         $this->assertEquals($expected->getTitle(), $actual->getTitle());
         $this->assertEquals($expected->getPath(), $actual->getPath());
+    }
+
+    public function testGetPageTemplatesOnly()
+    {
+        /* Given. */
+        $templateService = $this->initMockedTemplateService();
+        $fixtures = $this->initFixtures();
+
+        /* When. */
+        $templates = $templateService->getPageTemplates();
+
+        /* Then. */
+        foreach($templates as $template)
+        {
+            $this->assertTrue($template->isForPage());
+        }
     }
 
     public function testCase1()
@@ -199,6 +209,24 @@ class TemplateServiceTest extends WebTestCase
     private function getRealPath($path)
     {
         return __DIR__.'/../Resources/views/'.$path;
+    }
+
+    private function initMockedTemplateService()
+    {
+        $container = $this->getMockBuilder(self::CONTAINER_INTERFACE)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $templateService = new TemplateService($container, $this->em);
+        return $templateService;
+    }
+
+    private function initFixtures()
+    {
+        $classes = [
+            'Swifter\CommonBundle\DataFixtures\Test\PagesFixtures'
+        ];
+        $fixtures = $this->loadFixtures($classes)->getReferenceRepository();
+        return $fixtures;
     }
 
 }

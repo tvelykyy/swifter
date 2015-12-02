@@ -8,6 +8,7 @@ use Swifter\AdminBundle\Service\SerializationService;
 use Swifter\CommonBundle\Entity\Serialization\SerializationGroups;
 use Swifter\CommonBundle\Service\PageBlockService;
 use Swifter\CommonBundle\Service\PageService;
+use Swifter\CommonBundle\Service\TemplateService;
 
 class PageController extends CrudController
 {
@@ -16,13 +17,15 @@ class PageController extends CrudController
 
     private $pageBlockService;
     private $pageService;
+    private $templateService;
 
     public function __construct(CrudService $crudService, ResponseService $responseService, SerializationService $serializationService,
-                                PageBlockService $pageBlockService, PageService $pageService)
+                                PageBlockService $pageBlockService, PageService $pageService, TemplateService $templateService)
     {
         parent::__construct($crudService, $responseService, $serializationService);
         $this->pageBlockService = $pageBlockService;
         $this->pageService = $pageService;
+        $this->templateService = $templateService;
     }
 
     public function renderPagesAction()
@@ -40,7 +43,16 @@ class PageController extends CrudController
         $page = $this->pageService->get($id);
         $pageJson = $this->serializationService->serializeToJsonByGroup($page, SerializationGroups::DETAILS_GROUP);
 
-        return $this->render('SwifterAdminBundle::page_form.html.twig', array('title' => 'Pages Form', 'page' => $pageJson));
+        $templates = $this->templateService->getPageTemplates();
+        $templatesJson = $this->serializationService->serializeToJsonByGroup($templates, SerializationGroups::LIST_GROUP);
+
+        return $this->render('SwifterAdminBundle::page_form.html.twig',
+            array(
+                'title' => 'Pages Form',
+                'page' => $pageJson,
+                'templates' => $templatesJson
+            )
+        );
     }
 
     public function getPagesAction()

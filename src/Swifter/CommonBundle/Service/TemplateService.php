@@ -40,6 +40,13 @@ class TemplateService
         return $this->mergeWithParentIfHas($contents);
     }
 
+    public function getPageTemplates()
+    {
+        $templates = $this->repo->findByIsForPage(true);
+
+        return $templates;
+    }
+
     private function getContents($bundlePath)
     {
         $physicalPath = $this->getPhysicalPath($bundlePath);
