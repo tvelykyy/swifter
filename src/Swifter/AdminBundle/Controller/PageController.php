@@ -2,6 +2,7 @@
 
 namespace Swifter\AdminBundle\Controller;
 
+use Swifter\AdminBundle\Service\BlockService;
 use Swifter\AdminBundle\Service\ResponseService;
 use Swifter\AdminBundle\Service\CrudService;
 use Swifter\AdminBundle\Service\SerializationService;
@@ -9,6 +10,7 @@ use Swifter\CommonBundle\Entity\Serialization\SerializationGroups;
 use Swifter\CommonBundle\Service\PageBlockService;
 use Swifter\CommonBundle\Service\PageService;
 use Swifter\CommonBundle\Service\TemplateService;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class PageController extends CrudController
 {
@@ -20,12 +22,14 @@ class PageController extends CrudController
     private $templateService;
 
     public function __construct(CrudService $crudService, ResponseService $responseService, SerializationService $serializationService,
-                                PageBlockService $pageBlockService, PageService $pageService, TemplateService $templateService)
+                                PageBlockService $pageBlockService, PageService $pageService, TemplateService $templateService,
+                                BlockService $blockService)
     {
         parent::__construct($crudService, $responseService, $serializationService);
         $this->pageBlockService = $pageBlockService;
         $this->pageService = $pageService;
         $this->templateService = $templateService;
+        $this->blockService = $blockService;
     }
 
     public function renderPagesAction()
@@ -41,7 +45,7 @@ class PageController extends CrudController
     public function renderPagesEditAction($id)
     {
         $page = $this->pageService->get($id);
-        $pageJson = $this->serializationService->serializeToJsonByGroup($page, SerializationGroups::DETAILS_GROUP);
+        $pageJson = $this->serializationService->serializeToJsonByGroup($page, SerializationGroups::PAGE_DETAILS_GROUP);
 
         $templates = $this->templateService->getPageTemplates();
         $templatesJson = $this->serializationService->serializeToJsonByGroup($templates, SerializationGroups::LIST_GROUP);
@@ -96,6 +100,25 @@ class PageController extends CrudController
         $json = $this->serializationService->serializeToJsonByGroup($pages, SerializationGroups::BASIC_GROUP);
 
         return $this->responseService->generateJsonResponse($json);
+    }
+
+    protected function validate($page)
+    {
+        $validator = $this->get('validator');
+
+        $errors = new ConstraintViolationList();
+        foreach($page->getPageBlocks() as $pageBlock)
+        {
+            $block = $this->blockService->get($pageBlock->getBlock()->getId());
+            $constraintName = $block->getType()->getConstraint();
+            $constraintClass = 'Symfony\Component\Validator\Constraints\\'.$constraintName;
+            $options = json_decode($block->getOptions(), true);
+            $constraint = new $constraintClass($options);
+
+            $errors->addAll($validator->validate($pageBlock->getContent(), $constraint));
+        }
+
+        return $errors;
     }
 
 }

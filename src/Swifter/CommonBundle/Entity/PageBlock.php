@@ -18,7 +18,7 @@ class PageBlock
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP, SER::PAGE_BASIC_GROUP})
+     * @Groups({SER::LIST_GROUP, SER::PAGE_DETAILS_GROUP, SER::DETAILS_GROUP, SER::PAGE_BASIC_GROUP})
      *
      * @Assert\Type(type="integer")
      * @Assert\GreaterThan(value=0)
@@ -36,14 +36,14 @@ class PageBlock
      * @ORM\ManyToOne(targetEntity="Block")
      * @ORM\JoinColumn(name="block_id", referencedColumnName="id")
      *
-     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP, SER::PAGE_BASIC_GROUP})
+     * @Groups({SER::LIST_GROUP, SER::PAGE_DETAILS_GROUP, SER::DETAILS_GROUP, SER::PAGE_BASIC_GROUP})
      **/
     protected $block;
 
     /**
      * @ORM\Column(type="text")
      *
-     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP, SER::PAGE_BASIC_GROUP})
+     * @Groups({SER::LIST_GROUP, SER::PAGE_DETAILS_GROUP, SER::DETAILS_GROUP, SER::PAGE_BASIC_GROUP})
      **/
     protected $content;
 

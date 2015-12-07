@@ -19,7 +19,7 @@ class Template
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP})
+     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP, SER::PAGE_DETAILS_GROUP})
      *
      * @Assert\Type(type="integer")
      * @Assert\GreaterThan(value=0)
@@ -29,7 +29,7 @@ class Template
     /**
      * @ORM\Column(type="string", length=100)
      *
-     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP})
+     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP, SER::PAGE_DETAILS_GROUP})
      *
      * @Assert\Type(type="string")
      * @Assert\NotBlank
@@ -40,7 +40,7 @@ class Template
     /**
      * @ORM\Column(type="string", length=100)
      *
-     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP})
+     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP, SER::PAGE_DETAILS_GROUP})
      *
      * @Assert\Type(type="string")
      * @Assert\NotBlank
@@ -51,7 +51,7 @@ class Template
     /**
      * @ORM\Column(name="is_for_page", type="boolean")
      *
-     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP})
+     * @Groups({SER::LIST_GROUP, SER::DETAILS_GROUP, SER::PAGE_DETAILS_GROUP})
      * @Assert\Type(type="integer")
      */
     protected $isForPage;

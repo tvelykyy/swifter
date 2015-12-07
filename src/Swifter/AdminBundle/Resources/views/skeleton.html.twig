@@ -9,6 +9,8 @@
         {% stylesheets 'admin/css/*' filter='cssrewrite' %}
             <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
         <style type="text/css">
             body {
                 padding-bottom: 40px;
@@ -74,9 +76,12 @@
         'admin/js/knockout-3.0.0.js'
         'admin/js/knockout-mapping-2.4.1.js'
         'admin/js/utils.js'
+        'admin/js/summernote.js'
     %}
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
 {% endblock %}
 </body>
 

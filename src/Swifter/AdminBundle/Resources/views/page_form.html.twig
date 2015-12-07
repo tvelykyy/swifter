@@ -68,8 +68,14 @@
                     Override
                 </label>
             </div>
-            <div class="controls">
-                <textarea data-bind="value: $parent.tempContent, enable: $parent.override" class="autogrow"></textarea>
+            <div data-bind="if: $parent.block.type == 'html'" class="controls">
+                <div class="wysiwyg" data-bind="html: $parent.tempContent, enable: $parent.override"></div>
+            </div>
+            <div data-bind="if: $parent.block.type == 'email'" class="controls">
+                <input type="email" data-bind="value: $parent.tempContent, enable: $parent.override">
+            </div>
+            <div data-bind="if: $parent.block.type == 'url'" class="controls">
+                <input type="url" data-bind="value: $parent.tempContent, enable: $parent.override">
             </div>
         </div>
     </script>
@@ -99,6 +105,7 @@
             self.parentPageBlocks = ko.observableArray();
 
             self.template().id.subscribe(function(newId) {
+
                 var getTemplate = function() {
                     return $.ajax({
                         url: '{{ path('admin_get_template', {'id': 0}) }}'.replace('0', newId),
@@ -128,7 +135,7 @@
                             self.pageBlocks.push((function(){
                                 var pageBlock = {
                                     id: null,
-                                    block: {id: block.id, title: block.title},
+                                    block: {id: block.id, title: block.title, type: block.type.title},
                                     content: ko.observable(),
                                     override: ko.observable(false)
                                 }
@@ -181,9 +188,6 @@
                 }
             });
 
-            if (data) {
-                self.update(data);
-            }
         }
 
         Page.prototype.update = function(data) {
@@ -205,6 +209,8 @@
                     }
                 });
             }
+            $('.wysiwyg').summernote();
+
         };
 
         Page.prototype.toJSON = function() {
@@ -250,6 +256,7 @@
                     window.location.replace('{{ path('admin_ui_pages') }}');
                 });
             };
+
         };
 
         var pageStr = "{{ page }}";
@@ -260,6 +267,7 @@
             var pageModel = new PageModel();
         }
         ko.applyBindings(pageModel);
+        pageModel.page().update(pageToEdit);
 
         $(document).ready(function() {
             $('.parent-page input').keyup(function() {

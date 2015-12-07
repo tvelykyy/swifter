@@ -54,7 +54,14 @@ services:
 
     admin.controller.page:
         class: %admin.controller.page.class%
-        arguments: ["@admin.service.page.crud", "@admin.service.response", "@admin.service.serialization", "@common.service.pageBlock", "@common.service.page", "@common.service.template"]
+        arguments:
+            - @admin.service.page.crud
+            - @admin.service.response
+            - @admin.service.serialization
+            - @common.service.pageBlock
+            - @common.service.page
+            - @common.service.template
+            - @admin.service.block
         calls:
             -  [setContainer, ["@service_container"]]
 
